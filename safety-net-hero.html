@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafetyNET — Güvenlik Filesi Sistemleri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800;900&family=Barlow:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --red: #E2000D;
+  --red-glow: rgba(226,0,13,0.25);
+  --dark: #0e0e0e;
+  --surface: #161616;
+  --border: rgba(255,255,255,0.07);
+  --muted: #666;
+  --text: #e8e6e3;
+  --white: #ffffff;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--dark);
+  font-family: 'Barlow', sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ─── NOISE GRAIN ─── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 56px;
+  background: rgba(14,14,14,0.88);
+  backdrop-filter: blur(20px) saturate(1.4);
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.logo-bracket { color: var(--red); }
+
+.nav-menu {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+}
+
+.nav-menu a {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.nav-menu a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 0; height: 1px;
+  background: var(--red);
+  transition: width 0.3s;
+}
+
+.nav-menu a:hover { color: var(--text); }
+.nav-menu a:hover::after { width: 100%; }
+
+.nav-right { display: flex; align-items: center; gap: 16px; }
+
+.nav-tel {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  font-style: italic;
+}
+
+.btn-nav {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--white);
+  background: var(--red);
+  border: none;
+  padding: 10px 22px;
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
+
+.btn-nav:hover {
+  background: #ff1520;
+  box-shadow: 0 4px 20px var(--red-glow);
+}
+
+/* ─── HERO ─── */
+.hero {
+  position: relative;
+  height: 100vh;
+  min-height: 700px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* Canvas background */
+#bg-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Gradient vignette */
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 55% 90% at 72% 50%, rgba(226,0,13,0.06) 0%, transparent 65%),
+    linear-gradient(105deg, rgba(14,14,14,0.98) 0%, rgba(14,14,14,0.82) 42%, rgba(14,14,14,0.15) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 56px;
+  display: grid;
+  grid-template-columns: 560px 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+/* ─── LEFT ─── */
+.hero-left {}
+
+.tag-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: up 0.5s 0.15s ease-out forwards;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(226,0,13,0.1);
+  border: 1px solid rgba(226,0,13,0.25);
+  padding: 5px 12px;
+}
+
+.tag-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--red);
+  animation: blink 1.8s ease-in-out infinite;
+}
+
+.tag span {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red);
+}
+
+.tag-cert {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-left: 1px solid var(--border);
+  padding-left: 12px;
+}
+
+.hero-h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(56px, 5.5vw, 88px);
+  font-weight: 900;
+  line-height: 0.92;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  margin-bottom: 24px;
+  opacity: 0;
+  transform: translateY(24px);
+  animation: up 0.65s 0.3s ease-out forwards;
+}
+
+.h1-l1 { display: block; color: var(--white); }
+.h1-l2 {
+  display: block;
+  color: var(--red);
+  text-shadow: 0 0 60px rgba(226,0,13,0.3);
+}
+.h1-l3 {
+  display: block;
+  -webkit-text-stroke: 1.5px rgba(255,255,255,0.22);
+  color: transparent;
+}
+
+.hero-p {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.75;
+  color: rgba(255,255,255,0.52);
+  max-width: 420px;
+  margin-bottom: 40px;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: up 0.55s 0.5s ease-out forwards;
+}
+
+.hero-p strong {
+  font-weight: 400;
+  color: rgba(255,255,255,0.78);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: up 0.55s 0.65s ease-out forwards;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--white);
+  background: var(--red);
+  text-decoration: none;
+  padding: 15px 32px;
+  transition: all 0.25s;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+
+.btn-primary:hover {
+  background: #ff1520;
+  box-shadow: 0 0 40px rgba(226,0,13,0.4);
+  transform: translateY(-2px);
+}
+
+.btn-primary .arr { transition: transform 0.25s; }
+.btn-primary:hover .arr { transform: translateX(4px); }
+
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  padding-bottom: 2px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.btn-link:hover {
+  color: var(--white);
+  border-color: rgba(255,255,255,0.4);
+}
+
+/* Stats */
+.stats-row {
+  display: flex;
+  gap: 0;
+  margin-top: 52px;
+  border-top: 1px solid var(--border);
+  padding-top: 36px;
+  opacity: 0;
+  animation: up 0.6s 0.9s ease-out forwards;
+}
+
+.stat {
+  flex: 1;
+  padding-right: 28px;
+  border-right: 1px solid var(--border);
+  margin-right: 28px;
+}
+
+.stat:last-child {
+  border-right: none;
+  margin-right: 0;
+  padding-right: 0;
+}
+
+.stat-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 34px;
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.stat-num sup {
+  font-size: 14px;
+  color: var(--red);
+  font-weight: 700;
+}
+
+.stat-lbl {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* ─── RIGHT: VISUAL ─── */
+.hero-right {
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 500px;
+  opacity: 0;
+  animation: fadeIn 1s 0.5s ease-out forwards;
+}
+
+/* Main net card */
+.net-card {
+  position: relative;
+  width: 360px;
+  height: 360px;
+  border: 1px solid rgba(255,255,255,0.09);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.net-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(226,0,13,0.05) 0%, transparent 60%);
+  z-index: 1;
+}
+
+.net-card-svg {
+  width: 100%;
+  height: 100%;
+  animation: slowFloat 8s ease-in-out infinite;
+}
+
+/* Corner brackets */
+.net-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 28px; height: 28px;
+  border-top: 2px solid var(--red);
+  border-left: 2px solid var(--red);
+  z-index: 3;
+}
+
+.bracket-br {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 28px; height: 28px;
+  border-bottom: 2px solid var(--red);
+  border-right: 2px solid var(--red);
+  z-index: 3;
+}
+
+/* Spec card overlay */
+.spec-card {
+  position: absolute;
+  bottom: -20px;
+  left: -60px;
+  background: rgba(14,14,14,0.95);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 20px 24px;
+  backdrop-filter: blur(12px);
+  z-index: 10;
+  animation: floatB 6s ease-in-out infinite;
+}
+
+.spec-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.spec-list { display: flex; flex-direction: column; gap: 8px; }
+
+.spec-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.spec-item-key {
+  font-size: 12px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.5);
+}
+
+.spec-item-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.04em;
+}
+
+.spec-item-val.accent { color: var(--red); }
+
+/* Feature pills */
+.pill {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(14,14,14,0.92);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 9px 14px;
+  backdrop-filter: blur(10px);
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.pill-icon {
+  width: 24px; height: 24px;
+  background: rgba(226,0,13,0.12);
+  border: 1px solid rgba(226,0,13,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.pill-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.75);
+}
+
+.pill1 {
+  top: 20px; right: -70px;
+  animation: floatA 5s ease-in-out infinite;
+}
+
+.pill2 {
+  top: 140px; right: -90px;
+  animation: floatB 7s ease-in-out infinite;
+}
+
+/* ─── BOTTOM TICKER ─── */
+.ticker-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 48px;
+  background: rgba(226,0,13,0.92);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  z-index: 3;
+}
+
+.ticker-track {
+  display: flex;
+  gap: 0;
+  animation: ticker 20s linear infinite;
+  white-space: nowrap;
+}
+
+.ticker-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 32px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.9);
+  border-right: 1px solid rgba(255,255,255,0.2);
+}
+
+.ticker-sep {
+  color: rgba(255,255,255,0.35);
+  font-size: 18px;
+}
+
+/* ─── SCROLL INDICATOR ─── */
+.scroll-ind {
+  position: absolute;
+  bottom: 70px;
+  left: 56px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 5;
+  opacity: 0;
+  animation: fadeIn 0.6s 1.4s forwards;
+}
+
+.scroll-line {
+  width: 40px;
+  height: 1px;
+  background: linear-gradient(to right, var(--red), transparent);
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-line::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.6), transparent);
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+.scroll-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ─── KEYFRAMES ─── */
+@keyframes up {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes slowFloat {
+  0%, 100% { transform: scale(1.02) translateY(0); }
+  50% { transform: scale(1) translateY(-6px); }
+}
+
+@keyframes floatA {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes floatB {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <span class="logo-bracket">[</span>SAFETY<span class="logo-bracket">NET</span><span class="logo-bracket">]</span>
+  </div>
+  <ul class="nav-menu">
+    <li><a href="#">Ürünler</a></li>
+    <li><a href="#">Teknik Bilgi</a></li>
+    <li><a href="#">Projeler</a></li>
+    <li><a href="#">Hakkımızda</a></li>
+  </ul>
+  <div class="nav-right">
+    <span class="nav-tel">+90 232 000 00 00</span>
+    <button class="btn-nav">Teklif Al</button>
+  </div>
+</nav>
+
+<!-- HERO BACKGROUND CANVAS -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-vignette"></div>
+
+  <div class="hero-content">
+
+    <!-- LEFT -->
+    <div class="hero-left">
+
+      <div class="tag-row">
+        <div class="tag">
+          <div class="tag-dot"></div>
+          <span>Stokta Hazır</span>
+        </div>
+        <span class="tag-cert">EN 1263-1 · CE Sertifikalı</span>
+      </div>
+
+      <h1 class="hero-h1">
+        <span class="h1-l1">Yüksekte</span>
+        <span class="h1-l2">Güvenlik</span>
+        <span class="h1-l3">Çözümleri</span>
+      </h1>
+
+      <p class="hero-p">
+        İnşaat, endüstri ve spor alanları için <strong>yüksek dayanımlı güvenlik filesi</strong> sistemleri. Avrupa standartlarında üretim, hızlı teslimat, profesyonel montaj desteği.
+      </p>
+
+      <div class="actions">
+        <a href="#" class="btn-primary">
+          Ürünleri Gör
+          <svg class="arr" width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2 7H12M12 7L8 3M12 7L8 11" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a href="#" class="btn-link">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M7 1V8M7 8L4.5 5.5M7 8L9.5 5.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 11H12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+          Teknik Katalog İndir
+        </a>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-num">500<sup>+</sup></div>
+          <div class="stat-lbl">Proje Tamamlandı</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">20<sup>yıl</sup></div>
+          <div class="stat-lbl">Sektör Deneyimi</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">48<sup>sa</sup></div>
+          <div class="stat-lbl">Teslimat Süresi</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="hero-right">
+
+      <!-- Main card with net SVG -->
+      <div class="net-card">
+        <svg class="net-card-svg" viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <pattern id="dp" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+              <path d="M15 0 L30 15 L15 30 L0 15 Z" fill="none" stroke="rgba(226,0,13,0.35)" stroke-width="0.7"/>
+              <path d="M15 3 L27 15 L15 27 L3 15 Z" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+              <circle cx="15" cy="0" r="1.2" fill="rgba(255,255,255,0.15)"/>
+              <circle cx="0" cy="15" r="1.2" fill="rgba(255,255,255,0.15)"/>
+              <circle cx="30" cy="15" r="1.2" fill="rgba(255,255,255,0.15)"/>
+              <circle cx="15" cy="30" r="1.2" fill="rgba(255,255,255,0.15)"/>
+              <circle cx="15" cy="15" r="1.8" fill="rgba(226,0,13,0.2)"/>
+            </pattern>
+            <linearGradient id="vg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#161616"/>
+              <stop offset="40%" stop-color="transparent"/>
+              <stop offset="60%" stop-color="transparent"/>
+              <stop offset="100%" stop-color="#161616"/>
+            </linearGradient>
+            <linearGradient id="hg" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#161616"/>
+              <stop offset="20%" stop-color="transparent"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </linearGradient>
+          </defs>
+          <rect width="360" height="360" fill="#111"/>
+          <rect width="360" height="360" fill="url(#dp)"/>
+          <rect width="360" height="360" fill="url(#vg)"/>
+          <rect width="360" height="360" fill="url(#hg)"/>
+        </svg>
+        <div class="bracket-br"></div>
+
+        <!-- Centered text overlay on card -->
+        <div style="position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;">
+          <div style="text-align:center;padding:24px 32px;background:rgba(14,14,14,0.85);border:1px solid rgba(226,0,13,0.2);backdrop-filter:blur(8px);">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:52px;font-weight:900;color:#fff;line-height:1;">150</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:600;color:var(--red);letter-spacing:0.12em;text-transform:uppercase;margin-top:2px;">kN / m²</div>
+            <div style="font-size:10px;font-weight:400;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-top:10px;border-top:1px solid rgba(255,255,255,0.06);padding-top:10px;">Maks. Yük Kapasitesi</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Spec card -->
+      <div class="spec-card">
+        <div class="spec-title">Teknik Özellikler</div>
+        <div class="spec-list">
+          <div class="spec-item">
+            <span class="spec-item-key">Malzeme</span>
+            <span class="spec-item-val">HDPE / Polipropilen</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-item-key">Ağ Göz Boyutu</span>
+            <span class="spec-item-val accent">60 × 60 mm</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-item-key">Çekme Dayanımı</span>
+            <span class="spec-item-val">≥ 7,5 kN</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-item-key">Standart</span>
+            <span class="spec-item-val accent">EN 1263-1</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pills -->
+      <div class="pill pill1">
+        <div class="pill-icon">🛡</div>
+        <span class="pill-text">UV Dayanımlı</span>
+      </div>
+      <div class="pill pill2">
+        <div class="pill-icon">⚡</div>
+        <span class="pill-text">Hızlı Montaj</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="scroll-ind">
+    <div class="scroll-line"></div>
+    <span class="scroll-label">Keşfet</span>
+  </div>
+
+  <!-- Ticker -->
+  <div class="ticker-bar">
+    <div class="ticker-track" id="ticker">
+      <!-- Items duplicated for seamless loop -->
+    </div>
+  </div>
+</section>
+
+<script>
+// ── BACKGROUND CANVAS NET ──
+const canvas = document.getElementById('bg-canvas');
+canvas.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;';
+document.body.prepend(canvas);
+
+const ctx = canvas.getContext('2d');
+
+let W, H, nodes, cols = 24, rows = 15, mouse = { x: -999, y: -999 };
+let t = 0;
+
+function setup() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  nodes = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      nodes.push({
+        ox: (c / (cols - 1)) * W,
+        oy: (r / (rows - 1)) * H,
+        x: 0, y: 0,
+        ph: Math.random() * Math.PI * 2,
+        sp: 0.25 + Math.random() * 0.35
+      });
+    }
+  }
+}
+
+setup();
+window.addEventListener('resize', setup);
+window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+function draw(ts) {
+  t = ts * 0.001;
+  ctx.clearRect(0, 0, W, H);
+
+  for (const n of nodes) {
+    const w = Math.sin(t * n.sp + n.ph) * 7;
+    n.x = n.ox + Math.cos(n.ph * 1.3) * w * 0.5;
+    n.y = n.oy + w;
+
+    const dx = n.x - mouse.x, dy = n.y - mouse.y;
+    const d = Math.sqrt(dx * dx + dy * dy);
+    if (d < 140) {
+      const f = (140 - d) / 140 * 20;
+      n.x += (dx / d) * f;
+      n.y += (dy / d) * f;
+    }
+  }
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const i = r * cols + c;
+      const n = nodes[i];
+
+      if (c < cols - 1) {
+        const nx = nodes[i + 1];
+        const a = 0.07 + Math.sin(t * 0.4 + r * 0.5) * 0.025;
+        ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(nx.x, nx.y);
+        ctx.strokeStyle = `rgba(255,255,255,${a})`; ctx.lineWidth = 0.5; ctx.stroke();
+      }
+      if (r < rows - 1) {
+        const nb = nodes[i + cols];
+        const a = 0.05 + Math.sin(t * 0.35 + c * 0.4) * 0.02;
+        ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(nb.x, nb.y);
+        ctx.strokeStyle = `rgba(226,0,13,${a})`; ctx.lineWidth = 0.5; ctx.stroke();
+      }
+      if (c < cols - 1 && r < rows - 1 && (r + c) % 3 === 0) {
+        const nd = nodes[i + cols + 1];
+        ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(nd.x, nd.y);
+        ctx.strokeStyle = `rgba(255,255,255,0.025)`; ctx.lineWidth = 0.4; ctx.stroke();
+      }
+
+      const near = Math.hypot(n.x - mouse.x, n.y - mouse.y) < 160;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, near ? 2.2 : 0.9, 0, Math.PI * 2);
+      ctx.fillStyle = near ? `rgba(226,0,13,0.55)` : `rgba(255,255,255,0.12)`;
+      ctx.fill();
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+// ── TICKER ──
+const items = [
+  'Güvenlik Filesi', 'İskele Fileği', 'Çatı Koruma', 'Yüksek Yük Kapasitesi',
+  'CE Belgeli', 'Hızlı Teslimat', 'EN 1263-1 Standartı', 'Profesyonel Montaj',
+  'UV Dayanımlı Malzeme', 'Toplu Sipariş İndirimi'
+];
+
+const track = document.getElementById('ticker');
+const html = items.map(t =>
+  `<div class="ticker-item">${t}<span class="ticker-sep">◆</span></div>`
+).join('');
+track.innerHTML = html + html; // duplicate for seamless loop
+</script>
+
+</body>
+</html>

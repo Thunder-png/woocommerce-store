@@ -33,6 +33,48 @@ function wcs_child_enqueue_assets() {
         filemtime( get_stylesheet_directory() . '/assets/css/style.css' )
     );
 
+    if ( function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() ) ) {
+        $branding_base_url  = trailingslashit( home_url() ) . 'branding/';
+        $branding_base_path = trailingslashit( dirname( get_stylesheet_directory() ) ) . 'branding/';
+
+        wp_enqueue_style(
+            'wcs-brand-colors',
+            $branding_base_url . 'colors/brand-colors.css',
+            array( 'wcs-custom-style' ),
+            file_exists( $branding_base_path . 'colors/brand-colors.css' ) ? filemtime( $branding_base_path . 'colors/brand-colors.css' ) : null
+        );
+
+        wp_enqueue_style(
+            'wcs-brand-typography',
+            $branding_base_url . 'typography/typo-kit.css',
+            array( 'wcs-brand-colors' ),
+            file_exists( $branding_base_path . 'typography/typo-kit.css' ) ? filemtime( $branding_base_path . 'typography/typo-kit.css' ) : null
+        );
+
+        wp_enqueue_style(
+            'wcs-hero-style',
+            get_stylesheet_directory_uri() . '/template-parts/components/hero/hero.css',
+            array( 'wcs-brand-typography' ),
+            filemtime( get_stylesheet_directory() . '/template-parts/components/hero/hero.css' )
+        );
+
+        wp_enqueue_script(
+            'lottie-web',
+            'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js',
+            array(),
+            '5.12.2',
+            true
+        );
+
+        wp_enqueue_script(
+            'wcs-hero-script',
+            get_stylesheet_directory_uri() . '/template-parts/components/hero/hero.js',
+            array( 'lottie-web' ),
+            filemtime( get_stylesheet_directory() . '/template-parts/components/hero/hero.js' ),
+            true
+        );
+    }
+
     if ( function_exists( 'is_product' ) && is_product() ) {
         global $product;
 
