@@ -1,0 +1,125 @@
+/* ===========================
+   KRC Brand Kit - Typography System
+   Readability is critical for e-commerce
+   =========================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  /* Font Families */
+  --font-heading: 'Inter', sans-serif;
+  --font-body: 'Inter', 'Roboto', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Heading Scales */
+  --h1-size: 2.5rem;
+  --h1-weight: 700;
+  --h1-line-height: 1.2;
+
+  --h2-size: 2rem;
+  --h2-weight: 600;
+  --h2-line-height: 1.3;
+
+  --h3-size: 1.5rem;
+  --h3-weight: 600;
+  --h3-line-height: 1.4;
+
+  /* Body Text */
+  --body-size: 1rem;
+  --body-weight: 400;
+  --body-line-height: 1.6;
+
+  --body-medium-size: 0.95rem;
+  --body-medium-weight: 500;
+
+  /* Technical/Mono */
+  --mono-size: 0.875rem;
+  --mono-weight: 400;
+  --mono-line-height: 1.5;
+}
+
+/* Heading Styles */
+h1,
+.h1 {
+  font-family: var(--font-heading);
+  font-size: var(--h1-size);
+  font-weight: var(--h1-weight);
+  line-height: var(--h1-line-height);
+}
+
+h2,
+.h2 {
+  font-family: var(--font-heading);
+  font-size: var(--h2-size);
+  font-weight: var(--h2-weight);
+  line-height: var(--h2-line-height);
+}
+
+h3,
+.h3 {
+  font-family: var(--font-heading);
+  font-size: var(--h3-size);
+  font-weight: var(--h3-weight);
+  line-height: var(--h3-line-height);
+}
+
+/* Body Text Styles */
+body,
+p {
+  font-family: var(--font-body);
+  font-size: var(--body-size);
+  font-weight: var(--body-weight);
+  line-height: var(--body-line-height);
+}
+
+.body-medium {
+  font-family: var(--font-body);
+  font-size: var(--body-medium-size);
+  font-weight: var(--body-medium-weight);
+  line-height: var(--body-line-height);
+}
+
+/* Technical Data / Monospace */
+code,
+.mono,
+.technical-value {
+  font-family: var(--font-mono);
+  font-size: var(--mono-size);
+  font-weight: var(--mono-weight);
+  line-height: var(--mono-line-height);
+}
+
+/* Usage Examples */
+/* H1: Product Title */
+.product-title {
+  font-family: var(--font-heading);
+  font-size: var(--h1-size);
+  font-weight: var(--h1-weight);
+  line-height: var(--h1-line-height);
+}
+
+/* H2: Technical Specification */
+.spec-heading {
+  font-family: var(--font-heading);
+  font-size: var(--h2-size);
+  font-weight: var(--h2-weight);
+  line-height: var(--h2-line-height);
+}
+
+/* Body: Description */
+.description {
+  font-family: var(--font-body);
+  font-size: var(--body-size);
+  font-weight: var(--body-weight);
+  line-height: var(--body-line-height);
+}
+
+/* Mono: Technical Value */
+.spec-value {
+  font-family: var(--font-mono);
+  font-size: var(--mono-size);
+  font-weight: var(--mono-weight);
+  line-height: var(--mono-line-height);
+}

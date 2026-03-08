@@ -1,0 +1,58 @@
+/* ===========================
+   KRC Brand Kit - Color System
+   =========================== */
+
+:root {
+  /* Safety Red
+     Primary accent, CTA buttons, key highlights, logo 'K' element, '25 Years' badge background.
+     Used to command attention and signal importance/safety warning context. */
+  --color-safety-red: #C12E37;
+
+  /* Industrial Navy
+     Primary background for footer, header strips, and stats section.
+     Represents stability, authority, and corporate strength. */
+  --color-industrial-navy: #0F131E;
+
+  /* Structure White
+     Main page background, content areas.
+     Provides clean contrast for readability. */
+  --color-structure-white: #F8F8F8;
+
+  /* Steel Grey
+     Secondary text, dark overlays on service cards. */
+  --color-steel-grey: #2B2E37;
+}
+
+/* Color Utility Classes */
+.text-safety-red {
+  color: var(--color-safety-red);
+}
+
+.text-industrial-navy {
+  color: var(--color-industrial-navy);
+}
+
+.text-structure-white {
+  color: var(--color-structure-white);
+}
+
+.text-steel-grey {
+  color: var(--color-steel-grey);
+}
+
+.bg-safety-red {
+  background-color: var(--color-safety-red);
+}
+
+.bg-industrial-navy {
+  background-color: var(--color-industrial-navy);
+}
+
+.bg-structure-white {
+  background-color: var(--color-structure-white);
+}
+
+.bg-steel-grey {
+  background-color: var(--color-steel-grey);
+}
+

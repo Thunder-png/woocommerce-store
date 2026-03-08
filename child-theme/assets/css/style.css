@@ -1,0 +1,22 @@
+﻿.wcs-calculator {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid #d0d7de;
+  background: #f8fafc;
+}
+
+.wcs-calculator__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.wcs-calculator__grid input {
+  max-width: 220px;
+  padding: 0.45rem;
+}
+
+.wcs-calculator__results p {
+  margin: 0.35rem 0;
+}
