@@ -34,8 +34,8 @@ function wcs_child_enqueue_assets() {
     );
 
     if ( function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() ) ) {
-        $branding_base_url  = trailingslashit( home_url() ) . 'branding/';
-        $branding_base_path = trailingslashit( dirname( get_stylesheet_directory() ) ) . 'branding/';
+        $branding_base_url  = trailingslashit( get_stylesheet_directory_uri() ) . 'assets/branding/';
+        $branding_base_path = trailingslashit( get_stylesheet_directory() ) . 'assets/branding/';
 
         wp_enqueue_style(
             'wcs-brand-colors',
@@ -100,6 +100,19 @@ function wcs_child_enqueue_assets() {
     }
 }
 add_action( 'wp_enqueue_scripts', 'wcs_child_enqueue_assets' );
+
+/**
+ * Render hero before WooCommerce archive loop.
+ */
+function wcs_render_archive_hero() {
+    if ( ! function_exists( 'is_shop' ) || ( ! is_shop() && ! is_product_taxonomy() ) ) {
+        return;
+    }
+
+    get_template_part( 'template-parts/components/hero/hero' );
+    echo '<div id="products-grid"></div>';
+}
+add_action( 'woocommerce_before_main_content', 'wcs_render_archive_hero', 8 );
 
 /**
  * Render calculator fields for single product pages.
