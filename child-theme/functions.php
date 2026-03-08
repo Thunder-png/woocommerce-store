@@ -6,11 +6,29 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Return cache-busting version safely for child-theme assets.
+ *
+ * @param string $relative_path Relative path from child theme root.
+ * @param string $fallback      Fallback version if file does not exist.
+ * @return string
+ */
+function wcs_asset_version( $relative_path, $fallback = '1.0.0' ) {
+    $full_path = trailingslashit( get_stylesheet_directory() ) . ltrim( $relative_path, '/' );
+
+    if ( file_exists( $full_path ) ) {
+        return (string) filemtime( $full_path );
+    }
+
+    return $fallback;
+}
+
+/**
  * Enqueue child theme assets.
  */
 function wcs_child_enqueue_assets() {
     $parent_theme = wp_get_theme( get_template() );
     $child_theme  = wp_get_theme();
+    $is_shop_front = function_exists( 'wc_get_page_id' ) && is_front_page() && (int) get_queried_object_id() === (int) wc_get_page_id( 'shop' );
 
     wp_enqueue_style(
         'wcs-parent-style',
@@ -30,32 +48,38 @@ function wcs_child_enqueue_assets() {
         'wcs-custom-style',
         get_stylesheet_directory_uri() . '/assets/css/style.css',
         array( 'wcs-child-style' ),
-        filemtime( get_stylesheet_directory() . '/assets/css/style.css' )
+        wcs_asset_version( 'assets/css/style.css', $child_theme->get( 'Version' ) )
     );
 
-    if ( function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() ) ) {
-        $branding_base_url  = trailingslashit( get_stylesheet_directory_uri() ) . 'assets/branding/';
-        $branding_base_path = trailingslashit( get_stylesheet_directory() ) . 'assets/branding/';
+    if ( function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() || $is_shop_front ) ) {
+        $branding_base_url = trailingslashit( get_stylesheet_directory_uri() ) . 'assets/branding/';
 
         wp_enqueue_style(
             'wcs-brand-colors',
             $branding_base_url . 'colors/brand-colors.css',
             array( 'wcs-custom-style' ),
-            file_exists( $branding_base_path . 'colors/brand-colors.css' ) ? filemtime( $branding_base_path . 'colors/brand-colors.css' ) : null
+            wcs_asset_version( 'assets/branding/colors/brand-colors.css', $child_theme->get( 'Version' ) )
         );
 
         wp_enqueue_style(
             'wcs-brand-typography',
             $branding_base_url . 'typography/typo-kit.css',
             array( 'wcs-brand-colors' ),
-            file_exists( $branding_base_path . 'typography/typo-kit.css' ) ? filemtime( $branding_base_path . 'typography/typo-kit.css' ) : null
+            wcs_asset_version( 'assets/branding/typography/typo-kit.css', $child_theme->get( 'Version' ) )
         );
 
         wp_enqueue_style(
             'wcs-hero-style',
             get_stylesheet_directory_uri() . '/template-parts/components/hero/hero.css',
             array( 'wcs-brand-typography' ),
-            filemtime( get_stylesheet_directory() . '/template-parts/components/hero/hero.css' )
+            wcs_asset_version( 'template-parts/components/hero/hero.css', $child_theme->get( 'Version' ) )
+        );
+
+        wp_enqueue_style(
+            'wcs-shop-header-style',
+            get_stylesheet_directory_uri() . '/template-parts/header/shop-header.css',
+            array( 'wcs-brand-typography' ),
+            wcs_asset_version( 'template-parts/header/shop-header.css', $child_theme->get( 'Version' ) )
         );
 
         wp_enqueue_script(
@@ -70,7 +94,7 @@ function wcs_child_enqueue_assets() {
             'wcs-hero-script',
             get_stylesheet_directory_uri() . '/template-parts/components/hero/hero.js',
             array( 'lottie-web' ),
-            filemtime( get_stylesheet_directory() . '/template-parts/components/hero/hero.js' ),
+            wcs_asset_version( 'template-parts/components/hero/hero.js', $child_theme->get( 'Version' ) ),
             true
         );
     }
@@ -84,7 +108,7 @@ function wcs_child_enqueue_assets() {
             'wcs-m2-calculator',
             get_stylesheet_directory_uri() . '/assets/js/m2-calculator.js',
             array(),
-            filemtime( get_stylesheet_directory() . '/assets/js/m2-calculator.js' ),
+            wcs_asset_version( 'assets/js/m2-calculator.js', $child_theme->get( 'Version' ) ),
             true
         );
 
@@ -102,17 +126,85 @@ function wcs_child_enqueue_assets() {
 add_action( 'wp_enqueue_scripts', 'wcs_child_enqueue_assets' );
 
 /**
- * Render hero before WooCommerce archive loop.
+ * Hide Astra native header on WooCommerce archive pages
+ * when custom shop header component is used.
  */
-function wcs_render_archive_hero() {
-    if ( ! function_exists( 'is_shop' ) || ( ! is_shop() && ! is_product_taxonomy() ) ) {
+function wcs_hide_astra_header_on_shop() {
+    $is_shop_front = function_exists( 'wc_get_page_id' ) && is_front_page() && (int) get_queried_object_id() === (int) wc_get_page_id( 'shop' );
+
+    if ( ! function_exists( 'is_shop' ) || ( ! is_shop() && ! is_product_taxonomy() && ! $is_shop_front ) ) {
         return;
     }
-
-    get_template_part( 'template-parts/components/hero/hero' );
-    echo '<div id="products-grid"></div>';
+    ?>
+    <style id="wcs-hide-astra-header">
+        #masthead,
+        .site-header,
+        .main-header-bar-wrap,
+        .ast-mobile-header-wrap {
+            display: none !important;
+        }
+    </style>
+    <?php
 }
-add_action( 'woocommerce_before_main_content', 'wcs_render_archive_hero', 8 );
+add_action( 'wp_head', 'wcs_hide_astra_header_on_shop', 99 );
+
+/**
+ * Force full-width CSS layout on WooCommerce archives.
+ */
+function wcs_force_shop_fullwidth_css() {
+    $is_shop_front = function_exists( 'wc_get_page_id' ) && is_front_page() && (int) get_queried_object_id() === (int) wc_get_page_id( 'shop' );
+
+    if ( ! function_exists( 'is_shop' ) || ( ! is_shop() && ! is_product_taxonomy() && ! $is_shop_front ) ) {
+        return;
+    }
+    ?>
+    <style id="wcs-shop-fullwidth-layout">
+        .woocommerce-page .site-content .ast-container,
+        .woocommerce .site-content .ast-container {
+            max-width: 100% !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            display: block !important;
+        }
+
+        .woocommerce-page #primary,
+        .woocommerce #primary,
+        .woocommerce-page .content-area,
+        .woocommerce .content-area {
+            width: 100% !important;
+            float: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .woocommerce-page #secondary,
+        .woocommerce #secondary,
+        .woocommerce-page .widget-area,
+        .woocommerce .widget-area {
+            display: none !important;
+        }
+    </style>
+    <?php
+}
+add_action( 'wp_head', 'wcs_force_shop_fullwidth_css', 100 );
+
+/**
+ * Force full-width no-sidebar layout on WooCommerce archives.
+ *
+ * @param string $layout Astra layout slug.
+ * @return string
+ */
+function wcs_shop_no_sidebar_layout( $layout ) {
+    $is_shop_front = function_exists( 'wc_get_page_id' ) && is_front_page() && (int) get_queried_object_id() === (int) wc_get_page_id( 'shop' );
+
+    if ( function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() || $is_shop_front ) ) {
+        return 'no-sidebar';
+    }
+
+    return $layout;
+}
+add_filter( 'astra_page_layout', 'wcs_shop_no_sidebar_layout', 99 );
+add_filter( 'astra_woo_shop_sidebar_init', '__return_false' );
 
 /**
  * Render calculator fields for single product pages.

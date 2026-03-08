@@ -71,10 +71,9 @@
 .wcs-hero__spec-card p + p { margin-top: 0.42rem; }
 .wcs-hero__spec-card strong { color: var(--wcs-white); font-weight: 600; }
 
-.wcs-hero__logo { position: absolute; right: -56px; top: 16px; width: 130px; height: 130px; border: 1px solid rgba(248, 248, 248, 0.16); background: rgba(13, 18, 28, 0.8); }
 .wcs-hero__pill { position: absolute; padding: 0.5rem 0.75rem; border: 1px solid rgba(248, 248, 248, 0.14); background: rgba(13, 18, 28, 0.94); font-family: var(--wcs-font-body); font-size: 0.7rem; color: rgba(248, 248, 248, 0.86); }
-.wcs-hero__pill--1 { top: 120px; right: -118px; }
-.wcs-hero__pill--2 { top: 170px; right: -128px; }
+.wcs-hero__pill--1 { top: 40px; right: -118px; }
+.wcs-hero__pill--2 { top: 92px; right: -128px; }
 
 .wcs-hero__ticker { position: absolute; left: 0; right: 0; bottom: 0; height: 46px; overflow: hidden; background: var(--wcs-red); border-top: 1px solid rgba(248, 248, 248, 0.16); }
 .wcs-hero__ticker-track { display: flex; align-items: center; width: max-content; animation: wcsHeroTicker 24s linear infinite; }
@@ -85,7 +84,7 @@
 @media (max-width: 1180px) {
   .wcs-hero__inner { grid-template-columns: 1fr; gap: 2.2rem; padding-bottom: 6rem; }
   .wcs-hero__right { height: auto; justify-content: flex-start; padding-left: 0.2rem; }
-  .wcs-hero__logo, .wcs-hero__pill { display: none; }
+  .wcs-hero__pill { display: none; }
   .wcs-hero__spec-card { left: 12px; bottom: 12px; }
 }
 

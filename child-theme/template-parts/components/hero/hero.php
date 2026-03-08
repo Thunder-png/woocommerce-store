@@ -5,6 +5,12 @@
 
 defined( 'ABSPATH' ) || exit;
 
+if ( defined( 'WCS_HERO_ALREADY_RENDERED' ) ) {
+    return;
+}
+
+define( 'WCS_HERO_ALREADY_RENDERED', true );
+
 $hero_stats  = array(
     array(
         'value' => '500+',
@@ -31,7 +37,6 @@ $ticker_list = array(
     __( 'Profesyonel Montaj', 'woocommerce-store-child' ),
     __( 'Toplu Siparis Destegi', 'woocommerce-store-child' ),
 );
-$lottie_url  = get_stylesheet_directory_uri() . '/assets/branding/logo/logo-lottie-version.json';
 ?>
 
 <section class="wcs-hero" aria-labelledby="wcs-hero-title">
@@ -94,8 +99,6 @@ $lottie_url  = get_stylesheet_directory_uri() . '/assets/branding/logo/logo-lott
                 <p><?php esc_html_e( 'Ag Goz Boyutu', 'woocommerce-store-child' ); ?> <strong>60 x 60 mm</strong></p>
                 <p><?php esc_html_e( 'Standart', 'woocommerce-store-child' ); ?> <strong>EN 1263-1</strong></p>
             </div>
-
-            <div class="wcs-hero__logo" data-wcs-lottie data-lottie-src="<?php echo esc_url( $lottie_url ); ?>" aria-hidden="true"></div>
 
             <?php foreach ( $hero_pills as $index => $pill ) : ?>
                 <span class="wcs-hero__pill wcs-hero__pill--<?php echo esc_attr( $index + 1 ); ?>"><?php echo esc_html( $pill ); ?></span>
