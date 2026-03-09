@@ -234,3 +234,34 @@ function wcs_render_price_calculator() {
     <?php
 }
 add_action( 'woocommerce_before_add_to_cart_form', 'wcs_render_price_calculator', 15 );
+
+/**
+ * Auto-assign dedicated templates for policy pages based on common slugs.
+ *
+ * @param string $template Current resolved template path.
+ * @return string
+ */
+function wcs_policy_page_templates( $template ) {
+    if ( ! is_page() ) {
+        return $template;
+    }
+
+    $slug = get_post_field( 'post_name', get_queried_object_id() );
+
+    if ( in_array( $slug, array( 'privacy-policy', 'gizlilik-politikasi' ), true ) ) {
+        $privacy_template = get_stylesheet_directory() . '/page-templates/privacy-policy.php';
+        if ( file_exists( $privacy_template ) ) {
+            return $privacy_template;
+        }
+    }
+
+    if ( in_array( $slug, array( 'refund-policy', 'iade-ve-iptal-politikasi' ), true ) ) {
+        $refund_template = get_stylesheet_directory() . '/page-templates/refund-policy.php';
+        if ( file_exists( $refund_template ) ) {
+            return $refund_template;
+        }
+    }
+
+    return $template;
+}
+add_filter( 'template_include', 'wcs_policy_page_templates' );
