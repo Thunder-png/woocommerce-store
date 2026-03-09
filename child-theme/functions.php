@@ -236,40 +236,6 @@ function wcs_render_price_calculator() {
 add_action( 'woocommerce_before_add_to_cart_form', 'wcs_render_price_calculator', 15 );
 
 /**
- * Return policy page slug mappings.
- *
- * @return array<string, array<string, mixed>>
- */
-function wcs_policy_page_mappings() {
-    return array(
-        'gizlilik-politikasi' => array(
-            'template'    => 'privacy-policy.php',
-            'legacy_slug' => 'privacy-policy',
-        ),
-        'iade-ve-iptal-politikasi' => array(
-            'template'    => 'refund-policy.php',
-            'legacy_slug' => 'refund-policy',
-        ),
-        'kvkk-aydinlatma-metni' => array(
-            'template'    => 'kvkk-privacy-notice.php',
-            'legacy_slug' => 'kvkk',
-        ),
-        'odeme-ve-teslimat' => array(
-            'template'    => 'payment-delivery-policy.php',
-            'legacy_slug' => 'payment-delivery-policy',
-        ),
-        'cerez-politikasi' => array(
-            'template'    => 'cookie-policy.php',
-            'legacy_slug' => 'cookie-policy',
-        ),
-        'mesafeli-satis-sozlesmesi' => array(
-            'template'    => 'distance-sales-contract.php',
-            'legacy_slug' => 'distance-sales-contract',
-        ),
-    );
-}
-
-/**
  * Redirect legacy English policy slugs to Turkish slugs.
  */
 function wcs_redirect_legacy_policy_slugs() {
@@ -279,44 +245,21 @@ function wcs_redirect_legacy_policy_slugs() {
 
     $slug = get_post_field( 'post_name', get_queried_object_id() );
 
-    foreach ( wcs_policy_page_mappings() as $turkish_slug => $config ) {
-        if ( $slug === $config['legacy_slug'] ) {
-            wp_safe_redirect( home_url( '/' . $turkish_slug . '/' ), 301 );
-            exit;
-        }
+    $legacy_to_turkish = array(
+        'privacy-policy'          => 'gizlilik-politikasi',
+        'refund-policy'           => 'iade-ve-iptal-politikasi',
+        'kvkk'                    => 'kvkk-aydinlatma-metni',
+        'payment-delivery-policy' => 'odeme-ve-teslimat',
+        'cookie-policy'           => 'cerez-politikasi',
+        'distance-sales-contract' => 'mesafeli-satis-sozlesmesi',
+    );
+
+    if ( isset( $legacy_to_turkish[ $slug ] ) ) {
+        wp_safe_redirect( home_url( '/' . $legacy_to_turkish[ $slug ] . '/' ), 301 );
+        exit;
     }
 }
 add_action( 'template_redirect', 'wcs_redirect_legacy_policy_slugs' );
-
-/**
- * Auto-assign dedicated templates for policy pages based on policy slugs.
- *
- * @param string $template Current resolved template path.
- * @return string
- */
-function wcs_policy_page_templates( $template ) {
-    if ( ! is_page() ) {
-        return $template;
-    }
-
-    $slug      = get_post_field( 'post_name', get_queried_object_id() );
-    $mappings  = wcs_policy_page_mappings();
-
-    foreach ( $mappings as $turkish_slug => $config ) {
-        if ( $slug !== $turkish_slug && $slug !== $config['legacy_slug'] ) {
-            continue;
-        }
-
-        $policy_template = get_stylesheet_directory() . '/page-templates/' . $config['template'];
-
-        if ( file_exists( $policy_template ) ) {
-            return $policy_template;
-        }
-    }
-
-    return $template;
-}
-add_filter( 'template_include', 'wcs_policy_page_templates' );
 
 /**
  * Render brand footer with policy links.
