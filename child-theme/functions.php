@@ -262,6 +262,34 @@ function wcs_policy_page_templates( $template ) {
         }
     }
 
+    if ( in_array( $slug, array( 'kvkk', 'kvkk-aydinlatma-metni' ), true ) ) {
+        $kvkk_template = get_stylesheet_directory() . '/page-templates/kvkk-privacy-notice.php';
+        if ( file_exists( $kvkk_template ) ) {
+            return $kvkk_template;
+        }
+    }
+
+    if ( in_array( $slug, array( 'odeme-ve-teslimat', 'payment-delivery-policy' ), true ) ) {
+        $payment_template = get_stylesheet_directory() . '/page-templates/payment-delivery-policy.php';
+        if ( file_exists( $payment_template ) ) {
+            return $payment_template;
+        }
+    }
+
+    if ( in_array( $slug, array( 'cerez-politikasi', 'cookie-policy' ), true ) ) {
+        $cookie_template = get_stylesheet_directory() . '/page-templates/cookie-policy.php';
+        if ( file_exists( $cookie_template ) ) {
+            return $cookie_template;
+        }
+    }
+
+    if ( in_array( $slug, array( 'mesafeli-satis-sozlesmesi', 'distance-sales-contract' ), true ) ) {
+        $contract_template = get_stylesheet_directory() . '/page-templates/distance-sales-contract.php';
+        if ( file_exists( $contract_template ) ) {
+            return $contract_template;
+        }
+    }
+
     return $template;
 }
 add_filter( 'template_include', 'wcs_policy_page_templates' );
