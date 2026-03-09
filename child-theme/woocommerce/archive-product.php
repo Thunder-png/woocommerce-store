@@ -9,7 +9,6 @@ defined( 'ABSPATH' ) || exit;
 
 get_header( 'shop' );
 
-get_template_part( 'template-parts/header/shop-header' );
 get_template_part( 'template-parts/components/hero/hero' );
 echo '<div id="products-grid"></div>';
 
