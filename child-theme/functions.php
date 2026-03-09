@@ -42,6 +42,14 @@ function wcs_child_enqueue_assets() {
         $child_theme->get( 'Version' )
     );
 
+
+    wp_enqueue_style(
+        'wcs-bootstrap-icons',
+        'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css',
+        array(),
+        '1.11.3'
+    );
+
     $branding_base_url = trailingslashit( get_stylesheet_directory_uri() ) . 'assets/branding/';
 
     wp_enqueue_style(

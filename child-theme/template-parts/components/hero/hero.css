@@ -56,6 +56,9 @@
   grid-template-columns: 560px 1fr;
   gap: 5rem;
   align-items: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
 }
 
 .wcs-hero__tag-row {
@@ -144,9 +147,14 @@
 .wcs-hero__btn {
   display: inline-flex;
   align-items: center;
+  gap: 0.45rem;
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.09em;
+}
+
+.wcs-hero__btn i {
+  font-size: 0.82em;
 }
 
 .wcs-hero__btn--primary {
