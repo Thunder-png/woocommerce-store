@@ -1,0 +1,197 @@
+Gizlilik Politikası
+1. Genel Bilgilendirme
+
+Bu gizlilik politikası, BY KARACA İŞ GÜVENLİĞİ İNŞAAT MOBİLYA GAYRİMENKUL GIDA OTOMOTİV SANAYİ VE TİCARET LİMİTED ŞİRKETİ tarafından işletilen bykaracafile.com.tr web sitesini ziyaret eden ve alışveriş yapan kullanıcıların kişisel bilgilerinin nasıl toplandığını, kullanıldığını ve korunduğunu açıklamak amacıyla hazırlanmıştır.
+
+Web sitemizi kullanarak bu gizlilik politikasında belirtilen uygulamaları kabul etmiş sayılırsınız.
+
+2. Toplanan Bilgiler
+
+Web sitemiz üzerinden aşağıdaki bilgiler toplanabilir:
+
+Ad ve soyad
+
+Telefon numarası
+
+E-posta adresi
+
+Teslimat adresi
+
+Fatura bilgileri
+
+IP adresi ve cihaz bilgileri
+
+Sipariş geçmişi ve alışveriş bilgileri
+
+Bu bilgiler yalnızca hizmet sunmak ve sipariş süreçlerini yönetmek amacıyla kullanılmaktadır.
+
+3. Kişisel Verilerin Kullanım Amaçları
+
+Toplanan bilgiler aşağıdaki amaçlarla kullanılabilir:
+
+Siparişlerin alınması ve teslim edilmesi
+
+Müşteri destek hizmetlerinin sağlanması
+
+Ödeme işlemlerinin gerçekleştirilmesi
+
+Yasal yükümlülüklerin yerine getirilmesi
+
+Web sitesi deneyiminin geliştirilmesi
+
+4. Bilgi Güvenliği
+
+BY KARACA İŞ GÜVENLİĞİ İNŞAAT MOBİLYA GAYRİMENKUL GIDA OTOMOTİV SANAYİ VE TİCARET LİMİTED ŞİRKETİ, kullanıcı bilgilerinin güvenliğini sağlamak amacıyla gerekli teknik ve idari önlemleri almaktadır.
+
+Web sitemizde:
+
+SSL güvenlik sertifikası kullanılmaktadır
+
+Yetkisiz erişimlere karşı güvenlik önlemleri uygulanmaktadır
+
+Kişisel veriler yalnızca gerekli süre boyunca saklanmaktadır
+
+5. Üçüncü Taraf Hizmetler
+
+Sipariş ve ödeme süreçlerinde aşağıdaki hizmet sağlayıcılar kullanılabilir:
+
+Ödeme altyapısı sağlayıcıları
+
+Kargo firmaları
+
+Web hosting hizmetleri
+
+Bu hizmet sağlayıcılar yalnızca hizmetin sağlanması amacıyla gerekli bilgilere erişebilirler.
+
+6. Çerezler (Cookies)
+
+Web sitemiz kullanıcı deneyimini geliştirmek amacıyla çerezler kullanabilir.
+
+Çerezler aşağıdaki amaçlarla kullanılabilir:
+
+Site performansını ölçmek
+
+Kullanıcı tercihlerini hatırlamak
+
+Güvenli oturum yönetimi sağlamak
+
+Tarayıcı ayarları üzerinden çerezleri devre dışı bırakabilirsiniz.
+
+7. Kullanıcı Hakları
+
+6698 Sayılı Kişisel Verilerin Korunması Kanunu kapsamında kullanıcılar aşağıdaki haklara sahiptir:
+
+Kişisel verilerinin işlenip işlenmediğini öğrenme
+
+İşlenen veriler hakkında bilgi talep etme
+
+Yanlış verilerin düzeltilmesini isteme
+
+Verilerin silinmesini veya anonim hale getirilmesini talep etme
+
+Bu talepler için aşağıdaki iletişim adresi kullanılabilir:
+
+E-posta: info@bykaracafile.com.tr
+
+8. İletişim
+
+Gizlilik politikası ile ilgili sorularınız için bizimle iletişime geçebilirsiniz.
+
+Firma: BY KARACA İŞ GÜVENLİĞİ İNŞAAT MOBİLYA GAYRİMENKUL GIDA OTOMOTİV SANAYİ VE TİCARET LİMİTED ŞİRKETİ
+Adres: Aşağı Eğlence Mah, Etlik, Gen. Dr. Tevfik Sağlam Cd. No:59/93, 06110 Keçiören/Ankara
+E-posta: info@bykaracafile.com.tr
+Telefon: 0850 380 20 06
+
+
+
+Ödeme Güvenliği ve Gizliliği Politikası
+1. Ödeme Güvenliği
+
+BY KARACA İŞ GÜVENLİĞİ İNŞAAT MOBİLYA GAYRİMENKUL GIDA OTOMOTİV SANAYİ VE TİCARET LİMİTED ŞİRKETİ, müşterilerinin ödeme işlemlerinin güvenliğini en üst seviyede sağlamak amacıyla gerekli teknolojik altyapıyı kullanmaktadır.
+
+Web sitemizde gerçekleştirilen tüm ödeme işlemleri SSL (Secure Socket Layer) güvenlik sertifikası ile korunmaktadır.
+
+2. Kart Bilgilerinin Güvenliği
+
+Müşterilerin kredi kartı veya banka kartı bilgileri hiçbir şekilde BY KARACA İŞ GÜVENLİĞİ İNŞAAT MOBİLYA GAYRİMENKUL GIDA OTOMOTİV SANAYİ VE TİCARET LİMİTED ŞİRKETİ tarafından saklanmaz, kaydedilmez veya erişilmez.
+
+Ödeme işlemleri doğrudan yetkili ödeme kuruluşlarının güvenli altyapısı üzerinden gerçekleştirilmektedir.
+
+3. Güvenli Ödeme Altyapısı
+
+Sitemizde kullanılan ödeme altyapıları:
+
+Sanal POS hizmeti sağlayıcıları
+
+Bankalar
+
+Lisanslı ödeme kuruluşları
+
+Bu kurumlar ödeme işlemlerini uluslararası güvenlik standartlarına uygun şekilde gerçekleştirmektedir.
+
+4. Havale / EFT Ödemeleri
+
+Havale veya EFT ile yapılan ödemelerde müşteriler yalnızca BY KARACA İŞ GÜVENLİĞİ İNŞAAT MOBİLYA GAYRİMENKUL GIDA OTOMOTİV SANAYİ VE TİCARET LİMİTED ŞİRKETİ'na ait resmi banka hesaplarına ödeme yapmalıdır.
+
+Yanlış hesaplara yapılan ödemelerden kullanıcı sorumludur.
+
+5. Dolandırıcılık Önleme
+
+Şüpheli ödeme işlemleri güvenlik amacıyla incelenebilir ve gerekli durumlarda sipariş iptal edilebilir.
+
+BY KARACA İŞ GÜVENLİĞİ İNŞAAT MOBİLYA GAYRİMENKUL GIDA OTOMOTİV SANAYİ VE TİCARET LİMİTED ŞİRKETİ, müşterilerinin güvenliği için ek doğrulama talep etme hakkını saklı tutar.
+
+6. Veri Koruma
+
+Ödeme işlemleri sırasında paylaşılan bilgiler yalnızca işlem gerçekleştirmek amacıyla kullanılır ve üçüncü kişilerle paylaşılmaz.
+
+
+
+Web Sitesi Gizlilik Uygulamaları
+9. Biz Kimiz
+
+Sitemizin adresi: https://bykaracafile.com.tr
+
+10. Yorumlar
+
+Ziyaretçiler sitede yorum yaptığında, yorum formunda görüntülenen verilerin yanında istenmeyen yorumların algılanmasına yardımcı olacak ziyaretçi IP adresi ve tarayıcı bilgilerini de toplarız.
+
+Gravatar hizmetine, kullanıp kullanmadığınızı görmek için e-posta adresinizden oluşturulmuş anonimleştirilmiş bir metin (karma olarak da adlandırılır) gönderilebilir. Gravatar hizmetinin gizlilik ilkesi şu adreste bulunabilir: https://automattic.com/privacy/. Yorumunuzun onaylanmasından sonra profil görseliniz yorumunuzla birlikte herkese görüntülenir.
+
+11. Ortamlar
+
+Sitenize görselleri yüklüyorsanız, gömülmüş konum verileri (EXIF GPS) bulunan görseller yüklemekten kaçınmalısınız. Site ziyaretçileri, sitedeki görselleri indirip içindeki konum bilgilerini öğrenebilir.
+
+12. Çerezler (Detaylı)
+
+Sitemizde bir yorum yaparsanız, adınızın, e-posta adresinizin ve site adresinizin çerezlere kaydedilmesini seçebilirsiniz. Bunlar size kolaylık sağlamak içindir. Böylece başka bir yorum yaptığınızda bilgilerinizi yeniden yazmanız gerekmez. Bu çerezler bir yıl saklanır.
+
+Oturum açma sayfamızı ziyaret ederseniz, tarayıcınızın çerezleri kabul edip etmediğini belirlemek için geçici bir çerez ayarlayacağız. Bu çerezde herhangi bir kişisel veri bulunmaz ve tarayıcınızı kapattığınızda yok edilir.
+
+Oturum açtığınızda, oturum açma bilgilerinizi ve ekran görüntüleme seçiminizi kaydetmek için birkaç çerez kaydedeceğiz. Oturum açma çerezleri iki gün ve ekran seçenekleri çerezleri bir yıl boyunca tutulur. "Beni hatırla" seçeneğini seçerseniz, oturumunuz iki hafta boyunca etkin kalır. Hesabınızın oturumunu kapatırsanız, oturum açma çerezleri kaldırılır.
+
+Bir yazıyı düzenler ya da yayınlarsanız tarayıcınıza ek bir çerez kaydedilir. Bu çerezde herhangi bir kişisel veri bulunmaz ve yalnızca düzenlediğiniz yazının kimliği bulunur. 1 gün sonra zaman aşımına uğrar.
+
+13. Diğer Sitelerden Gömülen İçerik
+
+Bu sitedeki yazılarda gömülü içerik (videolar, görseller, yazılar gibi) bulunabilir. Diğer sitelerden gömülen içerikler, ziyaretçi diğer siteyi ziyaret ettiğindeki ile aynı şekilde davranır.
+
+Bu siteler sizin hakkınızda veriler toplayabilir, çerezler kullanabilir, üçüncü taraflarca gömülmüş izlemeler yapabilir ve gömülü içeriklerle etkileşiminizi izleyebilir. Bir hesabınız varsa ve bu sitede oturum açtıysanız, gömülen içerikle etkileşiminiz izlenebilir.
+
+14. Verinizi Kimlerle Paylaşıyoruz
+
+Parola sıfırlama isteğinde bulunduğunuzda, IP adresiniz sıfırlama e-postasına eklenir.
+
+15. Verilerinizi Ne Süreyle Tutuyoruz
+
+Bir yorum yaparsanız, yorum ve üst verileri süresiz olarak saklanır. Böylece, sonraki yorumlarınızı onay sırasına almak yerine otomatik olarak tanıyabilir ve onaylayabiliriz.
+
+Sitemizde hesap açan kullanıcılar için (varsa) kullanıcı profilinde verdikleri kişisel bilgileri de saklarız. Tüm kullanıcılar kişisel bilgilerini istedikleri zaman görebilir, düzenleyebilir ya da silebilir (kullanıcı adını değiştirmek dışında). Site yöneticileri de bu bilgileri görebilir ve düzenleyebilir.
+
+16. Verileriniz Üzerindeki Haklarınız Neler
+
+Bu sitede bir hesabınız veya yorumlarınız varsa, bize verdiğiniz veriler ile birlikte, hakkınızda tuttuğumuz kişisel verileri dosya olarak dışa aktarmak isteyebilirsiniz. Ayrıca, sizinle ilgili tuttuğumuz tüm kişisel verilerin silinmesini de isteyebilirsiniz. Silinecek veriler, idari, yasal veya güvenlik amaçlarıyla tutmak zorunda olduğumuz verileri kapsamaz.
+
+17. Verilerinizin Gönderildiği Yer
+
+Ziyaretçi yorumları otomatik istenmeyen yorum algılama hizmeti ile kontrol edilebilir.
