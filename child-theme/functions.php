@@ -234,3 +234,93 @@ function wcs_render_price_calculator() {
     <?php
 }
 add_action( 'woocommerce_before_add_to_cart_form', 'wcs_render_price_calculator', 15 );
+
+/**
+ * Redirect legacy English policy slugs to Turkish slugs.
+ */
+function wcs_redirect_legacy_policy_slugs() {
+    if ( ! is_page() ) {
+        return;
+    }
+
+    $slug = get_post_field( 'post_name', get_queried_object_id() );
+
+    $legacy_to_turkish = array(
+        'privacy-policy'          => 'gizlilik-politikasi',
+        'refund-policy'           => 'iade-ve-iptal-politikasi',
+        'kvkk'                    => 'kvkk-aydinlatma-metni',
+        'payment-delivery-policy' => 'odeme-ve-teslimat',
+        'cookie-policy'           => 'cerez-politikasi',
+        'distance-sales-contract' => 'mesafeli-satis-sozlesmesi',
+    );
+
+    if ( isset( $legacy_to_turkish[ $slug ] ) ) {
+        wp_safe_redirect( home_url( '/' . $legacy_to_turkish[ $slug ] . '/' ), 301 );
+        exit;
+    }
+}
+add_action( 'template_redirect', 'wcs_redirect_legacy_policy_slugs' );
+
+/**
+ * Render brand footer with policy links.
+ */
+function wcs_render_brand_footer() {
+    if ( is_admin() ) {
+        return;
+    }
+
+    $policy_links = array(
+        array(
+            'label' => __( 'Gizlilik Politikası', 'woocommerce-store-child' ),
+            'url'   => home_url( '/gizlilik-politikasi/' ),
+        ),
+        array(
+            'label' => __( 'İade ve İptal Politikası', 'woocommerce-store-child' ),
+            'url'   => home_url( '/iade-ve-iptal-politikasi/' ),
+        ),
+        array(
+            'label' => __( 'KVKK Aydınlatma Metni', 'woocommerce-store-child' ),
+            'url'   => home_url( '/kvkk-aydinlatma-metni/' ),
+        ),
+        array(
+            'label' => __( 'Ödeme ve Teslimat', 'woocommerce-store-child' ),
+            'url'   => home_url( '/odeme-ve-teslimat/' ),
+        ),
+        array(
+            'label' => __( 'Çerez Politikası', 'woocommerce-store-child' ),
+            'url'   => home_url( '/cerez-politikasi/' ),
+        ),
+        array(
+            'label' => __( 'Mesafeli Satış Sözleşmesi', 'woocommerce-store-child' ),
+            'url'   => home_url( '/mesafeli-satis-sozlesmesi/' ),
+        ),
+    );
+    ?>
+    <footer class="wcs-brand-footer" aria-label="Site footer">
+        <div class="wcs-brand-footer__inner">
+            <div class="wcs-brand-footer__brand">
+                <h3><?php esc_html_e( 'By Karaca', 'woocommerce-store-child' ); ?></h3>
+                <p><?php esc_html_e( 'Güvenli alışveriş, güçlü koruma ürünleri.', 'woocommerce-store-child' ); ?></p>
+            </div>
+
+            <nav class="wcs-brand-footer__policies" aria-label="Policy links">
+                <h4><?php esc_html_e( 'Politikalar', 'woocommerce-store-child' ); ?></h4>
+                <ul>
+                    <?php foreach ( $policy_links as $policy_link ) : ?>
+                        <li>
+                            <a href="<?php echo esc_url( $policy_link['url'] ); ?>"><?php echo esc_html( $policy_link['label'] ); ?></a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </nav>
+
+            <div class="wcs-brand-footer__contact">
+                <h4><?php esc_html_e( 'İletişim', 'woocommerce-store-child' ); ?></h4>
+                <p><a href="mailto:info@bykaracafile.com.tr">info@bykaracafile.com.tr</a></p>
+                <p>0850 380 20 06</p>
+            </div>
+        </div>
+    </footer>
+    <?php
+}
+add_action( 'wp_footer', 'wcs_render_brand_footer', 20 );
