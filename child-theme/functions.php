@@ -236,7 +236,60 @@ function wcs_render_price_calculator() {
 add_action( 'woocommerce_before_add_to_cart_form', 'wcs_render_price_calculator', 15 );
 
 /**
- * Auto-assign dedicated templates for policy pages based on common slugs.
+ * Return policy page slug mappings.
+ *
+ * @return array<string, array<string, mixed>>
+ */
+function wcs_policy_page_mappings() {
+    return array(
+        'gizlilik-politikasi' => array(
+            'template'    => 'privacy-policy.php',
+            'legacy_slug' => 'privacy-policy',
+        ),
+        'iade-ve-iptal-politikasi' => array(
+            'template'    => 'refund-policy.php',
+            'legacy_slug' => 'refund-policy',
+        ),
+        'kvkk-aydinlatma-metni' => array(
+            'template'    => 'kvkk-privacy-notice.php',
+            'legacy_slug' => 'kvkk',
+        ),
+        'odeme-ve-teslimat' => array(
+            'template'    => 'payment-delivery-policy.php',
+            'legacy_slug' => 'payment-delivery-policy',
+        ),
+        'cerez-politikasi' => array(
+            'template'    => 'cookie-policy.php',
+            'legacy_slug' => 'cookie-policy',
+        ),
+        'mesafeli-satis-sozlesmesi' => array(
+            'template'    => 'distance-sales-contract.php',
+            'legacy_slug' => 'distance-sales-contract',
+        ),
+    );
+}
+
+/**
+ * Redirect legacy English policy slugs to Turkish slugs.
+ */
+function wcs_redirect_legacy_policy_slugs() {
+    if ( ! is_page() ) {
+        return;
+    }
+
+    $slug = get_post_field( 'post_name', get_queried_object_id() );
+
+    foreach ( wcs_policy_page_mappings() as $turkish_slug => $config ) {
+        if ( $slug === $config['legacy_slug'] ) {
+            wp_safe_redirect( home_url( '/' . $turkish_slug . '/' ), 301 );
+            exit;
+        }
+    }
+}
+add_action( 'template_redirect', 'wcs_redirect_legacy_policy_slugs' );
+
+/**
+ * Auto-assign dedicated templates for policy pages based on policy slugs.
  *
  * @param string $template Current resolved template path.
  * @return string
@@ -246,47 +299,18 @@ function wcs_policy_page_templates( $template ) {
         return $template;
     }
 
-    $slug = get_post_field( 'post_name', get_queried_object_id() );
+    $slug      = get_post_field( 'post_name', get_queried_object_id() );
+    $mappings  = wcs_policy_page_mappings();
 
-    if ( in_array( $slug, array( 'privacy-policy', 'gizlilik-politikasi' ), true ) ) {
-        $privacy_template = get_stylesheet_directory() . '/page-templates/privacy-policy.php';
-        if ( file_exists( $privacy_template ) ) {
-            return $privacy_template;
+    foreach ( $mappings as $turkish_slug => $config ) {
+        if ( $slug !== $turkish_slug && $slug !== $config['legacy_slug'] ) {
+            continue;
         }
-    }
 
-    if ( in_array( $slug, array( 'refund-policy', 'iade-ve-iptal-politikasi' ), true ) ) {
-        $refund_template = get_stylesheet_directory() . '/page-templates/refund-policy.php';
-        if ( file_exists( $refund_template ) ) {
-            return $refund_template;
-        }
-    }
+        $policy_template = get_stylesheet_directory() . '/page-templates/' . $config['template'];
 
-    if ( in_array( $slug, array( 'kvkk', 'kvkk-aydinlatma-metni' ), true ) ) {
-        $kvkk_template = get_stylesheet_directory() . '/page-templates/kvkk-privacy-notice.php';
-        if ( file_exists( $kvkk_template ) ) {
-            return $kvkk_template;
-        }
-    }
-
-    if ( in_array( $slug, array( 'odeme-ve-teslimat', 'payment-delivery-policy' ), true ) ) {
-        $payment_template = get_stylesheet_directory() . '/page-templates/payment-delivery-policy.php';
-        if ( file_exists( $payment_template ) ) {
-            return $payment_template;
-        }
-    }
-
-    if ( in_array( $slug, array( 'cerez-politikasi', 'cookie-policy' ), true ) ) {
-        $cookie_template = get_stylesheet_directory() . '/page-templates/cookie-policy.php';
-        if ( file_exists( $cookie_template ) ) {
-            return $cookie_template;
-        }
-    }
-
-    if ( in_array( $slug, array( 'mesafeli-satis-sozlesmesi', 'distance-sales-contract' ), true ) ) {
-        $contract_template = get_stylesheet_directory() . '/page-templates/distance-sales-contract.php';
-        if ( file_exists( $contract_template ) ) {
-            return $contract_template;
+        if ( file_exists( $policy_template ) ) {
+            return $policy_template;
         }
     }
 
