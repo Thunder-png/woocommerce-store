@@ -9,12 +9,13 @@ Text Domain: woocommerce-store-child
 */
 
 :root {
-  --brand-primary: #0f3d5e;
-  --brand-accent: #f2a900;
-  --text-color: #1f2933;
-  --surface: #f8fafc;
+  --brand-primary: var(--color-industrial-navy, #0f131e);
+  --brand-accent: var(--color-safety-red, #c12e37);
+  --text-color: var(--color-steel-grey, #2b2e37);
+  --surface: var(--color-structure-white, #f8f8f8);
 }
 
 body {
   color: var(--text-color);
+  background: var(--surface);
 }
