@@ -28,8 +28,6 @@ function wcs_asset_version( $relative_path, $fallback = '1.0.0' ) {
 function wcs_child_enqueue_assets() {
     $parent_theme = wp_get_theme( get_template() );
     $child_theme  = wp_get_theme();
-    $is_shop_front = function_exists( 'wc_get_page_id' ) && is_front_page() && (int) get_queried_object_id() === (int) wc_get_page_id( 'shop' );
-
     wp_enqueue_style(
         'wcs-parent-style',
         get_template_directory_uri() . '/style.css',
@@ -51,51 +49,51 @@ function wcs_child_enqueue_assets() {
         wcs_asset_version( 'assets/css/style.css', $child_theme->get( 'Version' ) )
     );
 
-    if ( function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() || $is_shop_front ) ) {
-        $branding_base_url = trailingslashit( get_stylesheet_directory_uri() ) . 'assets/branding/';
+    $branding_base_url = trailingslashit( get_stylesheet_directory_uri() ) . 'assets/branding/';
 
-        wp_enqueue_style(
-            'wcs-brand-colors',
-            $branding_base_url . 'colors/brand-colors.css',
-            array( 'wcs-custom-style' ),
-            wcs_asset_version( 'assets/branding/colors/brand-colors.css', $child_theme->get( 'Version' ) )
-        );
+    wp_enqueue_style(
+        'wcs-brand-colors',
+        $branding_base_url . 'colors/brand-colors.css',
+        array( 'wcs-custom-style' ),
+        wcs_asset_version( 'assets/branding/colors/brand-colors.css', $child_theme->get( 'Version' ) )
+    );
 
-        wp_enqueue_style(
-            'wcs-brand-typography',
-            $branding_base_url . 'typography/typo-kit.css',
-            array( 'wcs-brand-colors' ),
-            wcs_asset_version( 'assets/branding/typography/typo-kit.css', $child_theme->get( 'Version' ) )
-        );
+    wp_enqueue_style(
+        'wcs-brand-typography',
+        $branding_base_url . 'typography/typo-kit.css',
+        array( 'wcs-brand-colors' ),
+        wcs_asset_version( 'assets/branding/typography/typo-kit.css', $child_theme->get( 'Version' ) )
+    );
 
+    wp_enqueue_style(
+        'wcs-shop-header-style',
+        get_stylesheet_directory_uri() . '/template-parts/header/shop-header.css',
+        array( 'wcs-brand-typography' ),
+        wcs_asset_version( 'template-parts/header/shop-header.css', $child_theme->get( 'Version' ) )
+    );
+
+    wp_enqueue_script(
+        'lottie-web',
+        'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js',
+        array(),
+        '5.12.2',
+        true
+    );
+
+    wp_enqueue_script(
+        'wcs-hero-script',
+        get_stylesheet_directory_uri() . '/template-parts/components/hero/hero.js',
+        array( 'lottie-web' ),
+        wcs_asset_version( 'template-parts/components/hero/hero.js', $child_theme->get( 'Version' ) ),
+        true
+    );
+
+    if ( function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() ) ) {
         wp_enqueue_style(
             'wcs-hero-style',
             get_stylesheet_directory_uri() . '/template-parts/components/hero/hero.css',
             array( 'wcs-brand-typography' ),
             wcs_asset_version( 'template-parts/components/hero/hero.css', $child_theme->get( 'Version' ) )
-        );
-
-        wp_enqueue_style(
-            'wcs-shop-header-style',
-            get_stylesheet_directory_uri() . '/template-parts/header/shop-header.css',
-            array( 'wcs-brand-typography' ),
-            wcs_asset_version( 'template-parts/header/shop-header.css', $child_theme->get( 'Version' ) )
-        );
-
-        wp_enqueue_script(
-            'lottie-web',
-            'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js',
-            array(),
-            '5.12.2',
-            true
-        );
-
-        wp_enqueue_script(
-            'wcs-hero-script',
-            get_stylesheet_directory_uri() . '/template-parts/components/hero/hero.js',
-            array( 'lottie-web' ),
-            wcs_asset_version( 'template-parts/components/hero/hero.js', $child_theme->get( 'Version' ) ),
-            true
         );
     }
 
@@ -126,13 +124,10 @@ function wcs_child_enqueue_assets() {
 add_action( 'wp_enqueue_scripts', 'wcs_child_enqueue_assets' );
 
 /**
- * Hide Astra native header on WooCommerce archive pages
- * when custom shop header component is used.
+ * Hide Astra native header globally so custom header is used site-wide.
  */
-function wcs_hide_astra_header_on_shop() {
-    $is_shop_front = function_exists( 'wc_get_page_id' ) && is_front_page() && (int) get_queried_object_id() === (int) wc_get_page_id( 'shop' );
-
-    if ( ! function_exists( 'is_shop' ) || ( ! is_shop() && ! is_product_taxonomy() && ! $is_shop_front ) ) {
+function wcs_hide_astra_header_globally() {
+    if ( is_admin() ) {
         return;
     }
     ?>
@@ -146,7 +141,19 @@ function wcs_hide_astra_header_on_shop() {
     </style>
     <?php
 }
-add_action( 'wp_head', 'wcs_hide_astra_header_on_shop', 99 );
+add_action( 'wp_head', 'wcs_hide_astra_header_globally', 99 );
+
+/**
+ * Render custom site header globally.
+ */
+function wcs_render_site_header() {
+    if ( is_admin() ) {
+        return;
+    }
+
+    get_template_part( 'template-parts/header/shop-header' );
+}
+add_action( 'wp_body_open', 'wcs_render_site_header', 20 );
 
 /**
  * Force full-width CSS layout on WooCommerce archives.
