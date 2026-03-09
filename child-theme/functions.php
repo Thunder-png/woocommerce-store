@@ -42,19 +42,12 @@ function wcs_child_enqueue_assets() {
         $child_theme->get( 'Version' )
     );
 
-    wp_enqueue_style(
-        'wcs-custom-style',
-        get_stylesheet_directory_uri() . '/assets/css/style.css',
-        array( 'wcs-child-style' ),
-        wcs_asset_version( 'assets/css/style.css', $child_theme->get( 'Version' ) )
-    );
-
     $branding_base_url = trailingslashit( get_stylesheet_directory_uri() ) . 'assets/branding/';
 
     wp_enqueue_style(
         'wcs-brand-colors',
         $branding_base_url . 'colors/brand-colors.css',
-        array( 'wcs-custom-style' ),
+        array( 'wcs-child-style' ),
         wcs_asset_version( 'assets/branding/colors/brand-colors.css', $child_theme->get( 'Version' ) )
     );
 
@@ -66,9 +59,16 @@ function wcs_child_enqueue_assets() {
     );
 
     wp_enqueue_style(
+        'wcs-custom-style',
+        get_stylesheet_directory_uri() . '/assets/css/style.css',
+        array( 'wcs-brand-typography' ),
+        wcs_asset_version( 'assets/css/style.css', $child_theme->get( 'Version' ) )
+    );
+
+    wp_enqueue_style(
         'wcs-shop-header-style',
         get_stylesheet_directory_uri() . '/template-parts/header/shop-header.css',
-        array( 'wcs-brand-typography' ),
+        array( 'wcs-custom-style' ),
         wcs_asset_version( 'template-parts/header/shop-header.css', $child_theme->get( 'Version' ) )
     );
 
@@ -92,7 +92,7 @@ function wcs_child_enqueue_assets() {
         wp_enqueue_style(
             'wcs-hero-style',
             get_stylesheet_directory_uri() . '/template-parts/components/hero/hero.css',
-            array( 'wcs-brand-typography' ),
+            array( 'wcs-custom-style' ),
             wcs_asset_version( 'template-parts/components/hero/hero.css', $child_theme->get( 'Version' ) )
         );
     }
