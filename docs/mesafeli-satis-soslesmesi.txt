@@ -1,0 +1,111 @@
+MESAFELİ SATIŞ SÖZLEŞMESİ
+1. Taraflar
+
+Bu sözleşme aşağıda bilgileri bulunan Satıcı ile web sitesi üzerinden alışveriş yapan Alıcı arasında elektronik ortamda kurulmuştur.
+
+Satıcı Bilgileri
+
+Firma: BY KARACA İŞ GÜVENLİĞİ İNŞAAT MOBİLYA GAYRİMENKUL GIDA OTOMOTİV SANAYİ VE TİCARET LİMİTED ŞİRKETİ
+Adres: Aşağı Eğlence Mah, Etlik, Gen. Dr. Tevfik Sağlam Cd. No:59/93, 06110 Keçiören/Ankara
+E-posta: info@bykaracafile.com.tr
+Telefon: 0850 380 20 06
+Web Sitesi: bykaracafile.com.tr
+
+Alıcı Bilgileri
+
+Alıcı, sipariş sırasında sisteme girmiş olduğu ad, soyad, adres ve iletişim bilgileri doğrultusunda işlem yapan kişidir.
+
+2. Sözleşmenin Konusu
+
+İşbu sözleşmenin konusu, Alıcı’nın Satıcı’ya ait [site adresi] internet sitesi üzerinden elektronik ortamda sipariş verdiği ürünün satışı ve teslimi ile ilgili olarak tarafların hak ve yükümlülüklerinin belirlenmesidir.
+
+3. Ürün Bilgileri ve Fiyatlandırma
+
+Satın alınan ürünlerin türü, miktarı, marka/modeli, satış bedeli ve ödeme şekli sipariş sırasında belirtilen bilgiler doğrultusunda geçerlidir.
+
+Web sitemizde satılan ürünlerin fiyatlandırması aşağıdaki şekilde hesaplanmaktadır:
+
+Ürün fiyatı metrekare (m²) bazında belirlenmektedir
+
+Ürün fiyatına KDV dahil edilmektedir
+
+Kargo ücreti sipariş sırasında ayrıca hesaplanmaktadır
+
+Toplam ödeme tutarı sipariş onay ekranında müşteriye gösterilir.
+
+4. Ödeme Şekli
+
+Alıcı, sipariş bedelini aşağıdaki ödeme yöntemleri ile gerçekleştirebilir:
+
+Kredi kartı / banka kartı ile sanal POS
+
+Havale / EFT
+
+Ödeme işlemleri güvenli ödeme altyapıları aracılığıyla gerçekleştirilmektedir.
+
+5. Teslimat
+
+Satın alınan ürünler, ödeme işleminin tamamlanmasını takiben hazırlanarak kargo firmasına teslim edilir.
+
+Teslimat süresi stok durumuna ve üretim sürecine bağlı olarak değişiklik gösterebilir.
+
+Teslimat, Alıcı’nın sipariş sırasında belirtmiş olduğu adrese yapılır.
+
+6. Sipariş Sorumluluğu
+
+Sipariş oluşturulurken ürün ölçüsü, adet, özellik ve teslimat bilgileri Alıcı tarafından dikkatli şekilde kontrol edilmelidir.
+
+Alıcı tarafından yanlış girilen sipariş bilgilerinden doğabilecek sorunlardan Alıcı sorumludur.
+
+7. Cayma Hakkı
+
+Alıcı, ürünü teslim aldığı tarihten itibaren 14 gün içinde cayma hakkını kullanabilir.
+
+Ancak aşağıdaki durumlarda cayma hakkı geçerli değildir:
+
+Ürünün paketinin açılması ve tekrar satışa uygunluğunun bozulması
+
+Hijyen kurallarına uygunluğu kaybolan ürünler
+
+Bu durumlarda iade kabul edilmemektedir.
+
+8. İade ve Değişim
+
+İade işlemleri, web sitesinde yer alan İade ve İptal Politikası doğrultusunda gerçekleştirilmektedir.
+
+Ürün iadesinin kabul edilebilmesi için:
+
+ürünün kullanılmamış olması
+
+tekrar satışa uygun olması
+
+hijyen koşullarının bozulmamış olması
+
+gerekmektedir.
+
+9. Mücbir Sebepler
+
+Tarafların kontrolü dışında gelişen doğal afet, yangın, savaş, grev, altyapı sorunları gibi mücbir sebepler nedeniyle sözleşme yükümlülükleri yerine getirilemezse taraflar sorumlu tutulamaz.
+
+10. Uyuşmazlıkların Çözümü
+
+Bu sözleşmeden doğabilecek uyuşmazlıklarda Türkiye Cumhuriyeti yasaları uygulanır.
+
+Uyuşmazlıkların çözümünde, Alıcı’nın yerleşim yerindeki veya Satıcı’nın bulunduğu yerdeki Tüketici Hakem Heyetleri ve Tüketici Mahkemeleri yetkilidir.
+
+11. Yürürlük
+
+Alıcı, web sitesi üzerinden sipariş vererek bu sözleşmenin tüm koşullarını okuduğunu ve kabul ettiğini beyan eder.
+
+Siparişin tamamlanması ile birlikte işbu sözleşme yürürlüğe girmiş sayılır.
+
+Satıcı
+
+Firma: BY KARACA İŞ GÜVENLİĞİ İNŞAAT MOBİLYA GAYRİMENKUL GIDA OTOMOTİV SANAYİ VE TİCARET LİMİTED ŞİRKETİ
+Adres: Aşağı Eğlence Mah, Etlik, Gen. Dr. Tevfik Sağlam Cd. No:59/93, 06110 Keçiören/Ankara
+E-posta: info@bykaracafile.com.tr
+Telefon: 0850 380 20 06
+
+Alıcı
+
+Sipariş sırasında belirtilen müşteri bilgileri.
