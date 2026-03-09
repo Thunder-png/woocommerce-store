@@ -1,7 +1,6 @@
 <?php
 /**
- * Template Name: Çerez Politikası
- * Template Post Type: page
+ * Policy page view: Çerez Politikası.
  *
  * @package WooCommerce_Store_Child
  */

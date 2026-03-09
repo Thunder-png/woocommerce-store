@@ -1,7 +1,6 @@
 <?php
 /**
- * Template Name: Refund & Cancellation Policy
- * Template Post Type: page
+ * Policy page view: İade ve İptal Politikası.
  *
  * @package WooCommerce_Store_Child
  */

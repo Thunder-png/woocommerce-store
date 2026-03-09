@@ -1,7 +1,6 @@
 <?php
 /**
- * Template Name: Ödeme ve Teslimat Politikası
- * Template Post Type: page
+ * Policy page view: Ödeme ve Teslimat Politikası.
  *
  * @package WooCommerce_Store_Child
  */

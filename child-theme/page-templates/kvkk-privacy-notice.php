@@ -1,7 +1,6 @@
 <?php
 /**
- * Template Name: KVKK Aydınlatma Metni
- * Template Post Type: page
+ * Policy page view: KVKK Aydınlatma Metni.
  *
  * @package WooCommerce_Store_Child
  */

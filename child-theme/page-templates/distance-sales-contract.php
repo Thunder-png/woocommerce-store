@@ -1,7 +1,6 @@
 <?php
 /**
- * Template Name: Mesafeli Satış Sözleşmesi
- * Template Post Type: page
+ * Policy page view: Mesafeli Satış Sözleşmesi.
  *
  * @package WooCommerce_Store_Child
  */

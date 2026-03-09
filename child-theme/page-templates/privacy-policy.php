@@ -1,7 +1,6 @@
 <?php
 /**
- * Template Name: Privacy Policy
- * Template Post Type: page
+ * Policy page view: Gizlilik Politikası.
  *
  * @package WooCommerce_Store_Child
  */
