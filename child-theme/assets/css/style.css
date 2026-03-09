@@ -51,3 +51,54 @@
 .wcs-policy-content ul {
   margin: 0.5rem 0 0.75rem 1.25rem;
 }
+
+#colophon,
+.ast-footer-overlay {
+  display: none;
+}
+
+.wcs-brand-footer {
+  background: linear-gradient(135deg, #0f3d5e 0%, #0b2f49 100%);
+  color: #f8fafc;
+  margin-top: 3rem;
+  padding: 2.25rem 1rem;
+}
+
+.wcs-brand-footer__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.wcs-brand-footer h3,
+.wcs-brand-footer h4 {
+  margin: 0 0 0.75rem;
+  color: #f2a900;
+}
+
+.wcs-brand-footer p {
+  margin: 0.35rem 0;
+}
+
+.wcs-brand-footer__policies ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wcs-brand-footer__policies li + li {
+  margin-top: 0.35rem;
+}
+
+.wcs-brand-footer a {
+  color: #f8fafc;
+  text-decoration: none;
+}
+
+.wcs-brand-footer a:hover,
+.wcs-brand-footer a:focus {
+  color: #f2a900;
+  text-decoration: underline;
+}
