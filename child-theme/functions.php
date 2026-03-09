@@ -236,32 +236,6 @@ function wcs_render_price_calculator() {
 add_action( 'woocommerce_before_add_to_cart_form', 'wcs_render_price_calculator', 15 );
 
 /**
- * Redirect legacy English policy slugs to Turkish slugs.
- */
-function wcs_redirect_legacy_policy_slugs() {
-    if ( ! is_page() ) {
-        return;
-    }
-
-    $slug = get_post_field( 'post_name', get_queried_object_id() );
-
-    $legacy_to_turkish = array(
-        'privacy-policy'          => 'gizlilik-politikasi',
-        'refund-policy'           => 'iade-ve-iptal-politikasi',
-        'kvkk'                    => 'kvkk-aydinlatma-metni',
-        'payment-delivery-policy' => 'odeme-ve-teslimat',
-        'cookie-policy'           => 'cerez-politikasi',
-        'distance-sales-contract' => 'mesafeli-satis-sozlesmesi',
-    );
-
-    if ( isset( $legacy_to_turkish[ $slug ] ) ) {
-        wp_safe_redirect( home_url( '/' . $legacy_to_turkish[ $slug ] . '/' ), 301 );
-        exit;
-    }
-}
-add_action( 'template_redirect', 'wcs_redirect_legacy_policy_slugs' );
-
-/**
  * Render brand footer with policy links.
  */
 function wcs_render_brand_footer() {
