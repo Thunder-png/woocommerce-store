@@ -56,6 +56,9 @@
   grid-template-columns: 560px 1fr;
   gap: 5rem;
   align-items: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
 }
 
 .wcs-hero__tag-row {
