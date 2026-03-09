@@ -1,0 +1,56 @@
+ÖDEME VE TESLİMAT ŞARTLARI
+1. Genel Bilgilendirme
+
+Bu sayfa, bykaracafile üzerinden yapılan alışverişlerde ödeme yöntemleri ve teslimat süreçleri hakkında bilgi vermek amacıyla hazırlanmıştır.
+
+2. Fiyatlandırma
+
+Web sitemizde satılan ürünlerin fiyatlandırması aşağıdaki şekilde yapılmaktadır:
+
+Ürün fiyatları metrekare (m²) bazında hesaplanmaktadır
+
+Fiyatlara KDV dahil edilmektedir
+
+Kargo ücreti sipariş sırasında ayrıca hesaplanmaktadır
+
+Siparişin toplam tutarı ödeme ekranında kullanıcıya açık şekilde gösterilir.
+
+3. Ödeme Yöntemleri
+
+Sitemizde aşağıdaki ödeme yöntemleri kullanılabilir:
+
+Kredi kartı / banka kartı ile sanal POS
+
+Havale / EFT
+
+Ödeme işlemleri güvenli ödeme altyapıları üzerinden gerçekleştirilmektedir.
+
+4. Havale / EFT Ödemeleri
+
+Havale veya EFT ile yapılan ödemelerde müşteriler yalnızca bykaracafile adına kayıtlı resmi banka hesaplarına ödeme yapmalıdır.
+
+Ödeme açıklama kısmına sipariş numarasının yazılması önerilir.
+
+5. Teslimat Süreci
+
+Siparişler, ödeme işlemi tamamlandıktan sonra hazırlanarak kargo firmasına teslim edilir.
+
+Teslimat süresi aşağıdaki faktörlere bağlı olarak değişebilir:
+
+ürün stok durumu
+
+üretim süreci
+
+teslimat adresi
+
+6. Kargo
+
+Siparişler anlaşmalı kargo firmaları aracılığıyla gönderilmektedir.
+
+Kargo bedeli sipariş sırasında hesaplanarak toplam ödeme tutarına eklenir.
+
+7. Teslimat Adresi
+
+Siparişler, müşteri tarafından sipariş sırasında belirtilen adrese gönderilir.
+
+Yanlış adres bilgisi girilmesinden kaynaklanan teslimat sorunlarından müşteri sorumludur.
