@@ -1,8 +1,102 @@
-﻿.wcs-calculator {
+﻿/* Global brand integration for WordPress + WooCommerce surfaces */
+:root {
+  --wcs-color-primary: var(--color-industrial-navy, #0f131e);
+  --wcs-color-accent: var(--color-safety-red, #c12e37);
+  --wcs-color-bg: var(--color-structure-white, #f8f8f8);
+  --wcs-color-text: var(--color-steel-grey, #2b2e37);
+  --wcs-surface: #ffffff;
+  --wcs-border: rgba(43, 46, 55, 0.14);
+}
+
+html,
+body {
+  background: var(--wcs-color-bg);
+  color: var(--wcs-color-text);
+  font-family: var(--font-body, 'Inter', sans-serif);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.entry-title,
+.site-title {
+  color: var(--wcs-color-primary);
+  font-family: var(--font-heading, 'Inter', sans-serif);
+}
+
+a {
+  color: var(--wcs-color-accent);
+}
+
+a:hover,
+a:focus {
+  color: var(--wcs-color-primary);
+}
+
+/* WordPress/Astra common wrappers */
+.site,
+.site-content,
+.ast-container,
+.content-area,
+.site-main,
+.entry-content,
+.widget,
+.wp-block-group {
+  font-family: var(--font-body, 'Inter', sans-serif);
+}
+
+/* Brand button system mapped to WP + WooCommerce classes */
+button,
+input[type='submit'],
+.wp-block-button__link,
+.button,
+.ast-button,
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce input.button {
+  background: var(--wcs-color-accent);
+  color: var(--wcs-color-bg);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-family: var(--font-heading, 'Inter', sans-serif);
+  letter-spacing: 0.02em;
+}
+
+button:hover,
+input[type='submit']:hover,
+.wp-block-button__link:hover,
+.button:hover,
+.ast-button:hover,
+.woocommerce a.button:hover,
+.woocommerce button.button:hover,
+.woocommerce input.button:hover {
+  background: var(--wcs-color-primary);
+  color: var(--wcs-color-bg);
+}
+
+/* Header spacing because custom header is rendered at body open */
+.site-content,
+.ast-container,
+#page {
+  scroll-margin-top: 84px;
+}
+
+.ast-separate-container #primary,
+.ast-separate-container .ast-article-post,
+.ast-separate-container .ast-article-single {
+  background: var(--wcs-surface);
+  border: 1px solid var(--wcs-border);
+  border-radius: 12px;
+}
+
+.wcs-calculator {
   margin: 1.5rem 0;
   padding: 1rem;
-  border: 1px solid #d0d7de;
-  background: #f8fafc;
+  border: 1px solid var(--wcs-border);
+  background: var(--wcs-color-bg);
 }
 
 .wcs-calculator__grid {
@@ -28,11 +122,11 @@
 }
 
 .wcs-policy-content {
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: var(--wcs-surface);
+  border: 1px solid var(--wcs-border);
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 10px 30px rgba(15, 61, 94, 0.08);
+  box-shadow: 0 10px 30px rgba(15, 19, 30, 0.08);
 }
 
 .wcs-policy-header h1 {
@@ -58,10 +152,11 @@
 }
 
 .wcs-brand-footer {
-  background: linear-gradient(135deg, #0f3d5e 0%, #0b2f49 100%);
-  color: #f8fafc;
+  background: var(--wcs-color-primary);
+  color: var(--wcs-color-bg);
   margin-top: 3rem;
   padding: 2.25rem 1rem;
+  border-top: 4px solid var(--wcs-color-accent);
 }
 
 .wcs-brand-footer__inner {
@@ -75,7 +170,7 @@
 .wcs-brand-footer h3,
 .wcs-brand-footer h4 {
   margin: 0 0 0.75rem;
-  color: #f2a900;
+  color: var(--wcs-color-bg);
 }
 
 .wcs-brand-footer p {
@@ -93,12 +188,12 @@
 }
 
 .wcs-brand-footer a {
-  color: #f8fafc;
+  color: var(--wcs-color-bg);
   text-decoration: none;
 }
 
 .wcs-brand-footer a:hover,
 .wcs-brand-footer a:focus {
-  color: #f2a900;
+  color: var(--wcs-color-accent);
   text-decoration: underline;
 }

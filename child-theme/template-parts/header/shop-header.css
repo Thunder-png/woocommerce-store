@@ -90,3 +90,8 @@
     min-height: 64px;
   }
 }
+
+
+.wcs-shop-header__tel i { margin-right: 0.35rem; }
+.wcs-shop-header__cta { display: inline-flex; align-items: center; gap: 0.4rem; }
+.wcs-shop-header__cta i { font-size: 0.82rem; }
