@@ -198,6 +198,27 @@ input[type='submit']:hover,
   text-decoration: underline;
 }
 
+
+.woocommerce ul.products {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.woocommerce ul.products li.product,
+.woocommerce-page ul.products li.product {
+  width: auto !important;
+  margin: 0 !important;
+  float: none !important;
+  clear: none !important;
+}
+
+@media (max-width: 767px) {
+  .woocommerce ul.products {
+    grid-template-columns: 1fr;
+  }
+}
+
 .woocommerce ul.products li.product.wcs-product-card {
   margin-bottom: 1.5rem;
 }
