@@ -1,0 +1,204 @@
+/* ═══════════════════════════════════════════════════════════════
+   WCS CART, CHECKOUT, ACCOUNT LAYOUTS
+   ═══════════════════════════════════════════════════════════════ */
+
+.wcs-cart-shell,
+.wcs-checkout-shell,
+.wcs-account-shell {
+  max-width: 1160px;
+  margin: 2.5rem auto 3rem;
+  padding: 0 1rem;
+}
+
+.wcs-cart-shell__header,
+.wcs-checkout-shell__header {
+  margin-bottom: 1.75rem;
+}
+
+.wcs-cart-shell__title,
+.wcs-checkout-shell__title {
+  font-family: var(--font-heading, 'Inter', sans-serif);
+  letter-spacing: -0.02em;
+  margin: 0 0 0.35rem;
+}
+
+.wcs-cart-shell__subtitle,
+.wcs-checkout-shell__subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: rgba(43, 46, 55, 0.75);
+}
+
+.wcs-cart-shell__inner,
+.wcs-checkout-shell__grid {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 19, 30, 0.08);
+  box-shadow: 0 18px 45px rgba(15, 19, 30, 0.08);
+  padding: 1.75rem 1.75rem 2rem;
+}
+
+.wcs-cart-shell__grid,
+.wcs-checkout-shell__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr);
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.wcs-cart-shell__col--summary,
+.wcs-checkout-shell__col--summary {
+  border-left: 1px solid rgba(15, 19, 30, 0.06);
+  padding-left: 1.5rem;
+}
+
+.wcs-cart-summary__title,
+.wcs-checkout-summary__title {
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  margin: 0 0 1rem;
+  color: rgba(15, 19, 30, 0.72);
+}
+
+.wcs-cart-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.wcs-cart-empty p {
+  margin-bottom: 1rem;
+}
+
+.wcs-cart-table {
+  margin-bottom: 1.5rem;
+}
+
+.wcs-cart-table th {
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(15, 19, 30, 0.58);
+}
+
+.wcs-cart-item-note {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.78rem;
+  color: rgba(193, 46, 55, 0.9);
+}
+
+/* Checkout form sections */
+.wcs-checkout-section__inner {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.wcs-checkout-summary__body {
+  margin-top: 0.75rem;
+}
+
+/* Account: layout */
+.woocommerce-account .woocommerce {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 2fr);
+  gap: 2rem;
+  max-width: 1160px;
+  margin: 2.5rem auto 3rem;
+  padding: 0 1rem;
+}
+
+.wcs-account-nav {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 19, 30, 0.08);
+  padding: 1.25rem 1.25rem 1.5rem;
+}
+
+.wcs-account-nav__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wcs-account-nav__item {
+  margin-bottom: 0.2rem;
+}
+
+.wcs-account-nav__link {
+  display: block;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  color: rgba(15, 19, 30, 0.8);
+}
+
+.is-active .wcs-account-nav__link,
+.wcs-account-nav__link:hover {
+  background: rgba(193, 46, 55, 0.06);
+  color: var(--wcs-color-accent, #c12e37);
+}
+
+.wcs-account-dashboard__header {
+  margin-bottom: 1.5rem;
+}
+
+.wcs-account-dashboard__title {
+  margin: 0 0 0.35rem;
+}
+
+.wcs-account-dashboard__subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: rgba(43, 46, 55, 0.78);
+}
+
+.wcs-account-dashboard__grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.wcs-account-card {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 19, 30, 0.08);
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.wcs-account-card__title {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: rgba(15, 19, 30, 0.72);
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .wcs-cart-shell__grid,
+  .wcs-checkout-shell__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .wcs-cart-shell__col--summary,
+  .wcs-checkout-shell__col--summary {
+    border-left: 0;
+    padding-left: 0;
+    border-top: 1px solid rgba(15, 19, 30, 0.06);
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+
+  .woocommerce-account .woocommerce {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .wcs-cart-shell__inner,
+  .wcs-checkout-shell__grid {
+    padding: 1.25rem 1.25rem 1.6rem;
+  }
+}
+

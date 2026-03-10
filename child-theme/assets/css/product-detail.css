@@ -1,0 +1,208 @@
+/* ═══════════════════════════════════════════════════════════════
+   WCS PRODUCT DETAIL LAYOUT
+   Brand kit ile uyumlu tekil ürün sayfası düzeni
+   ═══════════════════════════════════════════════════════════════ */
+
+.single-product .site-main {
+  background: transparent;
+}
+
+.single-product div.product {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 2.5rem;
+  align-items: flex-start;
+  max-width: 1160px;
+  margin: 2.5rem auto 3rem;
+  padding: 2rem 2.5rem;
+  background: var(--wcs-surface, #ffffff);
+  border-radius: 16px;
+  box-shadow: 0 18px 45px rgba(15, 19, 30, 0.12);
+  border: 1px solid rgba(15, 19, 30, 0.09);
+}
+
+.single-product .woocommerce-product-gallery {
+  margin-bottom: 0;
+}
+
+.single-product .woocommerce-product-gallery__wrapper {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 12px 36px rgba(15, 19, 30, 0.18);
+}
+
+.single-product .summary.entry-summary {
+  padding-left: 1.5rem;
+  border-left: 1px solid rgba(15, 19, 30, 0.06);
+}
+
+.single-product .product_title.entry-title {
+  font-family: var(--font-heading, 'Inter', sans-serif);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.6rem;
+}
+
+.single-product .price {
+  font-family: var(--font-heading, 'Inter', sans-serif);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--wcs-color-primary, #0f131e);
+}
+
+.single-product .woocommerce-Price-currencySymbol {
+  opacity: 0.7;
+  font-size: 0.72em;
+  margin-right: 2px;
+}
+
+.single-product .product_meta {
+  font-size: 0.85rem;
+  color: rgba(43, 46, 55, 0.7);
+}
+
+/* m² hesaplayıcıyı ürün özetine entegre et */
+.single-product .wcs-calculator {
+  margin-top: 1.75rem;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(193, 46, 55, 0.08), #ffffff);
+  border-color: rgba(193, 46, 55, 0.28);
+}
+
+.single-product .wcs-calculator h3 {
+  font-family: var(--font-heading, 'Inter', sans-serif);
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.single-product .wcs-calculator__grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+}
+
+.single-product .wcs-calculator__grid label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(15, 19, 30, 0.74);
+}
+
+.single-product .wcs-calculator__grid input {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid rgba(15, 19, 30, 0.14);
+}
+
+.single-product .wcs-calculator__results {
+  border-top: 1px dashed rgba(15, 19, 30, 0.14);
+  padding-top: 0.6rem;
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+}
+
+.single-product .wcs-calculator__results strong {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  color: var(--wcs-color-accent, #c12e37);
+}
+
+/* Teknik özellikler bloğu (mevcut meta çıktıları için genel stil) */
+.single-product .wcs-spec-section {
+  margin-top: 2.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid rgba(15, 19, 30, 0.08);
+}
+
+.single-product .wcs-spec-section__title {
+  font-size: 0.9rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(15, 19, 30, 0.72);
+  margin-bottom: 0.85rem;
+}
+
+.single-product .wcs-spec-table {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+.single-product .wcs-spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.8rem 0.9rem;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 19, 30, 0.06);
+}
+
+.single-product .wcs-spec-label {
+  font-weight: 600;
+  color: var(--wcs-color-primary, #0f131e);
+  font-size: 0.86rem;
+}
+
+.single-product .wcs-spec-value {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  color: var(--wcs-color-accent, #c12e37);
+  font-size: 0.8rem;
+}
+
+/* Alt içerik alanı (açıklama / ek sekmeler) */
+.single-product .woocommerce-tabs {
+  max-width: 1160px;
+  margin: 0 auto 3rem;
+}
+
+.single-product .woocommerce-tabs ul.tabs {
+  border-bottom: 1px solid rgba(15, 19, 30, 0.08);
+  padding-left: 0;
+}
+
+.single-product .woocommerce-tabs ul.tabs li {
+  border-radius: 0;
+  background: transparent;
+}
+
+.single-product .woocommerce-tabs ul.tabs li a {
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.single-product .woocommerce-tabs .panel {
+  padding: 1.5rem 0 0;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .single-product div.product {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1.5rem 1.5rem 2rem;
+  }
+
+  .single-product .summary.entry-summary {
+    padding-left: 0;
+    border-left: 0;
+    border-top: 1px solid rgba(15, 19, 30, 0.06);
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .single-product div.product {
+    margin: 1.5rem 0 2.5rem;
+    padding: 1.25rem 1.1rem 1.8rem;
+    border-radius: 14px;
+  }
+
+  .single-product .wcs-calculator__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+

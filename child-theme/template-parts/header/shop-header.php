@@ -16,15 +16,26 @@ $lottie_url = get_stylesheet_directory_uri() . '/assets/branding/logo/logo-lotti
         </a>
 
         <nav class="wcs-shop-header__nav" aria-label="<?php esc_attr_e( 'Ana menü', 'woocommerce-store-child' ); ?>">
-            <a href="#products-grid"><?php esc_html_e( 'Ürünler', 'woocommerce-store-child' ); ?></a>
-            <a href="#products-grid"><?php esc_html_e( 'Teknik Bilgi', 'woocommerce-store-child' ); ?></a>
-            <a href="#products-grid"><?php esc_html_e( 'Projeler', 'woocommerce-store-child' ); ?></a>
-            <a href="#products-grid"><?php esc_html_e( 'Hakkımızda', 'woocommerce-store-child' ); ?></a>
+            <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>"><?php esc_html_e( 'Mağaza', 'woocommerce-store-child' ); ?></a>
+            <a href="<?php echo esc_url( wc_get_page_permalink( 'cart' ) ); ?>"><?php esc_html_e( 'Sepet', 'woocommerce-store-child' ); ?></a>
+            <a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>"><?php esc_html_e( 'Hesabım', 'woocommerce-store-child' ); ?></a>
+            <a href="<?php echo esc_url( home_url( '/iletisim/' ) ); ?>"><?php esc_html_e( 'İletişim', 'woocommerce-store-child' ); ?></a>
         </nav>
 
         <div class="wcs-shop-header__right">
-            <span class="wcs-shop-header__tel"><i class="bi bi-telephone" aria-hidden="true"></i> +90 232 000 00 00</span>
-            <a class="wcs-shop-header__cta" href="#products-grid"><i class="bi bi-chat-dots" aria-hidden="true"></i> <?php esc_html_e( 'Teklif Al', 'woocommerce-store-child' ); ?></a>
+            <?php if ( function_exists( 'wc_get_page_permalink' ) ) : ?>
+                <form role="search" method="get" class="wcs-shop-header__search" action="<?php echo esc_url( home_url( '/' ) ); ?>">
+                    <input type="search" class="wcs-shop-header__search-input" placeholder="<?php esc_attr_e( 'Ürün ara…', 'woocommerce-store-child' ); ?>" value="<?php echo get_search_query(); ?>" name="s" />
+                    <input type="hidden" name="post_type" value="product" />
+                    <button type="submit" class="wcs-shop-header__search-btn" aria-label="<?php esc_attr_e( 'Ara', 'woocommerce-store-child' ); ?>">
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                    </button>
+                </form>
+            <?php endif; ?>
+
+            <a class="wcs-shop-header__icon-link" href="<?php echo esc_url( wc_get_page_permalink( 'cart' ) ); ?>" aria-label="<?php esc_attr_e( 'Sepeti görüntüle', 'woocommerce-store-child' ); ?>">
+                <i class="bi bi-cart3" aria-hidden="true"></i>
+            </a>
         </div>
     </div>
 </header>

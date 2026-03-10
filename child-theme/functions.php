@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Theme functions for WooCommerce Store Child.
  */
@@ -49,11 +49,16 @@ function wcs_child_enqueue_assets() {
         array(),
         '1.11.3'
     );
-    wp_enqueue_style( 'wcs-product-card',
-    get_stylesheet_directory_uri() . '/assets/css/product-card.css',
-    array( 'wcs-custom-style', 'wcs-bootstrap-icons' ),
-    wcs_asset_version( 'assets/css/product-card.css', $child_theme->get('Version') )  
-    );
+    $is_shop_context = function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() );
+
+    if ( $is_shop_context ) {
+        wp_enqueue_style(
+            'wcs-product-card',
+            get_stylesheet_directory_uri() . '/assets/css/product-card.css',
+            array( 'wcs-custom-style', 'wcs-bootstrap-icons' ),
+            wcs_asset_version( 'assets/css/product-card.css', $child_theme->get( 'Version' ) )
+        );
+    }
 
     $branding_base_url = trailingslashit( get_stylesheet_directory_uri() ) . 'assets/branding/';
 
@@ -85,23 +90,32 @@ function wcs_child_enqueue_assets() {
         wcs_asset_version( 'template-parts/header/shop-header.css', $child_theme->get( 'Version' ) )
     );
 
-    wp_enqueue_script(
-        'lottie-web',
-        'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js',
-        array(),
-        '5.12.2',
-        true
-    );
+    if ( is_front_page() ) {
+        wp_enqueue_style(
+            'wcs-home-category-grid',
+            get_stylesheet_directory_uri() . '/assets/css/home-category-grid.css',
+            array( 'wcs-custom-style' ),
+            wcs_asset_version( 'assets/css/home-category-grid.css', $child_theme->get( 'Version' ) )
+        );
+    }
 
-    wp_enqueue_script(
-        'wcs-hero-script',
-        get_stylesheet_directory_uri() . '/template-parts/components/hero/hero.js',
-        array( 'lottie-web' ),
-        wcs_asset_version( 'template-parts/components/hero/hero.js', $child_theme->get( 'Version' ) ),
-        true
-    );
+    if ( $is_shop_context ) {
+        wp_enqueue_script(
+            'lottie-web',
+            'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js',
+            array(),
+            '5.12.2',
+            true
+        );
 
-    if ( function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() ) ) {
+        wp_enqueue_script(
+            'wcs-hero-script',
+            get_stylesheet_directory_uri() . '/template-parts/components/hero/hero.js',
+            array( 'lottie-web' ),
+            wcs_asset_version( 'template-parts/components/hero/hero.js', $child_theme->get( 'Version' ) ),
+            true
+        );
+
         wp_enqueue_style(
             'wcs-hero-style',
             get_stylesheet_directory_uri() . '/template-parts/components/hero/hero.css',
@@ -131,6 +145,30 @@ function wcs_child_enqueue_assets() {
                 'vatRate'    => 0.20,
                 'currency'   => get_woocommerce_currency_symbol(),
             )
+        );
+
+        wp_enqueue_style(
+            'wcs-product-detail',
+            get_stylesheet_directory_uri() . '/assets/css/product-detail.css',
+            array( 'wcs-custom-style' ),
+            wcs_asset_version( 'assets/css/product-detail.css', $child_theme->get( 'Version' ) )
+        );
+    }
+
+    if (
+        function_exists( 'is_cart' )
+        && function_exists( 'is_checkout' )
+        && (
+            is_cart()
+            || is_checkout()
+            || ( function_exists( 'is_account_page' ) && is_account_page() )
+        )
+    ) {
+        wp_enqueue_style(
+            'wcs-cart-checkout-account',
+            get_stylesheet_directory_uri() . '/assets/css/cart-checkout-account.css',
+            array( 'wcs-custom-style' ),
+            wcs_asset_version( 'assets/css/cart-checkout-account.css', $child_theme->get( 'Version' ) )
         );
     }
 }
@@ -490,3 +528,114 @@ function wcs_render_shop_attribute_filters() {
     <?php
 }
 add_action( 'woocommerce_before_shop_loop', 'wcs_render_shop_attribute_filters', 15 );
+
+/**
+ * Render home category grid below hero on the front page.
+ */
+function wcs_render_home_category_grid() {
+	if ( ! is_front_page() ) {
+		return;
+	}
+
+	get_template_part( 'template-parts/components/home/home-category-grid' );
+}
+add_action( 'astra_primary_content_top', 'wcs_render_home_category_grid', 15 );
+
+/**
+ * Seed default home category meta (title/teaser/badges) from mapping once.
+ */
+function wcs_seed_home_category_meta() {
+	if ( get_option( 'wcs_home_category_meta_seeded' ) ) {
+		return;
+	}
+
+	$mapping = array(
+		'cocuk-guvenlik-filesi'       => array(
+			'title'   => __( 'Çocuk Güvenlik Filesi', 'woocommerce-store-child' ),
+			'excerpt' => __( 'Çocuklar için balkon ve merdiven boşluklarında ek koruma sağlar.', 'woocommerce-store-child' ),
+			'badges'  => array(
+				__( 'Balkon Uyumlu', 'woocommerce-store-child' ),
+				__( 'UV Dayanımlı', 'woocommerce-store-child' ),
+				__( 'Kolay Montaj', 'woocommerce-store-child' ),
+			),
+		),
+		'balkon-guvenlik-filesi'      => array(
+			'title'   => __( 'Balkon Güvenlik Filesi', 'woocommerce-store-child' ),
+			'excerpt' => __( 'Açık balkonlarda düşme riskine karşı görünmez bariyer oluşturur.', 'woocommerce-store-child' ),
+			'badges'  => array(
+				__( 'Dış Mekan Kullanım', 'woocommerce-store-child' ),
+				__( 'Ölçüye Özel Üretim', 'woocommerce-store-child' ),
+				__( 'Estetik Görünüm', 'woocommerce-store-child' ),
+			),
+		),
+		'kedi-balkon-filesi'          => array(
+			'title'   => __( 'Kedi Balkon Filesi', 'woocommerce-store-child' ),
+			'excerpt' => __( 'Evcil dostlarınız için balkon ve pencere açıklıklarını güvene alır.', 'woocommerce-store-child' ),
+			'badges'  => array(
+				__( 'Evcil Hayvan Güvenliği', 'woocommerce-store-child' ),
+				__( 'Çizilmeye Dayanıklı', 'woocommerce-store-child' ),
+				__( 'İz Bırakmaz', 'woocommerce-store-child' ),
+			),
+		),
+		'kus-koruma-filesi'           => array(
+			'title'   => __( 'Kuş Koruma Filesi', 'woocommerce-store-child' ),
+			'excerpt' => __( 'Balkon ve cephelerde kuşların konmasını ve zarar vermesini engeller.', 'woocommerce-store-child' ),
+			'badges'  => array(
+				__( 'Balkon ve Cephe Uyumlu', 'woocommerce-store-child' ),
+				__( 'UV Dayanımlı', 'woocommerce-store-child' ),
+				__( 'Hafif Yapı', 'woocommerce-store-child' ),
+			),
+		),
+		'havuz-guvenlik-filesi'       => array(
+			'title'   => __( 'Havuz Güvenlik Filesi', 'woocommerce-store-child' ),
+			'excerpt' => __( 'Havuz çevresinde düşme ve kayma risklerini en aza indirir.', 'woocommerce-store-child' ),
+			'badges'  => array(
+				__( 'Isıya Dayanıklı', 'woocommerce-store-child' ),
+				__( 'Kaymaz Yapı', 'woocommerce-store-child' ),
+				__( 'Kolay Sökülüp Takılır', 'woocommerce-store-child' ),
+			),
+		),
+		'merdiven-guvenlik-filesi'    => array(
+			'title'   => __( 'Merdiven Güvenlik Filesi', 'woocommerce-store-child' ),
+			'excerpt' => __( 'Merdiven boşlukları ve iç atrium alanlarını güvenli hale getirir.', 'woocommerce-store-child' ),
+			'badges'  => array(
+				__( 'İç Mekan Uyumlu', 'woocommerce-store-child' ),
+				__( 'Yüksek Taşıma Kapasitesi', 'woocommerce-store-child' ),
+				__( 'Şeffaf Görünüm', 'woocommerce-store-child' ),
+			),
+		),
+		'ozel-olcu-file-sistemleri'   => array(
+			'title'   => __( 'Özel Ölçü File Sistemleri', 'woocommerce-store-child' ),
+			'excerpt' => __( 'Standart ölçülere uymayan projeler için tam ölçüye özel çözümler.', 'woocommerce-store-child' ),
+			'badges'  => array(
+				__( 'Proje Bazlı Çözüm', 'woocommerce-store-child' ),
+				__( 'Keşif ve Montaj Desteği', 'woocommerce-store-child' ),
+				__( 'Endüstriyel Uygunluk', 'woocommerce-store-child' ),
+			),
+		),
+	);
+
+	foreach ( $mapping as $slug => $config ) {
+		$term = get_term_by( 'slug', $slug, 'product_cat' );
+
+		if ( ! $term || is_wp_error( $term ) ) {
+			continue;
+		}
+
+		if ( ! get_term_meta( $term->term_id, 'wcs_home_title', true ) ) {
+			update_term_meta( $term->term_id, 'wcs_home_title', $config['title'] );
+		}
+
+		if ( ! get_term_meta( $term->term_id, 'wcs_home_teaser', true ) ) {
+			update_term_meta( $term->term_id, 'wcs_home_teaser', $config['excerpt'] );
+		}
+
+		$existing_badges = get_term_meta( $term->term_id, 'wcs_home_badges', true );
+		if ( empty( $existing_badges ) && ! empty( $config['badges'] ) ) {
+			update_term_meta( $term->term_id, 'wcs_home_badges', $config['badges'] );
+		}
+	}
+
+	update_option( 'wcs_home_category_meta_seeded', 1 );
+}
+add_action( 'init', 'wcs_seed_home_category_meta', 30 );

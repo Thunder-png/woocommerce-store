@@ -3,12 +3,12 @@
    child-theme/woocommerce/product-card.css
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── Design tokens (hero ile aynı) ── */
+/* ── Design tokens (hero ile aynı, brand kit ile hizalı) ── */
 .wcs-card {
-  --wcs-red:       #e2000d;
-  --wcs-dark:      #0a0a0a;
+  --wcs-red:       var(--color-safety-red, #c12e37);
+  --wcs-dark:      var(--color-industrial-navy, #0f131e);
   --wcs-surface:   #111417;
-  --wcs-white:     #f8f8f8;
+  --wcs-white:     var(--color-structure-white, #f8f8f8);
   --wcs-muted:     rgba(248,248,248,0.42);
   --wcs-border:    rgba(248,248,248,0.07);
 }

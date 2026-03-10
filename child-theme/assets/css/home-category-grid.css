@@ -1,0 +1,194 @@
+/* ═══════════════════════════════════════════════════════════════
+   WCS HOME — CATEGORY GRID
+   Hero altı 7 kartlık kategori vitrini
+   ═══════════════════════════════════════════════════════════════ */
+
+.wcs-home-categories {
+  padding: 3.5rem 1.25rem 3.75rem;
+  background: var(--wcs-color-bg, var(--color-structure-white, #f8f8f8));
+}
+
+.wcs-home-categories__inner {
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+.wcs-home-categories__header {
+  text-align: left;
+  margin-bottom: 2.25rem;
+}
+
+.wcs-home-categories__title {
+  margin: 0 0 0.6rem;
+  font-family: var(--font-heading, 'Inter', sans-serif);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-size: clamp(1.6rem, 2.4vw, 2rem);
+  color: var(--wcs-color-primary, #0f131e);
+}
+
+.wcs-home-categories__subtitle {
+  margin: 0;
+  max-width: 560px;
+  font-size: 0.98rem;
+  color: rgba(43, 46, 55, 0.8);
+}
+
+.wcs-home-categories__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.wcs-home-category-card {
+  background: #ffffff;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid rgba(15, 19, 30, 0.06);
+  box-shadow: 0 12px 32px rgba(15, 19, 30, 0.06);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.wcs-home-category-card:hover,
+.wcs-home-category-card:focus-within {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(15, 19, 30, 0.12);
+  border-color: rgba(193, 46, 55, 0.28);
+}
+
+.wcs-home-category-card__media {
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.wcs-home-category-card__img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.25s ease;
+}
+
+.wcs-home-category-card:hover .wcs-home-category-card__img,
+.wcs-home-category-card:focus-within .wcs-home-category-card__img {
+  transform: scale(1.04);
+}
+
+.wcs-home-category-card__media-placeholder {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #111417, #1e2330);
+}
+
+.wcs-home-category-card__media-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 1px solid rgba(248, 248, 248, 0.35);
+  box-shadow: 0 0 0 1px rgba(193, 46, 55, 0.5);
+}
+
+.wcs-home-category-card__body {
+  padding: 1.25rem 1.35rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  flex: 1;
+}
+
+.wcs-home-category-card__title {
+  margin: 0;
+  font-family: var(--font-heading, 'Inter', sans-serif);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--wcs-color-primary, #0f131e);
+}
+
+.wcs-home-category-card__title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.wcs-home-category-card__title a:hover {
+  text-decoration: underline;
+}
+
+.wcs-home-category-card__excerpt {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: rgba(43, 46, 55, 0.85);
+}
+
+.wcs-home-category-card__badges {
+  list-style: none;
+  margin: 0.35rem 0 0.6rem;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.wcs-home-category-card__badge {
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: rgba(15, 19, 30, 0.8);
+  background: rgba(15, 19, 30, 0.03);
+  border: 1px solid rgba(15, 19, 30, 0.06);
+}
+
+.wcs-home-category-card__cta {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  border: 1px solid rgba(193, 46, 55, 0.35);
+  color: var(--wcs-color-accent, #c12e37);
+  text-decoration: none;
+  background: transparent;
+}
+
+.wcs-home-category-card__cta:hover {
+  background: rgba(193, 46, 55, 0.06);
+}
+
+/* Responsive */
+@media (max-width: 1023px) {
+  .wcs-home-categories {
+    padding: 3rem 1.1rem 3.25rem;
+  }
+
+  .wcs-home-categories__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .wcs-home-categories {
+    padding: 2.5rem 1rem 3rem;
+  }
+
+  .wcs-home-categories__header {
+    text-align: left;
+  }
+
+  .wcs-home-categories__grid {
+    grid-template-columns: 1fr;
+  }
+}
+

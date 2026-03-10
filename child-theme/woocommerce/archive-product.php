@@ -10,6 +10,7 @@ defined( 'ABSPATH' ) || exit;
 get_header( 'shop' );
 
 get_template_part( 'template-parts/components/hero/hero' );
+get_template_part( 'template-parts/components/home/home-category-grid' );
 echo '<div id="products-grid"></div>';
 
 do_action( 'woocommerce_before_main_content' );
