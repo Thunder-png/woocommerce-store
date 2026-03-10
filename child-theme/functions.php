@@ -49,6 +49,11 @@ function wcs_child_enqueue_assets() {
         array(),
         '1.11.3'
     );
+    wp_enqueue_style( 'wcs-product-card',
+    get_stylesheet_directory_uri() . '/assets/css/product-card.css',
+    array( 'wcs-custom-style', 'wcs-bootstrap-icons' ),
+    wcs_asset_version( 'assets/css/product-card.css', $child_theme->get('Version') )  
+    );
 
     $branding_base_url = trailingslashit( get_stylesheet_directory_uri() ) . 'assets/branding/';
 
@@ -313,6 +318,7 @@ function wcs_render_brand_footer() {
     <?php
 }
 add_action( 'wp_footer', 'wcs_render_brand_footer', 20 );
+
 
 /**
  * Central configuration for filterable WooCommerce attributes.

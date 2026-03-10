@@ -1,82 +1,143 @@
 <?php
 /**
- * Custom product card template.
+ * Product card loop template.
  *
- * @package WooCommerce\Templates
+ * Overrides: woocommerce/templates/content-product.php
+ * Path:      child-theme/woocommerce/content-product.php
+ *
+ * @package WooCommerceStoreChild
  */
 
 defined( 'ABSPATH' ) || exit;
 
 global $product;
 
-if ( empty( $product ) || ! $product->is_visible() ) {
-    return;
+if ( ! $product || ! $product->is_visible() ) {
+	return;
 }
 
-$filterable_attributes = function_exists( 'wcs_get_filterable_attribute_definitions' )
-    ? wcs_get_filterable_attribute_definitions()
-    : array();
+/* ── Badges ─────────────────────────────────── */
+$is_new   = ( time() - strtotime( $product->get_date_created() ) ) < ( 30 * DAY_IN_SECONDS );
+$in_stock = $product->is_in_stock();
+$low_stock = $in_stock && $product->get_stock_quantity() !== null && $product->get_stock_quantity() <= 5;
 
-$category_list = wc_get_product_category_list( $product->get_id(), ', ' );
+/* ── Category label ──────────────────────────── */
+$terms    = get_the_terms( $product->get_id(), 'product_cat' );
+$cat_name = ( $terms && ! is_wp_error( $terms ) ) ? esc_html( $terms[0]->name ) : '';
+
+/* ── Specs (custom fields) ───────────────────── */
+$layers  = get_post_meta( $product->get_id(), '_wcs_layers',   true );
+$mesh    = get_post_meta( $product->get_id(), '_wcs_mesh',     true );
+$std     = get_post_meta( $product->get_id(), '_wcs_standard', true );
+$extra   = get_post_meta( $product->get_id(), '_wcs_extra',    true );
+
+/* ── Price ───────────────────────────────────── */
+$price_raw = (float) wc_get_price_to_display( $product );
+$price_fmt = number_format( $price_raw, 2, ',', '.' );
+$currency  = get_woocommerce_currency_symbol();
 ?>
-<li <?php wc_product_class( 'wcs-product-card', $product ); ?>>
-    <article class="wcs-product-card__inner">
-        <a class="wcs-product-card__image-link" href="<?php the_permalink(); ?>" aria-label="<?php the_title_attribute(); ?>">
-            <?php if ( $product->is_on_sale() ) : ?>
-                <span class="wcs-product-card__badge"><?php esc_html_e( 'Öne Çıkan', 'woocommerce-store-child' ); ?></span>
-            <?php endif; ?>
-            <?php do_action( 'woocommerce_before_shop_loop_item_title' ); ?>
-        </a>
 
-        <div class="wcs-product-card__content">
-            <?php if ( ! empty( $category_list ) ) : ?>
-                <p class="wcs-product-card__meta"><?php echo wp_kses_post( $category_list ); ?></p>
-            <?php endif; ?>
+<div <?php wc_product_class( 'wcs-card', $product ); ?>>
 
-            <h2 class="woocommerce-loop-product__title wcs-product-card__title">
-                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-            </h2>
+	<?php /* Corner-cut pseudo element handled in CSS */ ?>
 
-            <div class="wcs-product-card__price">
-                <?php do_action( 'woocommerce_after_shop_loop_item_title' ); ?>
-            </div>
+	<!-- ── Badges ── -->
+	<div class="wcs-card__badges" aria-hidden="true">
+		<?php if ( $is_new ) : ?>
+			<span class="wcs-card__badge wcs-card__badge--new">
+				<i class="bi bi-lightning-fill"></i>
+				<?php esc_html_e( 'Yeni', 'woocommerce-store-child' ); ?>
+			</span>
+		<?php endif; ?>
 
-            <?php if ( ! empty( $filterable_attributes ) ) : ?>
-                <p class="wcs-product-card__spec-title"><?php esc_html_e( 'Teknik Özellikler', 'woocommerce-store-child' ); ?></p>
-                <ul class="wcs-product-card__attributes" aria-label="<?php esc_attr_e( 'Product specifications', 'woocommerce-store-child' ); ?>">
-                    <?php foreach ( $filterable_attributes as $attribute_slug => $attribute_config ) : ?>
-                        <?php
-                        $taxonomy = 'pa_' . $attribute_slug;
+		<?php if ( $low_stock ) : ?>
+			<span class="wcs-card__badge wcs-card__badge--low">
+				<i class="bi bi-exclamation-triangle-fill"></i>
+				<?php esc_html_e( 'Son Stok', 'woocommerce-store-child' ); ?>
+			</span>
+		<?php elseif ( $in_stock ) : ?>
+			<span class="wcs-card__badge wcs-card__badge--stock">
+				<i class="bi bi-check-circle-fill"></i>
+				<?php esc_html_e( 'Stokta', 'woocommerce-store-child' ); ?>
+			</span>
+		<?php endif; ?>
+	</div>
 
-                        if ( ! taxonomy_exists( $taxonomy ) ) {
-                            continue;
-                        }
+	<!-- ── Thumbnail ── -->
+	<a href="<?php the_permalink(); ?>" class="wcs-card__img" tabindex="-1" aria-hidden="true">
+		<?php if ( has_post_thumbnail() ) : ?>
+			<?php echo woocommerce_get_product_thumbnail( 'woocommerce_thumbnail' ); ?>
+		<?php else : ?>
+			<div class="wcs-card__img-placeholder">
+				<i class="bi bi-shield-fill-check wcs-card__img-icon" aria-hidden="true"></i>
+			</div>
+		<?php endif; ?>
+		<span class="wcs-card__m2-tag"><?php esc_html_e( 'm² bazlı fiyat', 'woocommerce-store-child' ); ?></span>
+	</a>
 
-                        $terms = wc_get_product_terms(
-                            $product->get_id(),
-                            $taxonomy,
-                            array(
-                                'fields' => 'names',
-                            )
-                        );
+	<!-- ── Body ── -->
+	<div class="wcs-card__body">
 
-                        if ( empty( $terms ) ) {
-                            continue;
-                        }
-                        ?>
-                        <li>
-                            <span class="wcs-product-card__attr-label"><?php echo esc_html( $attribute_config['label'] ); ?>:</span>
-                            <span class="wcs-product-card__attr-value"><?php echo esc_html( implode( ', ', $terms ) ); ?></span>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php endif; ?>
+		<?php if ( $cat_name ) : ?>
+			<span class="wcs-card__cat"><?php echo esc_html( $cat_name ); ?></span>
+		<?php endif; ?>
 
-            <div class="wcs-product-card__actions">
-                <?php if ( function_exists( 'woocommerce_template_loop_add_to_cart' ) ) : ?>
-                    <?php woocommerce_template_loop_add_to_cart(); ?>
-                <?php endif; ?>
-            </div>
-        </div>
-    </article>
-</li>
+		<h2 class="wcs-card__name">
+			<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+		</h2>
+
+		<!-- Specs -->
+		<?php if ( $layers || $mesh || $std || $extra ) : ?>
+			<div class="wcs-card__specs">
+				<?php if ( $layers ) : ?>
+					<span class="wcs-card__spec">
+						<i class="bi bi-layers" aria-hidden="true"></i>
+						<?php echo esc_html( $layers ); ?>
+					</span>
+				<?php endif; ?>
+				<?php if ( $mesh ) : ?>
+					<span class="wcs-card__spec">
+						<i class="bi bi-grid-3x3" aria-hidden="true"></i>
+						<?php echo esc_html( $mesh ); ?>
+					</span>
+				<?php endif; ?>
+				<?php if ( $std ) : ?>
+					<span class="wcs-card__spec">
+						<i class="bi bi-award" aria-hidden="true"></i>
+						<?php echo esc_html( $std ); ?>
+					</span>
+				<?php endif; ?>
+				<?php if ( $extra ) : ?>
+					<span class="wcs-card__spec">
+						<i class="bi bi-lightning-charge" aria-hidden="true"></i>
+						<?php echo esc_html( $extra ); ?>
+					</span>
+				<?php endif; ?>
+			</div>
+		<?php endif; ?>
+
+		<div class="wcs-card__hr"></div>
+
+		<!-- Footer: price + CTA -->
+		<div class="wcs-card__footer">
+			<div class="wcs-card__pricing">
+				<div class="wcs-card__price-lbl">
+					<?php esc_html_e( 'Fiyat', 'woocommerce-store-child' ); ?>
+				</div>
+				<div class="wcs-card__price">
+					<span class="wcs-card__price-cur"><?php echo esc_html( $currency ); ?></span>
+					<?php echo esc_html( $price_fmt ); ?>
+					<span class="wcs-card__price-unit">/ m²</span>
+				</div>
+			</div>
+
+			<a href="<?php the_permalink(); ?>" class="wcs-card__cta">
+				<?php esc_html_e( 'İncele', 'woocommerce-store-child' ); ?>
+				<i class="bi bi-arrow-right" aria-hidden="true"></i>
+			</a>
+		</div>
+
+	</div><!-- /.wcs-card__body -->
+
+	<span class="wcs-card__line" aria-hidden="true"></span>
+</div>

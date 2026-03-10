@@ -1,0 +1,411 @@
+/* ═══════════════════════════════════════════════════════════════
+   WCS PRODUCT CARD
+   child-theme/woocommerce/product-card.css
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Design tokens (hero ile aynı) ── */
+.wcs-card {
+  --wcs-red:       #e2000d;
+  --wcs-dark:      #0a0a0a;
+  --wcs-surface:   #111417;
+  --wcs-white:     #f8f8f8;
+  --wcs-muted:     rgba(248,248,248,0.42);
+  --wcs-border:    rgba(248,248,248,0.07);
+}
+
+/* ── Grid container ── */
+.wcs-shop__grid,
+ul.products {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 3.5rem 6rem;
+  list-style: none;
+}
+
+/* ── Card base ── */
+.wcs-card {
+  position: relative;
+  background: var(--wcs-surface);
+  border: 1px solid var(--wcs-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0;
+  animation: wcsCardIn 0.5s ease-out forwards;
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+/* Corner cut (top-right) */
+.wcs-card::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 14px; height: 14px;
+  background: #0d0f12;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+  z-index: 10;
+  transition: background 0.3s;
+}
+
+.wcs-card:hover {
+  border-color: rgba(226,0,13,0.35);
+  transform: translateY(-5px);
+  box-shadow:
+    0 0 0 1px rgba(226,0,13,0.12),
+    0 20px 60px rgba(0,0,0,0.6),
+    0 0 80px rgba(226,0,13,0.06);
+}
+
+/* Stagger animation */
+.wcs-card:nth-child(1) { animation-delay: 0.05s; }
+.wcs-card:nth-child(2) { animation-delay: 0.12s; }
+.wcs-card:nth-child(3) { animation-delay: 0.19s; }
+.wcs-card:nth-child(4) { animation-delay: 0.26s; }
+.wcs-card:nth-child(5) { animation-delay: 0.33s; }
+.wcs-card:nth-child(6) { animation-delay: 0.40s; }
+.wcs-card:nth-child(n+7) { animation-delay: 0.46s; }
+
+/* ── Badges ── */
+.wcs-card__badges {
+  position: absolute;
+  top: 12px; left: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wcs-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 10px 4px 12px;
+}
+
+.wcs-card__badge--new   { background: var(--wcs-red); color: var(--wcs-white); }
+.wcs-card__badge--stock { background: rgba(0,180,80,0.10); color: #3ddc84; border: 1px solid rgba(0,180,80,0.2); }
+.wcs-card__badge--low   { background: rgba(255,160,0,0.10); color: #ffb830; border: 1px solid rgba(255,160,0,0.18); }
+
+/* ── Image ── */
+.wcs-card__img {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #161a1f;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.wcs-card__img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(10,10,10,0.65) 100%);
+  pointer-events: none;
+}
+
+.wcs-card__img img,
+.wcs-card__img .attachment-woocommerce_thumbnail {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  display: block;
+}
+
+.wcs-card:hover .wcs-card__img img,
+.wcs-card:hover .wcs-card__img .attachment-woocommerce_thumbnail { transform: scale(1.04); }
+
+.wcs-card__img-placeholder {
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    repeating-linear-gradient(45deg, transparent, transparent 18px, rgba(255,255,255,0.012) 18px, rgba(255,255,255,0.012) 36px),
+    #161a1f;
+  transition: transform 0.5s ease;
+}
+.wcs-card:hover .wcs-card__img-placeholder { transform: scale(1.04); }
+
+.wcs-card__img-icon { font-size: 2.5rem; color: rgba(248,248,248,0.07); }
+
+.wcs-card__m2-tag {
+  position: absolute;
+  bottom: 10px; right: 10px;
+  z-index: 3;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(248,248,248,0.55);
+  background: rgba(10,10,10,0.7);
+  border: 1px solid rgba(248,248,248,0.08);
+  padding: 3px 8px;
+  backdrop-filter: blur(6px);
+}
+
+/* ── Body ── */
+.wcs-card__body {
+  padding: 1.1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  flex: 1;
+}
+
+.wcs-card__cat {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--wcs-red);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.wcs-card__cat::before {
+  content: '';
+  display: inline-block;
+  width: 14px; height: 1px;
+  background: var(--wcs-red);
+  opacity: 0.6;
+}
+
+.wcs-card__name {
+  font-family: var(--font-heading, 'Inter', sans-serif);
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--wcs-white);
+  letter-spacing: -0.01em;
+}
+.wcs-card__name a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.wcs-card__name a:hover { color: rgba(248,248,248,0.75); }
+
+/* ── Specs ── */
+.wcs-card__specs {
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.wcs-card__spec {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: var(--wcs-muted);
+}
+.wcs-card__spec .bi { font-size: 10px; color: rgba(226,0,13,0.6); }
+
+/* ── Divider ── */
+.wcs-card__hr {
+  height: 1px;
+  background: var(--wcs-border);
+  margin: 0.2rem 0;
+}
+
+/* ── Footer ── */
+.wcs-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: auto;
+}
+
+.wcs-card__price-lbl {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(248,248,248,0.35);
+  margin-bottom: 3px;
+}
+
+.wcs-card__price {
+  font-family: var(--font-heading, 'Inter', sans-serif);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--wcs-white);
+  line-height: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+.wcs-card__price-cur  { font-size: 0.65em; font-weight: 500; color: rgba(248,248,248,0.4); }
+.wcs-card__price-unit { font-size: 0.48em; font-weight: 600; color: var(--wcs-red); text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* ── CTA button ── */
+.wcs-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--wcs-red);
+  color: var(--wcs-white);
+  font-family: var(--font-heading, 'Inter', sans-serif);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 9px 15px;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 0 100%);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.wcs-card__cta:hover {
+  background: #f50010;
+  box-shadow: 0 4px 18px rgba(226,0,13,0.4);
+  transform: translateY(-1px);
+  color: var(--wcs-white);
+}
+.wcs-card__cta .bi { font-size: 0.9em; transition: transform 0.2s; }
+.wcs-card:hover .wcs-card__cta .bi { transform: translateX(3px); }
+
+/* ── Bottom accent line ── */
+.wcs-card__line {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 2px; width: 0;
+  background: var(--wcs-red);
+  transition: width 0.4s ease;
+  box-shadow: 0 0 10px rgba(226,0,13,0.5);
+}
+.wcs-card:hover .wcs-card__line { width: 100%; }
+
+/* ── Section header ── */
+.wcs-shop__header {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 5rem 3.5rem 2.5rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.wcs-shop__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--wcs-red, #e2000d);
+  margin-bottom: 12px;
+}
+.wcs-shop__eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 24px; height: 1px;
+  background: var(--wcs-red, #e2000d);
+  opacity: 0.6;
+}
+
+.wcs-shop__title {
+  font-family: var(--font-heading, 'Inter', sans-serif);
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--color-structure-white, #f8f8f8);
+}
+.wcs-shop__title span { color: var(--color-safety-red, #e2000d); }
+
+/* Sort buttons */
+.wcs-shop__sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: rgba(248,248,248,0.4);
+}
+.wcs-shop__sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(248,248,248,0.04);
+  border: 1px solid rgba(248,248,248,0.08);
+  padding: 7px 14px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: rgba(248,248,248,0.5);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+.wcs-shop__sort-btn:hover { border-color: rgba(248,248,248,0.15); color: #f8f8f8; }
+.wcs-shop__sort-btn.active { border-color: #e2000d; color: #e2000d; background: rgba(226,0,13,0.06); }
+
+/* ── Filter bar ── */
+.wcs-shop__filters {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 3.5rem 2.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.wcs-shop__filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid rgba(248,248,248,0.08);
+  padding: 6px 14px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(248,248,248,0.45);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.wcs-shop__filter:hover  { border-color: rgba(248,248,248,0.2); color: rgba(248,248,248,0.8); }
+.wcs-shop__filter.active { border-color: #e2000d; color: #e2000d; background: rgba(226,0,13,0.06); }
+.wcs-shop__filter .bi { font-size: 11px; }
+.wcs-shop__filter-divider { width: 1px; height: 20px; background: rgba(248,248,248,0.07); margin: 0 4px; }
+
+/* ── Keyframes ── */
+@keyframes wcsCardIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+  .wcs-shop__grid,
+  ul.products { grid-template-columns: repeat(2, 1fr); padding: 0 2rem 4rem; }
+  .wcs-shop__header,
+  .wcs-shop__filters { padding-left: 2rem; padding-right: 2rem; }
+}
+
+@media (max-width: 640px) {
+  .wcs-shop__grid,
+  ul.products { grid-template-columns: 1fr; padding: 0 1.2rem 3rem; gap: 1rem; }
+  .wcs-shop__header { padding: 3rem 1.2rem 1.5rem; flex-direction: column; align-items: flex-start; }
+  .wcs-shop__filters { padding: 0 1.2rem 1.5rem; }
+  .wcs-card__price { font-size: 1.1rem; }
+}
