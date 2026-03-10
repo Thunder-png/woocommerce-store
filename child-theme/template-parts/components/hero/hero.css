@@ -1,11 +1,11 @@
 /* ═══════════════════════════════════════════════════════════════
-   WCS HERO — Enhanced UI
+   WCS HERO — Enhanced UI  |  Bootstrap Icons + Full Responsive
    child-theme/template-parts/components/hero/hero.css
    ═══════════════════════════════════════════════════════════════ */
 
 .wcs-hero {
   --wcs-red:          var(--color-safety-red, #e2000d);
-  --wcs-red-glow:     color-mix(in srgb, var(--wcs-red) 25%, transparent);
+  --wcs-red-glow:     rgba(226, 0, 13, 0.25);
   --wcs-dark:         #0a0a0a;
   --wcs-surface:      #111417;
   --wcs-white:        var(--color-structure-white, #f8f8f8);
@@ -23,14 +23,14 @@
   background: var(--wcs-dark);
 }
 
-/* Grain texture overlay */
+/* Grain texture */
 .wcs-hero::before {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.025;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.022;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 200px 200px;
   z-index: 0;
 }
@@ -41,7 +41,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.018;
+  opacity: 0.016;
   background-image: radial-gradient(circle at 1px 1px, #fff 0.5px, transparent 0.5px);
   background-size: 28px 28px;
   z-index: 0;
@@ -96,6 +96,7 @@
   align-items: center;
   gap: 14px;
   margin-bottom: 30px;
+  flex-wrap: wrap;
   opacity: 0;
   transform: translateY(18px);
   animation: wcsHeroUp 0.55s 0.1s ease-out forwards;
@@ -124,7 +125,7 @@
   inset: 0;
   background: linear-gradient(90deg, transparent, rgba(226,0,13,0.08), transparent);
   transform: translateX(-100%);
-  animation: wcsTagShimmer 3s ease-in-out infinite 1s;
+  animation: wcsTagShimmer 3s ease-in-out infinite 1.2s;
 }
 
 .wcs-hero__tag-dot {
@@ -138,6 +139,9 @@
 }
 
 .wcs-hero__cert {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 10px;
   font-family: var(--wcs-font-body);
   font-weight: 400;
@@ -148,11 +152,16 @@
   padding-left: 14px;
 }
 
+.wcs-hero__cert .bi {
+  font-size: 11px;
+  color: rgba(248, 248, 248, 0.35);
+}
+
 /* ── Title ── */
 .wcs-hero__title {
   margin: 0;
   font-family: var(--wcs-font-heading);
-  font-size: clamp(60px, 5.8vw, 96px);
+  font-size: clamp(52px, 5.8vw, 96px);
   font-weight: 900;
   line-height: 0.90;
   text-transform: uppercase;
@@ -175,21 +184,11 @@
   position: relative;
 }
 
-/* Animated underline accent on red word */
-.wcs-hero__title-red::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--wcs-red);
-  animation: wcsLineGrow 0.6s 1s ease-out forwards;
-}
+
 
 .wcs-hero__title-outline {
   color: transparent;
-  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.18);
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.85);
 }
 
 /* ── Body text ── */
@@ -216,7 +215,8 @@
   margin-top: 36px;
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 20px;
+  flex-wrap: wrap;
   opacity: 0;
   transform: translateY(18px);
   animation: wcsHeroUp 0.6s 0.62s ease-out forwards;
@@ -227,18 +227,23 @@
   align-items: center;
   gap: 0.5rem;
   text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   transition: all 0.25s ease;
+  white-space: nowrap;
 }
 
-.wcs-hero__btn i { font-size: 0.82em; }
+/* Bootstrap icon size inside buttons */
+.wcs-hero__btn .bi {
+  font-size: 0.95em;
+  line-height: 1;
+}
 
 .wcs-hero__btn--primary {
   font-family: var(--wcs-font-heading);
   font-size: 13px;
   font-weight: 700;
-  padding: 13px 28px;
+  text-transform: uppercase;
+  padding: 13px 26px;
   background: var(--wcs-red);
   color: var(--wcs-white);
   clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
@@ -250,7 +255,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 60%);
   opacity: 0;
   transition: opacity 0.25s;
 }
@@ -259,6 +264,8 @@
   background: #f50010;
   box-shadow: 0 6px 32px rgba(226,0,13,0.45);
   transform: translateY(-2px);
+  color: var(--wcs-white);
+  text-decoration: none;
 }
 
 .wcs-hero__btn--primary:hover::before { opacity: 1; }
@@ -275,16 +282,17 @@
   font-family: var(--wcs-font-body);
   font-size: 12px;
   font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0.03em;
   color: rgba(255, 255, 255, 0.52);
   border-bottom: 1px solid rgba(255, 255, 255, 0.16);
   padding-bottom: 2px;
-  letter-spacing: 0.04em;
-  text-transform: none;
 }
 
 .wcs-hero__btn--link:hover {
   color: var(--wcs-white);
   border-bottom-color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
 }
 
 /* ── Stats ── */
@@ -368,9 +376,9 @@
   overflow: hidden;
   flex-shrink: 0;
   animation: wcsHeroFloat 9s ease-in-out infinite;
+  transition: transform 0.1s ease-out;
 }
 
-/* Red corner brackets */
 .wcs-hero__net-card::before,
 .wcs-hero__net-card::after {
   content: '';
@@ -378,7 +386,7 @@
   width: 22px;
   height: 22px;
   z-index: 4;
-  transition: all 0.3s;
+  transition: width 0.3s, height 0.3s;
 }
 
 .wcs-hero__net-card::before {
@@ -399,14 +407,13 @@
   height: 36px;
 }
 
-/* Remaining brackets (top-right, bottom-left via spans) */
 .wcs-hero__bracket-tr,
 .wcs-hero__bracket-bl {
   position: absolute;
   width: 22px;
   height: 22px;
   z-index: 4;
-  transition: all 0.3s;
+  transition: width 0.3s, height 0.3s;
 }
 
 .wcs-hero__bracket-tr {
@@ -427,8 +434,7 @@
   height: 36px;
 }
 
-/* Red glow sweep on hover */
-.wcs-hero__net-card .wcs-hero__net-glow {
+.wcs-hero__net-glow {
   position: absolute;
   inset: 0;
   background: radial-gradient(circle at 50% 50%, rgba(226,0,13,0.12) 0%, transparent 65%);
@@ -504,7 +510,7 @@
   left: -56px;
   bottom: -20px;
   padding: 1.1rem 1.2rem;
-  min-width: 238px;
+  min-width: 240px;
   border: 1px solid rgba(248, 248, 248, 0.1);
   background: rgba(10, 10, 10, 0.96);
   backdrop-filter: blur(16px);
@@ -514,7 +520,10 @@
 }
 
 .wcs-hero__spec-card-title {
-  margin: 0 0 0.75rem;
+  margin: 0 0 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-family: var(--wcs-font-body);
   font-size: 9px;
   font-weight: 600;
@@ -522,7 +531,12 @@
   text-transform: uppercase;
   color: var(--wcs-muted);
   border-bottom: 1px solid rgba(255,255,255,0.06);
-  padding-bottom: 0.6rem;
+  padding-bottom: 0.65rem;
+}
+
+.wcs-hero__spec-card-title .bi {
+  font-size: 11px;
+  color: var(--wcs-red);
 }
 
 .wcs-hero__spec-card p {
@@ -533,11 +547,22 @@
   gap: 0.75rem;
   font-family: var(--wcs-font-body);
   font-size: 0.73rem;
-  color: rgba(248, 248, 248, 0.62);
+  color: rgba(248, 248, 248, 0.6);
 }
 
 .wcs-hero__spec-card p + p {
   margin-top: 0.5rem;
+}
+
+.wcs-hero__spec-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.wcs-hero__spec-key .bi {
+  font-size: 11px;
+  color: rgba(248, 248, 248, 0.28);
 }
 
 .wcs-hero__spec-card strong {
@@ -569,15 +594,19 @@
 }
 
 .wcs-hero__pill-icon {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   background: rgba(226,0,13,0.1);
   border: 1px solid rgba(226,0,13,0.22);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
   flex-shrink: 0;
+}
+
+.wcs-hero__pill-icon .bi {
+  font-size: 11px;
+  color: var(--wcs-red);
 }
 
 .wcs-hero__pill--1 {
@@ -594,11 +623,11 @@
 
 .wcs-hero__pill--3 {
   top: 160px;
-  right: -110px;
+  right: -112px;
   animation: wcsHeroFloatA 6.5s ease-in-out infinite 1s;
 }
 
-/* ── Progress rings (decorative) ── */
+/* ── Decorative ring ── */
 .wcs-hero__ring {
   position: absolute;
   top: -30px;
@@ -610,15 +639,8 @@
   z-index: 1;
 }
 
-.wcs-hero__ring circle {
-  fill: none;
-  stroke-width: 1;
-}
-
-.wcs-hero__ring .ring-bg {
-  stroke: rgba(255,255,255,0.06);
-}
-
+.wcs-hero__ring circle { fill: none; stroke-width: 1; }
+.wcs-hero__ring .ring-bg   { stroke: rgba(255,255,255,0.06); }
 .wcs-hero__ring .ring-fill {
   stroke: var(--wcs-red);
   stroke-dasharray: 440;
@@ -659,23 +681,20 @@
 .wcs-hero__ticker-item {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   height: 48px;
   padding: 0 1.6rem;
   border-right: 1px solid rgba(248, 248, 248, 0.18);
   font-family: var(--wcs-font-heading);
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgba(248, 248, 248, 0.92);
-  gap: 0.8rem;
 }
 
-.wcs-hero__ticker-dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.5);
-  flex-shrink: 0;
+.wcs-hero__ticker-item .bi {
+  font-size: 14px;
+  opacity: 0.7;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -684,11 +703,11 @@
 
 .wcs-hero__scroll {
   position: absolute;
-  bottom: 68px;
+  bottom: 66px;
   left: 3.5rem;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   z-index: 6;
   opacity: 0;
   animation: wcsHeroFade 0.6s 1.5s forwards;
@@ -711,11 +730,19 @@
 }
 
 .wcs-hero__scroll-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--wcs-muted);
+}
+
+.wcs-hero__scroll-label .bi {
+  font-size: 11px;
+  animation: wcsChevronBounce 2s ease-in-out infinite;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -774,60 +801,269 @@
   to   { stroke-dashoffset: 110; }
 }
 
+@keyframes wcsChevronBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50%       { transform: translateY(3px); opacity: 1; }
+}
+
 /* ═══════════════════════════════════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE — 1280px (large laptop)
    ═══════════════════════════════════════════════════════════════ */
 
-@media (max-width: 1200px) {
+@media (max-width: 1280px) {
+  .wcs-hero__inner {
+    grid-template-columns: 520px 1fr;
+    gap: 3.5rem;
+    padding: 3.5rem 2.5rem 5.5rem;
+  }
+
+  .wcs-hero__pill--1 { right: -80px; }
+  .wcs-hero__pill--2 { right: -95px; }
+  .wcs-hero__pill--3 { right: -78px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE — 1100px (tablet landscape / small laptop)
+   Stacks to single column, right panel shown inline
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1100px) {
   .wcs-hero__inner {
     grid-template-columns: 1fr;
     gap: 2.5rem;
-    padding: 3rem 1.5rem 6rem;
+    padding: 3rem 2rem 6rem;
+    max-width: 680px;
   }
 
   .wcs-hero__right {
     height: auto;
-    justify-content: flex-start;
-    padding-left: 0;
+    justify-content: center;
+    padding: 0;
+    /* show a compact version below text */
   }
 
-  .wcs-hero__pill { display: none; }
+  /* Hide pills and ring at tablet — they overflow */
+  .wcs-hero__pill  { display: none; }
+  .wcs-hero__ring  { display: none; }
 
+  /* Spec card repositions below/inside the card */
   .wcs-hero__spec-card {
-    left: 10px;
-    bottom: 10px;
+    left: 0;
+    bottom: -64px;
+    min-width: 200px;
   }
 
-  .wcs-hero__ring { display: none; }
+  .wcs-hero__net-card {
+    width: 320px;
+    height: 320px;
+  }
+
+  .wcs-hero__right {
+    padding-bottom: 4rem; /* room for floating spec card */
+  }
+
+  .wcs-hero__scroll {
+    left: 2rem;
+  }
+
+  /* Vignette: full dark on tablet since image is gone */
+  .wcs-hero__vignette {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(226, 0, 13, 0.05) 0%, transparent 60%),
+      linear-gradient(180deg, rgba(10,10,10,0.7) 0%, rgba(10,10,10,0.95) 100%);
+  }
 }
 
-@media (max-width: 700px) {
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE — 768px (tablet portrait)
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
   .wcs-hero {
-    min-height: 0;
+    min-height: 100svh; /* use small viewport height */
   }
 
   .wcs-hero__inner {
-    padding: 2.5rem 1rem 6rem;
+    padding: 2.5rem 1.25rem 6rem;
+    max-width: 100%;
+    gap: 2rem;
   }
 
+  /* Hide right panel entirely on tablet portrait */
   .wcs-hero__right {
     display: none;
   }
 
+  .wcs-hero__title {
+    font-size: clamp(48px, 11vw, 68px);
+  }
+
+  .wcs-hero__text {
+    font-size: 14px;
+    max-width: 100%;
+  }
+
+  .wcs-hero__actions {
+    gap: 14px;
+  }
+
+  .wcs-hero__btn--primary {
+    padding: 12px 22px;
+    font-size: 12px;
+  }
+
+  /* Stats: 2 columns */
   .wcs-hero__stats {
-    flex-wrap: wrap;
-    gap: 1.2rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem 0;
+    margin-top: 2rem;
+    padding-top: 1.4rem;
   }
 
   .wcs-hero__stat {
-    flex: 0 0 calc(50% - 0.6rem);
     margin-right: 0;
     padding-right: 0;
     border-right: 0;
   }
 
+  /* Odd stats get right border as visual separator */
+  .wcs-hero__stat:nth-child(odd) {
+    border-right: 1px solid var(--wcs-border);
+    padding-right: 1rem;
+  }
+
+  .wcs-hero__stat-value {
+    font-size: 1.7rem;
+  }
+
+  .wcs-hero__scroll {
+    left: 1.25rem;
+    bottom: 58px;
+  }
+
+  .wcs-hero__cert {
+    display: none; /* too cramped on small screens */
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE — 480px (mobile)
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 480px) {
+  .wcs-hero__inner {
+    padding: 2rem 1rem 5.5rem;
+  }
+
+  .wcs-hero__title {
+    font-size: clamp(44px, 13vw, 56px);
+    line-height: 0.92;
+  }
+
+  .wcs-hero__tag-row {
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+
+  .wcs-hero__tag {
+    font-size: 9px;
+    padding: 4px 10px;
+  }
+
+  .wcs-hero__text {
+    font-size: 13.5px;
+    line-height: 1.7;
+    margin-top: 20px;
+  }
+
+  .wcs-hero__actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .wcs-hero__btn--primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Stats: single column on very small screens */
+  .wcs-hero__stats {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .wcs-hero__stat:nth-child(odd) {
+    border-right: 0;
+    padding-right: 0;
+  }
+
+  .wcs-hero__stat {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--wcs-border);
+    border-right: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .wcs-hero__stat:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .wcs-hero__stat-value {
+    font-size: 1.8rem;
+    min-width: 60px;
+  }
+
+  .wcs-hero__stat-label {
+    margin-top: 0;
+    font-size: 11px;
+  }
+
+  .wcs-hero__ticker-item {
+    font-size: 0.68rem;
+    padding: 0 1.1rem;
+    gap: 6px;
+  }
+
   .wcs-hero__scroll {
     left: 1rem;
-    bottom: 56px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .wcs-hero__canvas { display: none; }
+
+  .wcs-hero__tag-row,
+  .wcs-hero__title,
+  .wcs-hero__text,
+  .wcs-hero__actions,
+  .wcs-hero__stats,
+  .wcs-hero__right,
+  .wcs-hero__scroll {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .wcs-hero__net-card,
+  .wcs-hero__spec-card,
+  .wcs-hero__pill--1,
+  .wcs-hero__pill--2,
+  .wcs-hero__pill--3,
+  .wcs-hero__ticker-track,
+  .wcs-hero__tag-dot,
+  .wcs-hero__ring .ring-fill,
+  .wcs-hero__title-red::after {
+    animation: none;
   }
 }

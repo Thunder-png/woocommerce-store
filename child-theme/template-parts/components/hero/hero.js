@@ -18,8 +18,8 @@
     var ctx = canvas.getContext('2d');
     var W, H;
     var nodes = [];
-    var cols  = 26;
-    var rows  = 16;
+    var cols  = 22;
+    var rows  = 14;
     var mouse = { x: -9999, y: -9999 };
     var t     = 0;
     var raf;
@@ -38,9 +38,7 @@
             x:  0,
             y:  0,
             ph: Math.random() * Math.PI * 2,
-            sp: 0.22 + Math.random() * 0.32,
-            vx: 0,
-            vy: 0,
+            sp: 0.18 + Math.random() * 0.28,
           });
         }
       }
@@ -53,7 +51,7 @@
       /* Update node positions */
       for (var i = 0; i < nodes.length; i++) {
         var n  = nodes[i];
-        var w  = Math.sin(t * n.sp + n.ph) * 8;
+        var w  = Math.sin(t * n.sp + n.ph) * 14;
         n.x    = n.ox + Math.cos(n.ph * 1.4) * w * 0.45;
         n.y    = n.oy + w;
 
@@ -61,8 +59,8 @@
         var dx = n.x - mouse.x;
         var dy = n.y - mouse.y;
         var d  = Math.sqrt(dx * dx + dy * dy);
-        if (d < 150 && d > 0) {
-          var f = (150 - d) / 150 * 22;
+        if (d < 180 && d > 0) {
+          var f = (180 - d) / 180 * 32;
           n.x  += (dx / d) * f;
           n.y  += (dy / d) * f;
         }
@@ -74,57 +72,74 @@
           var idx = r * cols + c;
           var n   = nodes[idx];
 
-          /* Horizontal — white */
+          /* Horizontal — white, brighter with pulse */
           if (c < cols - 1) {
-            var nx = nodes[idx + 1];
-            var a  = 0.06 + Math.sin(t * 0.38 + r * 0.55) * 0.024;
+            var nx  = nodes[idx + 1];
+            var a   = 0.55 + Math.sin(t * 0.4 + r * 0.6) * 0.12;
+            /* glow pass */
+            ctx.beginPath();
+            ctx.moveTo(n.x, n.y);
+            ctx.lineTo(nx.x, nx.y);
+            ctx.strokeStyle = 'rgba(255,255,255,' + (a * 0.25) + ')';
+            ctx.lineWidth   = 5;
+            ctx.stroke();
+            /* sharp pass */
             ctx.beginPath();
             ctx.moveTo(n.x, n.y);
             ctx.lineTo(nx.x, nx.y);
             ctx.strokeStyle = 'rgba(255,255,255,' + a + ')';
-            ctx.lineWidth   = 0.5;
+            ctx.lineWidth   = 1.6;
             ctx.stroke();
           }
 
-          /* Vertical — red */
+          /* Vertical — red, brighter with pulse */
           if (r < rows - 1) {
-            var nb = nodes[idx + cols];
-            var ab = 0.045 + Math.sin(t * 0.32 + c * 0.42) * 0.02;
+            var nb  = nodes[idx + cols];
+            var ab  = 0.38 + Math.sin(t * 0.35 + c * 0.45) * 0.1;
+            /* glow pass */
+            ctx.beginPath();
+            ctx.moveTo(n.x, n.y);
+            ctx.lineTo(nb.x, nb.y);
+            ctx.strokeStyle = 'rgba(240,80,80,' + (ab * 0.3) + ')';
+            ctx.lineWidth   = 5;
+            ctx.stroke();
+            /* sharp pass */
             ctx.beginPath();
             ctx.moveTo(n.x, n.y);
             ctx.lineTo(nb.x, nb.y);
             ctx.strokeStyle = 'rgba(226,0,13,' + ab + ')';
-            ctx.lineWidth   = 0.5;
+            ctx.lineWidth   = 1.6;
             ctx.stroke();
           }
 
-          /* Diagonal — subtle */
-          if (c < cols - 1 && r < rows - 1 && (r + c) % 4 === 0) {
+          /* Diagonal — visible now */
+          if (c < cols - 1 && r < rows - 1 && (r + c) % 3 === 0) {
             var nd = nodes[idx + cols + 1];
             ctx.beginPath();
             ctx.moveTo(n.x, n.y);
             ctx.lineTo(nd.x, nd.y);
-            ctx.strokeStyle = 'rgba(255,255,255,0.018)';
-            ctx.lineWidth   = 0.4;
+            ctx.strokeStyle = 'rgba(255,255,255,0.055)';
+            ctx.lineWidth   = 0.5;
             ctx.stroke();
           }
 
           /* Nodes */
-          var near = Math.hypot(n.x - mouse.x, n.y - mouse.y) < 160;
-          ctx.beginPath();
-          ctx.arc(n.x, n.y, near ? 2.4 : 0.9, 0, Math.PI * 2);
-          ctx.fillStyle = near
-            ? 'rgba(226,0,13,0.6)'
-            : 'rgba(255,255,255,0.11)';
-          ctx.fill();
+          var dist = Math.hypot(n.x - mouse.x, n.y - mouse.y);
+          var near = dist < 180;
 
-          /* Glow for very close nodes */
-          if (near && Math.hypot(n.x - mouse.x, n.y - mouse.y) < 80) {
+          if (near) {
             ctx.beginPath();
-            ctx.arc(n.x, n.y, 7, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(226,0,13,0.07)';
+            ctx.arc(n.x, n.y, 10, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(226,0,13,' + ((180 - dist) / 180 * 0.12) + ')';
             ctx.fill();
           }
+
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, near ? 3.0 : 1.4, 0, Math.PI * 2);
+          ctx.fillStyle = near
+            ? 'rgba(226,0,13,0.85)'
+            : 'rgba(255,255,255,0.22)';
+          ctx.fill();
         }
       }
 
@@ -187,10 +202,21 @@
 
       stats.forEach(function (el) {
         var target   = parseInt(el.getAttribute('data-target'), 10);
-        var sup      = el.querySelector('sup');
-        var supText  = sup ? sup.textContent : '';
         var duration = 1400;
         var start    = null;
+
+        /* Find or create the leading text node (before <sup>) */
+        var textNode = null;
+        for (var i = 0; i < el.childNodes.length; i++) {
+          if (el.childNodes[i].nodeType === 3) {
+            textNode = el.childNodes[i];
+            break;
+          }
+        }
+        if (!textNode) {
+          textNode = document.createTextNode('');
+          el.insertBefore(textNode, el.firstChild);
+        }
 
         function step(ts) {
           if (!start) start = ts;
@@ -198,22 +224,12 @@
           var eased    = easeOutQuart(progress);
           var current  = Math.round(eased * target);
 
-          /* Rebuild text node while preserving <sup> */
-          el.childNodes.forEach(function (node) {
-            if (node.nodeType === 3) node.textContent = current;
-          });
-
-          if (!sup) {
-            el.textContent = current;
-          }
+          textNode.textContent = current;
 
           if (progress < 1) {
             requestAnimationFrame(step);
           } else {
-            /* Ensure exact final value */
-            el.childNodes.forEach(function (node) {
-              if (node.nodeType === 3) node.textContent = target;
-            });
+            textNode.textContent = target;
           }
         }
 

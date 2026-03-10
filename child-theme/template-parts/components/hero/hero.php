@@ -25,42 +25,52 @@ $hero_stats = array(
 	array(
 		'value' => '48',
 		'sup'   => 'sa',
-		'label' => __( 'Hızlı Termin', 'woocommerce-store-child' ),
+		'label' => __( 'Hızlı Temin', 'woocommerce-store-child' ),
 	),
 );
 
 $ticker_list = array(
-	__( 'Güvenlik Filesi Sistemleri', 'woocommerce-store-child' ),
-	__( 'Endüstriyel Koruma Çözümleri', 'woocommerce-store-child' ),
-	__( 'Şantiye ve Yapı Güvenliği', 'woocommerce-store-child' ),
-	__( 'UV Dayanımlı Ağ Teknolojisi', 'woocommerce-store-child' ),
-	__( 'Profesyonel Keşif ve Montaj', 'woocommerce-store-child' ),
-	__( 'Toplu Proje Desteği', 'woocommerce-store-child' ),
-	__( 'CE Belgeli Üretim', 'woocommerce-store-child' ),
-	__( 'EN 1263-1 Sertifikalı', 'woocommerce-store-child' ),
+	array( 'icon' => 'bi-shield-check',   'text' => __( 'Güvenlik Filesi Sistemleri', 'woocommerce-store-child' ) ),
+	array( 'icon' => 'bi-gear-fill',      'text' => __( 'Endüstriyel Koruma Çözümleri', 'woocommerce-store-child' ) ),
+	array( 'icon' => 'bi-building',       'text' => __( 'Şantiye ve Yapı Güvenliği', 'woocommerce-store-child' ) ),
+	array( 'icon' => 'bi-sun',            'text' => __( 'UV Dayanımlı Ağ Teknolojisi', 'woocommerce-store-child' ) ),
+	array( 'icon' => 'bi-tools',          'text' => __( 'Profesyonel Keşif ve Montaj', 'woocommerce-store-child' ) ),
+	array( 'icon' => 'bi-boxes',          'text' => __( 'Toplu Proje Desteği', 'woocommerce-store-child' ) ),
+	array( 'icon' => 'bi-patch-check',    'text' => __( 'CE Belgeli Üretim', 'woocommerce-store-child' ) ),
+	array( 'icon' => 'bi-award',          'text' => __( 'EN 1263-1 Sertifikalı', 'woocommerce-store-child' ) ),
 );
 
 $spec_rows = array(
 	array(
+		'icon'   => 'bi-layers',
 		'key'    => __( 'Malzeme', 'woocommerce-store-child' ),
 		'val'    => 'HDPE / Polipropilen',
 		'accent' => false,
 	),
 	array(
+		'icon'   => 'bi-grid-3x3',
 		'key'    => __( 'Ağ Göz Boyutu', 'woocommerce-store-child' ),
 		'val'    => '60 × 60 mm',
 		'accent' => true,
 	),
 	array(
+		'icon'   => 'bi-lightning-charge',
 		'key'    => __( 'Çekme Dayanımı', 'woocommerce-store-child' ),
 		'val'    => '≥ 7,5 kN',
 		'accent' => false,
 	),
 	array(
+		'icon'   => 'bi-award',
 		'key'    => __( 'Standart', 'woocommerce-store-child' ),
 		'val'    => 'EN 1263-1',
 		'accent' => true,
 	),
+);
+
+$pills = array(
+	array( 'icon' => 'bi-shield-fill-check', 'text' => __( 'UV Dayanımlı', 'woocommerce-store-child' ) ),
+	array( 'icon' => 'bi-lightning-fill',    'text' => __( 'Hızlı Montaj', 'woocommerce-store-child' ) ),
+	array( 'icon' => 'bi-patch-check-fill',  'text' => __( 'CE Belgeli', 'woocommerce-store-child' ) ),
 );
 ?>
 
@@ -78,7 +88,10 @@ $spec_rows = array(
 					<span class="wcs-hero__tag-dot" aria-hidden="true"></span>
 					<?php esc_html_e( 'Stoktan Hızlı Sevk', 'woocommerce-store-child' ); ?>
 				</span>
-				<span class="wcs-hero__cert"><?php esc_html_e( 'EN 1263-1 · CE Belgeli Üretim', 'woocommerce-store-child' ); ?></span>
+				<span class="wcs-hero__cert">
+					<i class="bi bi-award" aria-hidden="true"></i>
+					<?php esc_html_e( 'EN 1263-1 · CE Belgeli Üretim', 'woocommerce-store-child' ); ?>
+				</span>
 			</div>
 
 			<h1 id="wcs-hero-title" class="wcs-hero__title">
@@ -90,8 +103,8 @@ $spec_rows = array(
 			<p class="wcs-hero__text">
 				<?php
 				printf(
-					/* translators: %s: strong tag for bold text */
-					esc_html__( 'İnşaat, endüstri ve spor alanları için %s çözümleri. Brand standartlarımızla üretilen sistemler; hızlı termin, yerinde keşif ve profesyonel montaj ile sunulur.', 'woocommerce-store-child' ),
+					/* translators: %s: bold text */
+					esc_html__( 'İnşaat, endüstri ve spor alanları için %s çözümleri. Brand standartlarımızla üretilen sistemler; stoktan hızlı temin sayesinde 48 saat içinde teslim edilir.', 'woocommerce-store-child' ),
 					'<strong>' . esc_html__( 'yüksek dayanımlı güvenlik filesi', 'woocommerce-store-child' ) . '</strong>'
 				);
 				?>
@@ -99,16 +112,12 @@ $spec_rows = array(
 
 			<div class="wcs-hero__actions">
 				<a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="wcs-hero__btn wcs-hero__btn--primary">
+					<i class="bi bi-grid-fill" aria-hidden="true"></i>
 					<?php esc_html_e( 'Ürünleri Gör', 'woocommerce-store-child' ); ?>
-					<svg class="wcs-hero__btn-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-						<path d="M2 7H12M12 7L8 3M12 7L8 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-					</svg>
+					<i class="bi bi-arrow-right wcs-hero__btn-arrow" aria-hidden="true"></i>
 				</a>
 				<a href="#" class="wcs-hero__btn wcs-hero__btn--link">
-					<svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-						<path d="M6.5 1.5V9M6.5 9L4 6.5M6.5 9L9 6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-						<path d="M1.5 11H11.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-					</svg>
+					<i class="bi bi-download" aria-hidden="true"></i>
 					<?php esc_html_e( 'Teknik Katalog İndir', 'woocommerce-store-child' ); ?>
 				</a>
 			</div>
@@ -117,8 +126,7 @@ $spec_rows = array(
 				<?php foreach ( $hero_stats as $stat ) : ?>
 					<li class="wcs-hero__stat">
 						<span class="wcs-hero__stat-value" data-target="<?php echo esc_attr( $stat['value'] ); ?>">
-							<?php echo esc_html( $stat['value'] ); ?>
-							<sup><?php echo esc_html( $stat['sup'] ); ?></sup>
+							<?php echo esc_html( $stat['value'] ); ?><sup><?php echo esc_html( $stat['sup'] ); ?></sup>
 						</span>
 						<span class="wcs-hero__stat-label"><?php echo esc_html( $stat['label'] ); ?></span>
 					</li>
@@ -130,13 +138,11 @@ $spec_rows = array(
 		<!-- ── RIGHT ── -->
 		<div class="wcs-hero__right" aria-hidden="true">
 
-			<!-- Decorative ring -->
 			<svg class="wcs-hero__ring" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
 				<circle class="ring-bg"   cx="80" cy="80" r="70"/>
 				<circle class="ring-fill" cx="80" cy="80" r="70"/>
 			</svg>
 
-			<!-- Main net card -->
 			<div class="wcs-hero__net-card">
 				<span class="wcs-hero__bracket-tr"></span>
 				<span class="wcs-hero__bracket-bl"></span>
@@ -171,7 +177,6 @@ $spec_rows = array(
 					<rect width="380" height="380" fill="url(#wcs-hg)"/>
 				</svg>
 
-				<!-- Central load badge -->
 				<div class="wcs-hero__load">
 					<p class="wcs-hero__load-value">150</p>
 					<p class="wcs-hero__load-unit">kN / m²</p>
@@ -181,10 +186,16 @@ $spec_rows = array(
 
 			<!-- Spec card -->
 			<div class="wcs-hero__spec-card">
-				<p class="wcs-hero__spec-card-title"><?php esc_html_e( 'Teknik Özellikler', 'woocommerce-store-child' ); ?></p>
+				<p class="wcs-hero__spec-card-title">
+					<i class="bi bi-clipboard-data" aria-hidden="true"></i>
+					<?php esc_html_e( 'Teknik Özellikler', 'woocommerce-store-child' ); ?>
+				</p>
 				<?php foreach ( $spec_rows as $row ) : ?>
 					<p>
-						<span><?php echo esc_html( $row['key'] ); ?></span>
+						<span class="wcs-hero__spec-key">
+							<i class="bi <?php echo esc_attr( $row['icon'] ); ?>" aria-hidden="true"></i>
+							<?php echo esc_html( $row['key'] ); ?>
+						</span>
 						<strong class="<?php echo $row['accent'] ? 'accent' : ''; ?>">
 							<?php echo esc_html( $row['val'] ); ?>
 						</strong>
@@ -193,18 +204,14 @@ $spec_rows = array(
 			</div>
 
 			<!-- Feature pills -->
-			<div class="wcs-hero__pill wcs-hero__pill--1">
-				<span class="wcs-hero__pill-icon" aria-hidden="true">🛡</span>
-				<?php esc_html_e( 'UV Dayanımlı', 'woocommerce-store-child' ); ?>
-			</div>
-			<div class="wcs-hero__pill wcs-hero__pill--2">
-				<span class="wcs-hero__pill-icon" aria-hidden="true">⚡</span>
-				<?php esc_html_e( 'Hızlı Montaj', 'woocommerce-store-child' ); ?>
-			</div>
-			<div class="wcs-hero__pill wcs-hero__pill--3">
-				<span class="wcs-hero__pill-icon" aria-hidden="true">✓</span>
-				<?php esc_html_e( 'CE Belgeli', 'woocommerce-store-child' ); ?>
-			</div>
+			<?php foreach ( $pills as $i => $pill ) : ?>
+				<div class="wcs-hero__pill wcs-hero__pill--<?php echo $i + 1; ?>">
+					<span class="wcs-hero__pill-icon">
+						<i class="bi <?php echo esc_attr( $pill['icon'] ); ?>" aria-hidden="true"></i>
+					</span>
+					<?php echo esc_html( $pill['text'] ); ?>
+				</div>
+			<?php endforeach; ?>
 
 		</div><!-- /.wcs-hero__right -->
 
@@ -213,7 +220,10 @@ $spec_rows = array(
 	<!-- Scroll indicator -->
 	<div class="wcs-hero__scroll" aria-hidden="true">
 		<div class="wcs-hero__scroll-line"></div>
-		<span class="wcs-hero__scroll-label"><?php esc_html_e( 'Keşfet', 'woocommerce-store-child' ); ?></span>
+		<span class="wcs-hero__scroll-label">
+			<i class="bi bi-chevron-double-down" aria-hidden="true"></i>
+			<?php esc_html_e( 'Keşfet', 'woocommerce-store-child' ); ?>
+		</span>
 	</div>
 
 	<!-- Ticker -->
@@ -221,8 +231,8 @@ $spec_rows = array(
 		<div class="wcs-hero__ticker-track" id="wcs-hero-ticker">
 			<?php foreach ( array_merge( $ticker_list, $ticker_list ) as $item ) : ?>
 				<span class="wcs-hero__ticker-item">
-					<span class="wcs-hero__ticker-dot"></span>
-					<?php echo esc_html( $item ); ?>
+					<i class="bi <?php echo esc_attr( $item['icon'] ); ?>" aria-hidden="true"></i>
+					<?php echo esc_html( $item['text'] ); ?>
 				</span>
 			<?php endforeach; ?>
 		</div>
