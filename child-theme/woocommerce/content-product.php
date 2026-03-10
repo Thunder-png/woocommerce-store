@@ -73,7 +73,9 @@ $category_list = wc_get_product_category_list( $product->get_id(), ', ' );
             <?php endif; ?>
 
             <div class="wcs-product-card__actions">
-                <?php do_action( 'woocommerce_after_shop_loop_item' ); ?>
+                <?php if ( function_exists( 'woocommerce_template_loop_add_to_cart' ) ) : ?>
+                    <?php woocommerce_template_loop_add_to_cart(); ?>
+                <?php endif; ?>
             </div>
         </div>
     </article>
