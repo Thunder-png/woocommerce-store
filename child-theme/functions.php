@@ -313,3 +313,174 @@ function wcs_render_brand_footer() {
     <?php
 }
 add_action( 'wp_footer', 'wcs_render_brand_footer', 20 );
+
+/**
+ * Central configuration for filterable WooCommerce attributes.
+ *
+ * @return array<string,array<string,mixed>>
+ */
+function wcs_get_filterable_attribute_definitions() {
+    return array(
+        'kullanim-amaci' => array(
+            'label'   => __( 'Kullanım Amacı', 'woocommerce-store-child' ),
+            'options' => array(
+                __( 'Çocuk güvenlik', 'woocommerce-store-child' ),
+                __( 'İnşaat', 'woocommerce-store-child' ),
+                __( 'Kedi güvenlik', 'woocommerce-store-child' ),
+                __( 'Balkon', 'woocommerce-store-child' ),
+                __( 'Kuş Filesi', 'woocommerce-store-child' ),
+                __( 'Havuz güvenlik', 'woocommerce-store-child' ),
+            ),
+        ),
+        'mukavemet' => array(
+            'label'   => __( 'Mukavemet', 'woocommerce-store-child' ),
+            'options' => array(
+                '400 lbs',
+                '200 lbs',
+            ),
+        ),
+        'en-boy-orani' => array(
+            'label'   => __( 'En/Boy Oranı', 'woocommerce-store-child' ),
+            'options' => array(
+                '1.5x2',
+                '2.5x10',
+            ),
+        ),
+        'ip-kalinligi' => array(
+            'label'   => __( 'İp Kalınlığı', 'woocommerce-store-child' ),
+            'options' => array(
+                '4mm',
+                '6mm',
+                '8mm',
+            ),
+        ),
+        'goz-araligi' => array(
+            'label'   => __( 'Göz Aralığı', 'woocommerce-store-child' ),
+            'options' => array(
+                '5x5',
+                '8x8',
+            ),
+        ),
+        'renk' => array(
+            'label'   => __( 'Renk', 'woocommerce-store-child' ),
+            'options' => array(
+                __( 'Beyaz', 'woocommerce-store-child' ),
+                __( 'Siyah', 'woocommerce-store-child' ),
+                __( 'Sarı', 'woocommerce-store-child' ),
+                __( 'Mavi', 'woocommerce-store-child' ),
+            ),
+        ),
+    );
+}
+
+/**
+ * Create filter attributes and their default terms for WooCommerce.
+ */
+function wcs_register_filterable_attributes() {
+    if ( ! function_exists( 'wc_get_attribute_taxonomies' ) || ! function_exists( 'wc_create_attribute' ) ) {
+        return;
+    }
+
+    $definitions         = wcs_get_filterable_attribute_definitions();
+    $existing_attributes = wc_get_attribute_taxonomies();
+    $existing_by_slug    = array();
+
+    if ( ! empty( $existing_attributes ) ) {
+        foreach ( $existing_attributes as $attribute ) {
+            $existing_by_slug[ $attribute->attribute_name ] = true;
+        }
+    }
+
+    foreach ( $definitions as $slug => $config ) {
+        if ( ! isset( $existing_by_slug[ $slug ] ) ) {
+            wc_create_attribute(
+                array(
+                    'name'         => $config['label'],
+                    'slug'         => $slug,
+                    'type'         => 'select',
+                    'order_by'     => 'menu_order',
+                    'has_archives' => false,
+                )
+            );
+        }
+
+        $taxonomy = 'pa_' . $slug;
+
+        if ( ! taxonomy_exists( $taxonomy ) ) {
+            continue;
+        }
+
+        foreach ( $config['options'] as $term_name ) {
+            if ( ! term_exists( $term_name, $taxonomy ) ) {
+                wp_insert_term( $term_name, $taxonomy );
+            }
+        }
+    }
+}
+add_action( 'init', 'wcs_register_filterable_attributes', 20 );
+
+/**
+ * Render shop filter controls for configured attributes.
+ */
+function wcs_render_shop_attribute_filters() {
+    if ( ! function_exists( 'is_shop' ) || ( ! is_shop() && ! is_product_taxonomy() ) ) {
+        return;
+    }
+
+    $definitions = wcs_get_filterable_attribute_definitions();
+    ?>
+    <form class="wcs-product-filters" method="get" action="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>">
+        <div class="wcs-product-filters__grid">
+            <?php foreach ( $definitions as $slug => $config ) : ?>
+                <?php
+                $taxonomy  = 'pa_' . $slug;
+                $query_key = 'filter_' . $taxonomy;
+
+                if ( ! taxonomy_exists( $taxonomy ) ) {
+                    continue;
+                }
+
+                $terms = get_terms(
+                    array(
+                        'taxonomy'   => $taxonomy,
+                        'hide_empty' => false,
+                    )
+                );
+
+                if ( is_wp_error( $terms ) || empty( $terms ) ) {
+                    continue;
+                }
+
+                $selected = isset( $_GET[ $query_key ] ) ? sanitize_title( wp_unslash( $_GET[ $query_key ] ) ) : '';
+                ?>
+                <label>
+                    <span><?php echo esc_html( $config['label'] ); ?></span>
+                    <select name="<?php echo esc_attr( $query_key ); ?>">
+                        <option value=""><?php esc_html_e( 'Tümü', 'woocommerce-store-child' ); ?></option>
+                        <?php foreach ( $terms as $term ) : ?>
+                            <option value="<?php echo esc_attr( $term->slug ); ?>" <?php selected( $selected, $term->slug ); ?>>
+                                <?php echo esc_html( $term->name ); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </label>
+            <?php endforeach; ?>
+        </div>
+
+        <?php foreach ( $_GET as $key => $value ) : ?>
+            <?php
+            if ( ! is_string( $key ) || 0 === strpos( $key, 'filter_pa_' ) || 0 === strpos( $key, 'query_type_pa_' ) || 'paged' === $key ) {
+                continue;
+            }
+            ?>
+            <input type="hidden" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( wp_unslash( $value ) ); ?>" />
+        <?php endforeach; ?>
+
+        <div class="wcs-product-filters__actions">
+            <button type="submit"><?php esc_html_e( 'Filtrele', 'woocommerce-store-child' ); ?></button>
+            <a class="button" href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>"><?php esc_html_e( 'Temizle', 'woocommerce-store-child' ); ?></a>
+        </div>
+    </form>
+    <?php
+}
+add_action( 'woocommerce_before_shop_loop', 'wcs_render_shop_attribute_filters', 15 );
