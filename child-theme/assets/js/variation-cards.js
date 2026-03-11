@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (typeof nextValue !== 'string' || !nextValue.length) {
           return;
         }
+      }
 
         if (select.value !== nextValue) {
           select.value = nextValue;
