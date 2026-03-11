@@ -57,14 +57,6 @@ document.addEventListener('DOMContentLoaded', function () {
           select.dispatchEvent(event);
         });
 
-        // Set variation_id hidden field so WooCommerce validation passes.
-        var variationIdInput = form.querySelector('input.variation_id');
-        var variationId = card.getAttribute('data-variation-id');
-
-        if (variationIdInput && variationId) {
-          variationIdInput.value = variationId;
-        }
-
         // Update main price block to selected variation price.
         var mainPrice = cardRoot.querySelector('.wcs-product-card__price-current');
         var cardPrice = card.querySelector('.wcs-product-card__variation-price');
@@ -95,46 +87,6 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       row.style.display = 'none';
-    });
-
-    // Form gönderilirken eksik attribute varsa aktif karttan doldur.
-    form.addEventListener('submit', function () {
-      if (!activeCard) {
-        return;
-      }
-
-      var raw = activeCard.getAttribute('data-attributes');
-
-      if (!raw) {
-        return;
-      }
-
-      var attrs;
-
-      try {
-        attrs = JSON.parse(raw);
-      } catch (e) {
-        return;
-      }
-
-      var selects = form.querySelectorAll('select[name^="attribute_pa_"]');
-
-      selects.forEach(function (select) {
-        if (select.value) {
-          return;
-        }
-
-        var key = select.name;
-
-        if (!attrs.hasOwnProperty(key)) {
-          return;
-        }
-
-        select.value = attrs[key];
-
-        var event = new Event('change', { bubbles: true });
-        select.dispatchEvent(event);
-      });
     });
 
     // m² hesaplayıcıyı isteğe bağlı aç/kapat.
