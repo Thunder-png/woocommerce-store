@@ -352,6 +352,21 @@
   min-width: 260px;
 }
 
+/* WooCommerce varsayılan dropdown varyasyon formunu gizle
+   (kartlar seçimi yönetecek, form arka planda çalışmaya devam edecek) */
+.single-product form.variations_form .variations td.label,
+.single-product form.variations_form .variations select {
+  display: none !important;
+}
+
+.single-product form.variations_form .variations tr {
+  border: 0;
+}
+
+.single-product form.variations_form .single_variation_wrap {
+  margin-top: 0.75rem;
+}
+
 /* m² hesaplayıcı kart stili */
 .single-product .wcs-calculator {
   margin-top: 0;

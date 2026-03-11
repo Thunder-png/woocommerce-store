@@ -133,6 +133,7 @@ if ( $product->is_type( 'variable' ) ) {
 			'regular_price'   => $var_regular,
 			'sale_price'      => $var_sale,
 			'discount'        => $var_discount,
+			'attributes'      => $attrs,
 		);
 	}
 }
@@ -223,7 +224,11 @@ if ( $product->is_type( 'variable' ) ) {
 
 					<div class="wcs-product-card__variation-grid">
 						<?php foreach ( $variation_cards as $var_card ) : ?>
-							<div class="wcs-product-card__variation" data-variation-id="<?php echo esc_attr( $var_card['id'] ); ?>">
+							<div
+								class="wcs-product-card__variation"
+								data-variation-id="<?php echo esc_attr( $var_card['id'] ); ?>"
+								data-attributes="<?php echo esc_attr( wp_json_encode( $var_card['attributes'] ) ); ?>"
+							>
 								<div class="wcs-product-card__variation-header">
 									<span class="wcs-product-card__variation-label">
 										<?php echo esc_html( $var_card['label'] ); ?>
