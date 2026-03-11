@@ -1,69 +1,360 @@
 /* ═══════════════════════════════════════════════════════════════
    WCS PRODUCT DETAIL LAYOUT
-   Brand kit ile uyumlu tekil ürün sayfası düzeni
+   Tekil ürün sayfası için modern kart tasarımı
    ═══════════════════════════════════════════════════════════════ */
 
+/* Base layout */
 .single-product .site-main {
   background: transparent;
 }
 
 .single-product div.product {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-  gap: 2.5rem;
-  align-items: flex-start;
   max-width: 1160px;
   margin: 2.5rem auto 3rem;
-  padding: 2rem 2.5rem;
-  background: var(--wcs-surface, #ffffff);
-  border-radius: 16px;
-  box-shadow: 0 18px 45px rgba(15, 19, 30, 0.12);
-  border: 1px solid rgba(15, 19, 30, 0.09);
+  padding: 0 1.25rem;
 }
 
-.single-product .woocommerce-product-gallery {
+/* ── Ürün kartı kabuğu ───────────────────────────────────────── */
+.single-product .wcs-product-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 2.5rem;
+  align-items: flex-start;
+  padding: 2rem 2.5rem;
+  background: var(--wcs-surface, #ffffff);
+  border-radius: 20px;
+  box-shadow: 0 20px 48px rgba(15, 19, 30, 0.16);
+  border: 1px solid rgba(15, 19, 30, 0.09);
+  position: relative;
+}
+
+.single-product .wcs-product-card__body {
+  display: contents;
+}
+
+.single-product .wcs-product-card__top {
+  position: absolute;
+  top: 1.1rem;
+  left: 1.4rem;
+  right: 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+
+.single-product .wcs-product-card__chip-row {
+  display: flex;
+  gap: 0.5rem;
+  pointer-events: auto;
+}
+
+.single-product .wcs-product-card__chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+}
+
+.single-product .wcs-product-card__chip--muted {
+  background: rgba(15, 19, 30, 0.04);
+  color: rgba(15, 19, 30, 0.72);
+}
+
+.single-product .wcs-product-card__chip--success {
+  background: rgba(7, 148, 80, 0.08);
+  color: #079450;
+  border-color: rgba(7, 148, 80, 0.32);
+}
+
+.single-product .wcs-product-card__chip--danger {
+  background: rgba(193, 46, 55, 0.1);
+  color: #c12e37;
+  border-color: rgba(193, 46, 55, 0.4);
+}
+
+.single-product .wcs-product-card__fav {
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  border: 1px solid rgba(15, 19, 30, 0.08);
+  box-shadow: 0 8px 24px rgba(15, 19, 30, 0.16);
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(15, 19, 30, 0.7);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+}
+
+.single-product .wcs-product-card__fav:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 30px rgba(15, 19, 30, 0.22);
+  color: #c12e37;
+}
+
+/* ── Medya kolonu ────────────────────────────────────────────── */
+.single-product .wcs-product-card__media {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.single-product .wcs-product-card__media-main .woocommerce-product-gallery {
   margin-bottom: 0;
 }
 
-.single-product .woocommerce-product-gallery__wrapper {
-  border-radius: 14px;
+.single-product .wcs-product-card__media-main .woocommerce-product-gallery__wrapper {
+  border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 12px 36px rgba(15, 19, 30, 0.18);
+  box-shadow: 0 16px 40px rgba(15, 19, 30, 0.2);
+  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.6), #e4e6ee);
 }
 
-.single-product .summary.entry-summary {
-  padding-left: 1.5rem;
-  border-left: 1px solid rgba(15, 19, 30, 0.06);
+.single-product .wcs-product-card__color-dots {
+  display: inline-flex;
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 10px 28px rgba(15, 19, 30, 0.18);
+  align-self: flex-start;
 }
 
-.single-product .product_title.entry-title {
+.single-product .wcs-product-card__color-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  border: 2px solid rgba(15, 19, 30, 0.16);
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.single-product .wcs-product-card__color-dot-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: #ffffff;
+}
+
+/* ── İçerik kolonu ───────────────────────────────────────────── */
+.single-product .wcs-product-card__content {
+  padding-left: 0.75rem;
+}
+
+.single-product .wcs-product-card__title {
   font-family: var(--font-heading, 'Inter', sans-serif);
   font-weight: 800;
   letter-spacing: -0.02em;
-  margin-bottom: 0.6rem;
+  margin: 0 0 0.6rem;
+  font-size: 1.6rem;
+  color: var(--wcs-color-primary, #0f131e);
 }
 
-.single-product .price {
+.single-product .wcs-product-card__rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.8rem;
+  font-size: 0.85rem;
+  color: rgba(43, 46, 55, 0.85);
+}
+
+.single-product .wcs-product-card__rating-score {
+  font-weight: 700;
+}
+
+.single-product .wcs-product-card__rating-count {
+  color: rgba(43, 46, 55, 0.7);
+}
+
+.single-product .wcs-product-card__excerpt {
+  margin-bottom: 1.5rem;
+  color: rgba(15, 19, 30, 0.9);
+  font-size: 0.95rem;
+}
+
+/* Varyasyon kartları */
+.single-product .wcs-product-card__section-title {
+  font-size: 0.86rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(15, 19, 30, 0.72);
+  margin-bottom: 0.7rem;
+}
+
+.single-product .wcs-product-card__variations {
+  margin-bottom: 1.6rem;
+}
+
+.single-product .wcs-product-card__variation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+
+.single-product .wcs-product-card__variation {
+  border-radius: 12px;
+  border: 1px solid rgba(15, 19, 30, 0.08);
+  padding: 0.7rem 0.8rem;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.single-product .wcs-product-card__variation:hover {
+  border-color: rgba(193, 46, 55, 0.6);
+  box-shadow: 0 10px 26px rgba(15, 19, 30, 0.16);
+  transform: translateY(-1px);
+}
+
+.single-product .wcs-product-card__variation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.single-product .wcs-product-card__variation-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--wcs-color-primary, #0f131e);
+}
+
+.single-product .wcs-product-card__badge-discount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(193, 46, 55, 0.12);
+  color: #c12e37;
+}
+
+.single-product .wcs-product-card__variation-price {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Kullanım alanları */
+.single-product .wcs-product-card__usage {
+  margin-bottom: 1.5rem;
+}
+
+.single-product .wcs-product-card__usage-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+}
+
+.single-product .wcs-product-card__usage-item {
+  min-width: 120px;
+  border-radius: 999px;
+  background: rgba(15, 19, 30, 0.02);
+  border: 1px solid rgba(15, 19, 30, 0.06);
+  padding: 0.4rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.single-product .wcs-product-card__usage-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--wcs-color-primary, #0f131e);
+}
+
+/* Tag pill’ler */
+.single-product .wcs-product-card__tags {
+  margin-bottom: 1.6rem;
+}
+
+.single-product .wcs-product-card__tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.single-product .wcs-product-card__tag-pill {
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: rgba(193, 46, 55, 0.06);
+  color: #c12e37;
+}
+
+/* Fiyat & CTA bloğu */
+.single-product .wcs-product-card__footer {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+}
+
+.single-product .wcs-product-card__price-block {
+  min-width: 0;
+}
+
+.single-product .wcs-product-card__price-main {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.single-product .wcs-product-card__price-current {
   font-family: var(--font-heading, 'Inter', sans-serif);
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   font-weight: 800;
   color: var(--wcs-color-primary, #0f131e);
 }
 
-.single-product .woocommerce-Price-currencySymbol {
-  opacity: 0.7;
-  font-size: 0.72em;
-  margin-right: 2px;
+.single-product .wcs-product-card__price-old {
+  font-size: 0.95rem;
+  text-decoration: line-through;
+  color: rgba(43, 46, 55, 0.6);
 }
 
-.single-product .product_meta {
-  font-size: 0.85rem;
-  color: rgba(43, 46, 55, 0.7);
+.single-product .wcs-product-card__price-meta {
+  margin-top: 0.25rem;
 }
 
-/* m² hesaplayıcıyı ürün özetine entegre et */
+.single-product .wcs-product-card__cta-block {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.9rem;
+  min-width: 260px;
+}
+
+/* m² hesaplayıcı kart stili */
 .single-product .wcs-calculator {
-  margin-top: 1.75rem;
+  margin-top: 0;
   border-radius: 14px;
   background: linear-gradient(135deg, rgba(193, 46, 55, 0.08), #ffffff);
   border-color: rgba(193, 46, 55, 0.28);
@@ -109,7 +400,7 @@
   color: var(--wcs-color-accent, #c12e37);
 }
 
-/* Teknik özellikler bloğu (mevcut meta çıktıları için genel stil) */
+/* Teknik özellikler bloğu (alt tarafta kullanılabilir) */
 .single-product .wcs-spec-section {
   margin-top: 2.5rem;
   padding-top: 1.75rem;
@@ -152,7 +443,7 @@
   font-size: 0.8rem;
 }
 
-/* Alt içerik alanı (açıklama / ek sekmeler) */
+/* Woo sekmeleri (açıklama / yorumlar vb.) */
 .single-product .woocommerce-tabs {
   max-width: 1160px;
   margin: 0 auto 3rem;
@@ -181,24 +472,43 @@
 /* Responsive */
 @media (max-width: 960px) {
   .single-product div.product {
-    grid-template-columns: minmax(0, 1fr);
-    padding: 1.5rem 1.5rem 2rem;
+    margin: 1.75rem 0 2.5rem;
+    padding: 0 1rem;
   }
 
-  .single-product .summary.entry-summary {
+  .single-product .wcs-product-card {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1.5rem 1.6rem 1.9rem;
+  }
+
+  .single-product .wcs-product-card__content {
     padding-left: 0;
-    border-left: 0;
-    border-top: 1px solid rgba(15, 19, 30, 0.06);
     margin-top: 1.5rem;
-    padding-top: 1.5rem;
+  }
+
+  .single-product .wcs-product-card__footer {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
 
 @media (max-width: 640px) {
   .single-product div.product {
-    margin: 1.5rem 0 2.5rem;
-    padding: 1.25rem 1.1rem 1.8rem;
-    border-radius: 14px;
+    margin: 1.4rem 0 2.3rem;
+    padding: 0 0.75rem;
+  }
+
+  .single-product .wcs-product-card {
+    padding: 1.25rem 1.15rem 1.7rem;
+    border-radius: 16px;
+  }
+
+  .single-product .wcs-product-card__title {
+    font-size: 1.35rem;
+  }
+
+  .single-product .wcs-product-card__cta-block {
+    min-width: 0;
   }
 
   .single-product .wcs-calculator__grid {
