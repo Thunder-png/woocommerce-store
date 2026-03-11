@@ -19,8 +19,26 @@
   function normalize(text) {
     return String(text || "")
       .toLowerCase()
-      .replace(/\s+/g, "")
       .trim();
+  }
+
+  function parseThicknessMm(text) {
+    var t = normalize(text);
+    var match = t.match(/([\d.,]+)/);
+    if (!match) {
+      return null;
+    }
+    var num = parseFloat(match[1].replace(",", "."));
+    return Number.isFinite(num) ? num : null;
+  }
+
+  function parseMesh(text) {
+    var t = normalize(text);
+    var match = t.match(/(\d+)\s*[x×*]\s*(\d+)/i);
+    if (!match) {
+      return null;
+    }
+    return match[1] + "x" + match[2];
   }
 
   function resolvePricePerM2() {
@@ -46,9 +64,13 @@
         ? colorSelect.options[colorSelect.selectedIndex].text
         : "";
 
-    const t = normalize(thicknessText); // örn: "15mm", "2mm", "4mm"
-    const m = normalize(meshText); // örn: "2x2", "4x4", "5x5"
-    const c = normalize(colorText); // örn: "beyaz", "siyah", "gri", "standartrenk"
+    const thicknessMm = parseThicknessMm(thicknessText); // örn: 1.5, 2, 4
+    const mesh = parseMesh(meshText); // örn: "2x2", "4x4", "5x5"
+    const c = normalize(colorText); // örn: "beyaz", "siyah", "gri", "standart renk"
+
+    if (!thicknessMm || !mesh) {
+      return fallbackPricePerM2;
+    }
 
     // Renk grubu tespiti.
     var colorGroup = "standard";
@@ -60,49 +82,63 @@
 
     // Temel tablo (renkten bağımsız fiyatlar).
     var basePrice = null;
+    var key = thicknessMm + "|" + mesh;
 
-    if (t === "15mm" && m === "2x2") {
-      basePrice = 45;
-    } else if (t === "2mm" && m === "4x4") {
-      basePrice = 50;
-    } else if (t === "25mm" && m === "4x4") {
-      basePrice = 55;
-    } else if (t === "3mm" && m === "4x4") {
-      basePrice = 60;
-    } else if (t === "4mm" && m === "4x4") {
-      basePrice = 70;
-    } else if (t === "6mm" && m === "10x10") {
-      basePrice = 70;
-    } else if (t === "2mm" && m === "13x13") {
-      basePrice = 52;
-    } else if (t === "4mm" && m === "12x12") {
-      basePrice = 60;
-    } else if (t === "4mm" && m === "5x5") {
-      basePrice = 100;
+    // Temel tablo (renkten bağımsız fiyatlar).
+    switch (key) {
+      case "1.5|2x2":
+        basePrice = 45;
+        break;
+      case "2|4x4":
+        basePrice = 50;
+        break;
+      case "2.5|4x4":
+        basePrice = 55;
+        break;
+      case "3|4x4":
+        basePrice = 60;
+        break;
+      case "4|4x4":
+        basePrice = 70;
+        break;
+      case "6|10x10":
+        basePrice = 70;
+        break;
+      case "2|13x13":
+        basePrice = 52;
+        break;
+      case "4|12x12":
+        basePrice = 60;
+        break;
+      case "4|5x5":
+        basePrice = 100;
+        break;
+      default:
+        basePrice = null;
     }
 
     // Renkli ve siyah/gri için override'lar.
-    if (t === "4mm" && m === "5x5" && colorGroup === "colored") {
+    if (thicknessMm === 4 && mesh === "5x5" && colorGroup === "colored") {
       // 4 mm 5x5 = 105 - Renkli
       basePrice = 105;
     }
 
-    if (t === "15mm" && m === "2x2" && colorGroup === "black") {
+    if (thicknessMm === 1.5 && mesh === "2x2" && colorGroup === "black") {
       // 1.5 mm 2x2 = 50 - Siyah/Gri
       basePrice = 50;
     }
 
-    if (t === "2mm" && m === "4x4" && colorGroup === "black") {
+    if (thicknessMm === 2 && mesh === "4x4" && colorGroup === "black") {
       // 2 mm 4x4 = 70 - Siyah
       basePrice = 70;
     }
 
-    if (t === "3mm" && m === "4x4" && colorGroup === "black") {
+    if (thicknessMm === 3 && mesh === "4x4" && colorGroup === "black") {
       // 3 mm 4x4 = 75 - Siyah
       basePrice = 75;
     }
 
-    if (t === "6mm" && m === "10x10" && colorGroup === "black") {
+    if (thicknessMm === 6 && mesh === "10x10" && colorGroup === "black") {
       // 6 mm 10x10 = 95 - Siyah
       basePrice = 95;
     }
