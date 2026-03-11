@@ -54,7 +54,7 @@ $section_id = 'wcs-home-categories';
 				?>
 
 				<article class="wcs-home-category-card" role="listitem">
-					<a class="wcs-home-category-card__media" href="<?php echo esc_url( $permalink ); ?>">
+					<a class="wcs-home-category-card__link" href="<?php echo esc_url( $permalink ); ?>">
 						<?php if ( $image_url ) : ?>
 							<img
 								class="wcs-home-category-card__img"
@@ -67,25 +67,16 @@ $section_id = 'wcs-home-categories';
 								<span class="wcs-home-category-card__media-icon"></span>
 							</div>
 						<?php endif; ?>
-					</a>
 
-					<div class="wcs-home-category-card__body">
-						<h3 class="wcs-home-category-card__title">
-							<a href="<?php echo esc_url( $permalink ); ?>">
+						<div class="wcs-home-category-card__overlay">
+							<h3 class="wcs-home-category-card__title">
 								<?php echo esc_html( $category->name ); ?>
-							</a>
-						</h3>
-
-						<?php if ( ! empty( $category->description ) ) : ?>
-							<p class="wcs-home-category-card__excerpt">
-								<?php echo esc_html( wp_trim_words( $category->description, 20, '…' ) ); ?>
+							</h3>
+							<p class="wcs-home-category-card__subtitle">
+								<?php esc_html_e( 'Kategorideki ürünleri gör →', 'woocommerce-store-child' ); ?>
 							</p>
-						<?php endif; ?>
-
-						<a class="wcs-home-category-card__cta" href="<?php echo esc_url( $permalink ); ?>">
-							<?php esc_html_e( 'Kategoriyi Gör', 'woocommerce-store-child' ); ?>
-						</a>
-					</div>
+						</div>
+					</a>
 				</article>
 			<?php endforeach; ?>
 		</div>
