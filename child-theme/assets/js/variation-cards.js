@@ -79,6 +79,23 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     }
 
+
+    function syncInlineVariationMeta(variation) {
+      if (!variation || typeof variation !== 'object') {
+        return;
+      }
+
+      var variationPriceWrap = form.querySelector('.woocommerce-variation-price');
+      if (variationPriceWrap && variation.price_html) {
+        variationPriceWrap.innerHTML = variation.price_html;
+      }
+
+      var availabilityWrap = form.querySelector('.woocommerce-variation-availability');
+      if (availabilityWrap && variation.availability_html) {
+        availabilityWrap.innerHTML = variation.availability_html;
+      }
+    }
+
     function syncAttributesToForm(attrs) {
       if (!attrs || typeof attrs !== 'object') {
         return;
@@ -90,13 +107,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!select) {
           return;
         }
-      }
 
         var nextValue = attrs[selectName];
 
         if (typeof nextValue !== 'string' || !nextValue.length) {
           return;
         }
+      }
 
         if (select.value !== nextValue) {
           select.value = nextValue;
@@ -122,7 +139,6 @@ document.addEventListener('DOMContentLoaded', function () {
           cardAttrs = null;
         }
       }
-    }
 
       // Variation JSON bulunamazsa, kart üzerindeki attribute payload'u kullan.
       if (!attrs) {
@@ -135,6 +151,15 @@ document.addEventListener('DOMContentLoaded', function () {
       if (variationIdInput && variationId) {
         variationIdInput.value = variationId;
       }
+
+      if (variationData) {
+        syncInlineVariationMeta(variationData);
+
+        if (jQueryInstance) {
+          jQueryInstance(form).trigger('found_variation', [variationData]);
+        }
+      }
+    }
 
       var cardPrice = card.querySelector('.wcs-product-card__variation-price');
       if (mainPrice && cardPrice && cardPrice.innerHTML.trim()) {
@@ -172,6 +197,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (mainPrice && variation.price_html) {
           mainPrice.innerHTML = variation.price_html;
         }
+
+        syncInlineVariationMeta(variation);
       });
     }
 
