@@ -15,11 +15,36 @@ document.addEventListener('DOMContentLoaded', function () {
     var cards = Array.from(cardRoot.querySelectorAll('.wcs-product-card__variation'));
     var mainPrice = cardRoot.querySelector('.wcs-product-card__price-current');
 
+    function getVariationSelects() {
+      return Array.from(form.querySelectorAll('select[name^="attribute_"]'));
+    }
+
     function setCardState(activeCard) {
       cards.forEach(function (card) {
         var isActive = card === activeCard;
         card.classList.toggle('is-active', isActive);
         card.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+      });
+    }
+
+    function dispatchSelectChange(select) {
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    function fillMissingAttributes() {
+      getVariationSelects().forEach(function (select) {
+        if (select.value) {
+          return;
+        }
+
+        var fallbackOption = Array.from(select.options).find(function (option) {
+          return option.value && !option.disabled;
+        });
+
+        if (fallbackOption) {
+          select.value = fallbackOption.value;
+          dispatchSelectChange(select);
+        }
       });
     }
 
@@ -40,12 +65,16 @@ document.addEventListener('DOMContentLoaded', function () {
         if (typeof nextValue !== 'string' || !nextValue.length) {
           return;
         }
+      }
 
         if (select.value !== nextValue) {
           select.value = nextValue;
-          select.dispatchEvent(new Event('change', { bubbles: true }));
+          dispatchSelectChange(select);
         }
       });
+
+      // Sadece kart seçimi ile sepete eklenebilsin diye, seçilmeyen attribute'leri otomatik doldur.
+      fillMissingAttributes();
     }
 
     function activateCard(card) {
@@ -96,6 +125,11 @@ document.addEventListener('DOMContentLoaded', function () {
       if (mainPrice && variation.price_html) {
         mainPrice.innerHTML = variation.price_html;
       }
+    });
+
+    form.addEventListener('submit', function () {
+      // Submit anında boş attribute kalırsa Woo validasyonu bloklamasın.
+      fillMissingAttributes();
     });
 
     var variationRows = form.querySelectorAll('table.variations tr');
