@@ -41,7 +41,7 @@
     });
 
     // AJAX ile sepete ekleme olduğunda sidebari aç.
-    $(document.body).on('added_to_cart', function () {
+    $(document.body).on('added_to_cart wc_fragments_refreshed', function () {
       openSidebar($sidebar, $overlay);
     });
 
