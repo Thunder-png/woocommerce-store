@@ -1,42 +1,43 @@
-document.addEventListener('DOMContentLoaded', function () {
-  var forms = document.querySelectorAll('.single-product form.variations_form');
-
-  if (!forms.length) {
+(function ($) {
+  if (typeof $ === 'undefined') {
     return;
   }
 
-  var $ = window.jQuery || null;
+  function initCardPicker(form) {
+    var $form = $(form);
 
-  forms.forEach(function (form) {
-    var cardRoot = form.closest('.wcs-product-card') || document.querySelector('.wcs-product-card');
-    if (!cardRoot) {
+    // WooCommerce henüz initialize edilmediyse çık.
+    if (!$form.length || $form.data('wcsCardsInit')) {
       return;
     }
 
-    var cards = Array.from(cardRoot.querySelectorAll('.wcs-product-card__variation'));
-    if (!cards.length) {
+    var $cardRoot = $form.closest('.wcs-product-card');
+    if (!$cardRoot.length) {
+      $cardRoot = $('.wcs-product-card').first();
+    }
+
+    if (!$cardRoot.length) {
       return;
     }
 
-    var mainPrice = cardRoot.querySelector('.wcs-product-card__price-current');
-
-    function triggerChange(select) {
-      select.dispatchEvent(new Event('change', { bubbles: true }));
-      if ($) {
-        $(select).trigger('change');
-      }
+    var $cards = $cardRoot.find('.wcs-product-card__variation');
+    if (!$cards.length) {
+      return;
     }
 
-    function setActiveCard(activeCard) {
-      cards.forEach(function (card) {
-        var isActive = card === activeCard;
-        card.classList.toggle('is-active', isActive);
-        card.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    var $mainPrice = $cardRoot.find('.wcs-product-card__price-current').first();
+
+    function setActiveCard($active) {
+      $cards.each(function () {
+        var $card = $(this);
+        var isActive = $card.is($active);
+        $card.toggleClass('is-active', isActive);
+        $card.attr('aria-pressed', isActive ? 'true' : 'false');
       });
     }
 
-    function applyCardAttributes(card) {
-      var raw = card.getAttribute('data-attributes');
+    function applyCardAttributesAndCheck($card) {
+      var raw = $card.attr('data-attributes');
       if (!raw) {
         return;
       }
@@ -48,69 +49,96 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
+      // 1. Tüm select değerlerini sessizce yaz.
       Object.keys(attrs).forEach(function (key) {
-        var select = form.querySelector('select[name="' + key + '"]');
-        if (!select) {
-          return;
-        }
-
         var value = attrs[key];
         if (typeof value !== 'string' || !value.length) {
           return;
         }
 
-        if (select.value !== value) {
-          select.value = value;
-          triggerChange(select);
+        var $select = $form.find('select[name="' + key + '"]');
+        if (!$select.length) {
+          return;
+        }
+
+        if ($select.val() !== value) {
+          $select.val(value);
         }
       });
 
-      // Seçilen kartın variation_id değerini gizli inputa yaz.
-      var variationIdInput = form.querySelector('input[name="variation_id"]');
-      var cardVariationId = card.getAttribute('data-variation-id');
-      if (variationIdInput && cardVariationId) {
-        variationIdInput.value = cardVariationId;
-      }
+      // 2. WooCommerce'e bir kez değiştiğini bildir.
+      $form.trigger('woocommerce_variation_select_change');
 
-      var cardPrice = card.querySelector('.wcs-product-card__variation-price');
-      if (mainPrice && cardPrice && cardPrice.innerHTML.trim()) {
-        mainPrice.innerHTML = cardPrice.innerHTML;
+      // 3. WooCommerce'e varyasyonları tekrar kontrol ettir.
+      $form.trigger('check_variations', ['', false]);
+
+      // 4. Kart fiyatını büyük fiyat alanına yansıt (ekstra görsel senkron).
+      var $cardPrice = $card.find('.wcs-product-card__variation-price').first();
+      if ($mainPrice.length && $cardPrice.length && $.trim($cardPrice.html()).length) {
+        $mainPrice.html($cardPrice.html());
       }
     }
 
-    cards.forEach(function (card) {
-      card.addEventListener('click', function () {
-        setActiveCard(card);
-        applyCardAttributes(card);
-      });
+    // Kart tıklamaları.
+    $cards.on('click.wcsCards', function () {
+      var $card = $(this);
+      setActiveCard($card);
+      applyCardAttributesAndCheck($card);
     });
 
-    // Varsayılan olarak ilk kartı seç.
-    setActiveCard(cards[0]);
-    applyCardAttributes(cards[0]);
+    // WooCommerce bir varyasyon bulduğunda kart durumunu ve fiyatı senkronize et.
+    $form.on('found_variation.wcsCards', function (event, variation) {
+      if (!variation || !variation.variation_id) {
+        return;
+      }
 
-    // WooCommerce dropdown tablosunu gizle (sadece kartlar görünsün).
-    var rows = form.querySelectorAll('table.variations tr');
-    rows.forEach(function (row) {
-      var select = row.querySelector('select[name^="attribute_"]');
-      if (select) {
-        row.style.display = 'none';
+      var id = String(variation.variation_id);
+      var $match = $cards.filter('[data-variation-id="' + id + '"]');
+      if ($match.length) {
+        setActiveCard($match.eq(0));
+      }
+
+      if ($mainPrice.length && variation.price_html) {
+        $mainPrice.html(variation.price_html);
+      }
+    });
+
+    // Başlangıç durumu: ilk kartı seç ve varyasyonları kontrol ettir.
+    var $initial = $cards.eq(0);
+    if ($initial.length) {
+      setActiveCard($initial);
+      applyCardAttributesAndCheck($initial);
+    }
+
+    // Orijinal Woo dropdown tablosunu gizle (sadece kartlar görünsün).
+    $form.find('table.variations tr').each(function () {
+      var $row = $(this);
+      var hasSelect = $row.find('select[name^="attribute_"]').length > 0;
+      if (hasSelect) {
+        $row.hide();
       }
     });
 
     // m² hesaplayıcı toggle
-    var toggle = cardRoot.querySelector('.wcs-calculator-toggle');
-    var calculator = cardRoot.querySelector('.wcs-calculator');
+    var $toggle = $cardRoot.find('.wcs-calculator-toggle').first();
+    var $calculator = $cardRoot.find('.wcs-calculator').first();
 
-    if (toggle && calculator) {
-      calculator.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
+    if ($toggle.length && $calculator.length) {
+      $calculator.removeClass('is-open');
+      $toggle.attr('aria-expanded', 'false');
 
-      toggle.addEventListener('click', function () {
-        var isOpen = calculator.classList.toggle('is-open');
-        toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      $toggle.on('click.wcsCards', function () {
+        var isOpen = $calculator.toggleClass('is-open').hasClass('is-open');
+        $toggle.attr('aria-expanded', isOpen ? 'true' : 'false');
       });
     }
+
+    $form.data('wcsCardsInit', true);
+  }
+
+  // WooCommerce variations_form hazır olduğunda kart picker'ı başlat.
+  $(document).on('woocommerce_variation_form', '.single-product form.variations_form', function () {
+    initCardPicker(this);
   });
-});
+})(window.jQuery);
 
