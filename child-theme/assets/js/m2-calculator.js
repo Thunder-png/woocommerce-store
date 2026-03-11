@@ -15,6 +15,7 @@
   const currency = (window.wcsCalculator && window.wcsCalculator.currency) || "";
 
   const format = (value) => `${value.toFixed(2)} ${currency}`.trim();
+  let lastValues = null;
 
   function resolvePricePerM2() {
     const thicknessSelect = document.getElementById("wcs-thickness");
@@ -129,6 +130,7 @@
     const height = Number(heightInput.value);
 
     if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
+      lastValues = null;
       areaOutput.textContent = "0.00 m²";
       priceOutput.textContent = format(0);
       vatOutput.textContent = format(0);
@@ -136,11 +138,33 @@
       return;
     }
 
+    const thicknessSelect = document.getElementById("wcs-thickness");
+    const meshSelect = document.getElementById("wcs-mesh");
+    const colorSelect = document.getElementById("wcs-color");
+
+    const thicknessValue = thicknessSelect ? thicknessSelect.value : "";
+    const mesh = meshSelect ? meshSelect.value : "";
+    const colorLabel =
+      colorSelect && colorSelect.options[colorSelect.selectedIndex]
+        ? colorSelect.options[colorSelect.selectedIndex].text
+        : "";
+
     const pricePerM2 = resolvePricePerM2();
     const area = width * height;
     const price = area * pricePerM2;
     const vat = price * vatRate;
     const total = price + vat;
+
+    lastValues = {
+      width: width,
+      height: height,
+      thickness: thicknessValue,
+      mesh: mesh,
+      colorLabel: colorLabel,
+      area: area,
+      pricePerM2: pricePerM2,
+      total: total,
+    };
 
     areaOutput.textContent = `${area.toFixed(2)} m²`;
     priceOutput.textContent = format(price);
@@ -158,4 +182,53 @@
       el.addEventListener("change", calculate);
     }
   });
+
+  // Özel ölçü ile sepete ekle
+  var addButton = document.querySelector(".wcs-calculator__add-to-cart");
+  if (addButton) {
+    addButton.addEventListener("click", function () {
+      // Son hesap değerleri yoksa veya eksikse hesaplama yapmayı dene.
+      if (!lastValues) {
+        calculate();
+      }
+
+      if (!lastValues) {
+        alert("Lütfen en, boy, ip kalınlığı, göz boyutu ve renk grubunu seçip tekrar deneyin.");
+        return;
+      }
+
+      if (!lastValues.thickness || !lastValues.mesh) {
+        alert("Lütfen ip kalınlığı ve göz boyutunu seçin.");
+        return;
+      }
+
+      var form = document.querySelector(".single-product form.cart");
+      if (!form) {
+        return;
+      }
+
+      function setHidden(name, value) {
+        var input = form.querySelector('input[name="' + name + '"]');
+        if (!input) {
+          input = document.createElement("input");
+          input.type = "hidden";
+          input.name = name;
+          form.appendChild(input);
+        }
+        input.value = String(value);
+      }
+
+      setHidden("wcs_custom_order", "1");
+      setHidden("wcs_width", lastValues.width);
+      setHidden("wcs_height", lastValues.height);
+      setHidden("wcs_thickness", lastValues.thickness);
+      setHidden("wcs_mesh", lastValues.mesh);
+      setHidden("wcs_color", lastValues.colorLabel);
+      setHidden("wcs_area", lastValues.area.toFixed(2));
+      setHidden("wcs_price_per_m2", lastValues.pricePerM2.toFixed(2));
+      setHidden("wcs_total", lastValues.total.toFixed(2));
+
+      form.submit();
+    });
+  }
 })();

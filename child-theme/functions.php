@@ -334,10 +334,154 @@ function wcs_render_price_calculator() {
             <p><?php esc_html_e( 'VAT (20%):', 'woocommerce-store-child' ); ?> <strong id="wcs-vat">0.00</strong></p>
             <p><?php esc_html_e( 'Total:', 'woocommerce-store-child' ); ?> <strong id="wcs-total">0.00</strong></p>
         </div>
+
+        <button type="button" class="wcs-calculator__add-to-cart">
+            <?php esc_html_e( 'Özel ölçü ile sepete ekle', 'woocommerce-store-child' ); ?>
+        </button>
     </section>
     <?php
 }
 add_action( 'woocommerce_before_add_to_cart_form', 'wcs_render_price_calculator', 15 );
+
+/**
+ * Özel ölçü siparişleri için sepet satırı verisini ekle.
+ *
+ * @param array $cart_item_data Mevcut sepet verisi.
+ * @param int   $product_id     Ürün ID.
+ * @param int   $variation_id   Varyasyon ID.
+ * @return array
+ */
+function wcs_custom_order_add_cart_item_data( $cart_item_data, $product_id, $variation_id ) {
+	if ( empty( $_POST['wcs_custom_order'] ) || '1' !== $_POST['wcs_custom_order'] ) {
+		return $cart_item_data;
+	}
+
+	$fields = array(
+		'wcs_width',
+		'wcs_height',
+		'wcs_thickness',
+		'wcs_mesh',
+		'wcs_color',
+		'wcs_area',
+		'wcs_price_per_m2',
+		'wcs_total',
+	);
+
+	$data = array();
+
+	foreach ( $fields as $field ) {
+		if ( isset( $_POST[ $field ] ) ) {
+			$data[ $field ] = sanitize_text_field( wp_unslash( $_POST[ $field ] ) );
+		}
+	}
+
+	$cart_item_data['wcs_custom_order']       = 1;
+	$cart_item_data['wcs_custom_order_meta']  = $data;
+
+	return $cart_item_data;
+}
+add_filter( 'woocommerce_add_cart_item_data', 'wcs_custom_order_add_cart_item_data', 10, 3 );
+
+/**
+ * Özel ölçü siparişlerinde ürün birim fiyatını, hesaplanan toplam tutara göre ayarla.
+ *
+ * @param WC_Cart $cart Cart instance.
+ */
+function wcs_custom_order_before_calculate_totals( $cart ) {
+	if ( is_admin() && ! defined( 'DOING_AJAX' ) ) {
+		return;
+	}
+
+	if ( ! $cart instanceof WC_Cart ) {
+		return;
+	}
+
+	foreach ( $cart->get_cart() as $cart_item_key => $cart_item ) {
+		if ( empty( $cart_item['wcs_custom_order'] ) || empty( $cart_item['wcs_custom_order_meta']['wcs_total'] ) ) {
+			continue;
+		}
+
+		$total = (float) $cart_item['wcs_custom_order_meta']['wcs_total'];
+		$qty   = max( 1, (int) $cart_item['quantity'] );
+
+		$unit_price = $total / $qty;
+
+		if ( isset( $cart_item['data'] ) && $cart_item['data'] instanceof WC_Product ) {
+			$cart_item['data']->set_price( $unit_price );
+		}
+	}
+}
+add_action( 'woocommerce_before_calculate_totals', 'wcs_custom_order_before_calculate_totals', 20 );
+
+/**
+ * Sepet satırında özel ölçü meta bilgisini göster.
+ *
+ * @param array $item_data Mevcut görüntülenecek veriler.
+ * @param array $cart_item Sepet satırı.
+ * @return array
+ */
+function wcs_custom_order_get_item_data( $item_data, $cart_item ) {
+	if ( empty( $cart_item['wcs_custom_order_meta'] ) || ! is_array( $cart_item['wcs_custom_order_meta'] ) ) {
+		return $item_data;
+	}
+
+	$meta = $cart_item['wcs_custom_order_meta'];
+
+	if ( ! empty( $meta['wcs_width'] ) && ! empty( $meta['wcs_height'] ) ) {
+		$item_data[] = array(
+			'key'   => __( 'Ölçü', 'woocommerce-store-child' ),
+			'value' => sprintf( '%s m x %s m', $meta['wcs_width'], $meta['wcs_height'] ),
+		);
+	}
+
+	if ( ! empty( $meta['wcs_thickness'] ) ) {
+		$item_data[] = array(
+			'key'   => __( 'İp Kalınlığı', 'woocommerce-store-child' ),
+			'value' => $meta['wcs_thickness'] . ' mm',
+		);
+	}
+
+	if ( ! empty( $meta['wcs_mesh'] ) ) {
+		$item_data[] = array(
+			'key'   => __( 'Göz Boyutu', 'woocommerce-store-child' ),
+			'value' => $meta['wcs_mesh'],
+		);
+	}
+
+	if ( ! empty( $meta['wcs_color'] ) ) {
+		$item_data[] = array(
+			'key'   => __( 'Renk Grubu', 'woocommerce-store-child' ),
+			'value' => $meta['wcs_color'],
+		);
+	}
+
+	if ( ! empty( $meta['wcs_area'] ) ) {
+		$item_data[] = array(
+			'key'   => __( 'Hesaplanan Alan', 'woocommerce-store-child' ),
+			'value' => $meta['wcs_area'] . ' m²',
+		);
+	}
+
+	return $item_data;
+}
+add_filter( 'woocommerce_get_item_data', 'wcs_custom_order_get_item_data', 10, 2 );
+
+/**
+ * Özel ölçü siparişlerinde ürün adını ön ekle değiştir.
+ *
+ * @param string $name      Ürün adı.
+ * @param array  $cart_item Sepet satırı.
+ * @param string $key       Sepet anahtarı.
+ * @return string
+ */
+function wcs_custom_order_cart_item_name( $name, $cart_item, $key ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+	if ( ! empty( $cart_item['wcs_custom_order'] ) ) {
+		$name = __( 'Özel ölçü sipariş', 'woocommerce-store-child' ) . ' - ' . $name;
+	}
+
+	return $name;
+}
+add_filter( 'woocommerce_cart_item_name', 'wcs_custom_order_cart_item_name', 10, 3 );
 
 /**
  * Render brand footer with policy links.
@@ -593,6 +737,12 @@ add_action( 'astra_primary_content_top', 'wcs_render_home_category_grid', 15 );
 add_filter(
 	'woocommerce_add_to_cart_validation',
 	function ( $passed, $product_id, $quantity, $variation_id, $variations ) {
+		// Özel ölçü siparişi ise varyasyon doğrulamasını atla.
+		if ( isset( $_POST['wcs_custom_order'] ) && '1' === $_POST['wcs_custom_order'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			return true;
+		}
+
+		// Kart tabanlı seçicide geçerli variation_id varsa attribute uyuşmazlığı uyarısını yumuşat.
 		if ( is_product() && $variation_id > 0 ) {
 			return true;
 		}
