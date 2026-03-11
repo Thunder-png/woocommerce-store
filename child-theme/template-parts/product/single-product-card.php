@@ -17,7 +17,9 @@ if ( ! $product instanceof WC_Product ) {
 	return;
 }
 
-$product_id = $product->get_id();
+$product_id   = $product->get_id();
+$is_simple    = $product->is_type( 'simple' );
+$is_variable  = $product->is_type( 'variable' );
 
 // Basic product data.
 $title        = get_the_title( $product_id );
@@ -334,21 +336,23 @@ if ( $product->is_type( 'variable' ) ) {
 				</div>
 
 				<div class="wcs-product-card__cta-block">
-					<button class="wcs-calculator-toggle" type="button">
-						<?php esc_html_e( 'Özel ölçü (m² hesapla)', 'woocommerce-store-child' ); ?>
-					</button>
-					<?php
-					/**
-					 * Render only add-to-cart form.
-					 *
-					 * We intentionally avoid full `woocommerce_single_product_summary`
-					 * here to prevent duplicate title/price/excerpt and legacy dropdown
-					 * UI from appearing alongside the custom variation cards.
-					 */
-					if ( function_exists( 'woocommerce_template_single_add_to_cart' ) ) {
-						woocommerce_template_single_add_to_cart();
-					}
-					?>
+					<?php if ( $is_simple ) : ?>
+						<button class="wcs-calculator-toggle" type="button">
+							<?php esc_html_e( 'Özel ölçü (m² hesapla)', 'woocommerce-store-child' ); ?>
+						</button>
+
+						<?php
+						if ( function_exists( 'woocommerce_template_single_add_to_cart' ) ) {
+							woocommerce_template_single_add_to_cart();
+						}
+						?>
+					<?php else : ?>
+						<?php
+						if ( function_exists( 'woocommerce_template_single_add_to_cart' ) ) {
+							woocommerce_template_single_add_to_cart();
+						}
+						?>
+					<?php endif; ?>
 				</div>
 			</footer>
 		</div>
