@@ -147,6 +147,14 @@ function wcs_child_enqueue_assets() {
             )
         );
 
+        wp_enqueue_script(
+            'wcs-attribute-buttons',
+            get_stylesheet_directory_uri() . '/assets/js/wcs-attribute-buttons.js',
+            array( 'jquery', 'wc-add-to-cart-variation' ),
+            wcs_asset_version( 'assets/js/wcs-attribute-buttons.js', $child_theme->get( 'Version' ) ),
+            true
+        );
+
         wp_enqueue_style(
             'wcs-product-detail',
             get_stylesheet_directory_uri() . '/assets/css/product-detail.css',
