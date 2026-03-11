@@ -100,22 +100,40 @@ if ( $product->is_type( 'variable' ) ) {
 		}
 
 		$attrs = $variation->get_attributes();
-		$label_parts = array();
 
-		foreach ( $attrs as $attr_key => $attr_val ) {
-			if ( ! $attr_val ) {
-				continue;
-			}
+		// Prefer the \"Ölçü\" / size attribute as main label.
+		$size_label = '';
+		$size_attr_slugs = array( 'pa_olcu', 'pa_en-boy-orani' );
 
-			$clean_key = str_replace( 'attribute_pa_', '', $attr_key );
-			$term      = get_term_by( 'slug', $attr_val, 'pa_' . $clean_key );
-
-			if ( $term && ! is_wp_error( $term ) ) {
-				$label_parts[] = $term->name;
+		foreach ( $size_attr_slugs as $size_slug ) {
+			$value = $variation->get_attribute( $size_slug );
+			if ( $value ) {
+				$size_label = $value;
+				break;
 			}
 		}
 
-		$label = implode( ' • ', $label_parts );
+		$label = $size_label;
+
+		// Fallback: build label from all attribute term names.
+		if ( '' === $label && ! empty( $attrs ) ) {
+			$label_parts = array();
+
+			foreach ( $attrs as $attr_key => $attr_val ) {
+				if ( ! $attr_val ) {
+					continue;
+				}
+
+				$clean_key = str_replace( 'attribute_pa_', '', $attr_key );
+				$term      = get_term_by( 'slug', $attr_val, 'pa_' . $clean_key );
+
+				if ( $term && ! is_wp_error( $term ) ) {
+					$label_parts[] = $term->name;
+				}
+			}
+
+			$label = implode( ' • ', $label_parts );
+		}
 
 		$var_regular = (float) $variation->get_regular_price();
 		$var_sale    = (float) $variation->get_sale_price();
@@ -308,13 +326,15 @@ if ( $product->is_type( 'variable' ) ) {
 				</div>
 
 				<div class="wcs-product-card__cta-block">
+					<button class="wcs-calculator-toggle" type="button">
+						<?php esc_html_e( 'Özel ölçü (m² hesapla)', 'woocommerce-store-child' ); ?>
+					</button>
 					<?php
 					/**
-					 * Calculator and add to cart form.
+					 * Add to cart form & related summary content.
 					 *
-					 * We keep default hooks so existing JS keeps working.
+					 * Calculator is injected via woocommerce_before_add_to_cart_form hook.
 					 */
-					do_action( 'woocommerce_before_add_to_cart_form' );
 					do_action( 'woocommerce_single_product_summary' );
 					?>
 				</div>

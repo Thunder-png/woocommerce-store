@@ -352,15 +352,30 @@
   min-width: 260px;
 }
 
-/* WooCommerce varsayılan dropdown varyasyon formunu gizle
-   (kartlar seçimi yönetecek, form arka planda çalışmaya devam edecek) */
-.single-product form.variations_form .variations td.label,
-.single-product form.variations_form .variations select {
-  display: none !important;
+.single-product .wcs-calculator-toggle {
+  align-self: flex-start;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 19, 30, 0.12);
+  background: rgba(15, 19, 30, 0.02);
+  padding: 0.45rem 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(15, 19, 30, 0.8);
+  cursor: pointer;
 }
 
-.single-product form.variations_form .variations tr {
-  border: 0;
+.single-product .wcs-calculator-toggle:hover {
+  background: rgba(193, 46, 55, 0.06);
+  border-color: rgba(193, 46, 55, 0.3);
+  color: #c12e37;
+}
+
+/* WooCommerce varsayılan dropdown varyasyon formunu gizle
+   (kartlar seçimi yönetecek, form arka planda çalışmaya devam edecek) */
+.single-product form.variations_form table.variations {
+  display: none !important;
 }
 
 .single-product form.variations_form .single_variation_wrap {
@@ -369,10 +384,15 @@
 
 /* m² hesaplayıcı kart stili */
 .single-product .wcs-calculator {
+  display: none;
   margin-top: 0;
   border-radius: 14px;
   background: linear-gradient(135deg, rgba(193, 46, 55, 0.08), #ffffff);
   border-color: rgba(193, 46, 55, 0.28);
+}
+
+.single-product .wcs-calculator.is-open {
+  display: block;
 }
 
 .single-product .wcs-calculator h3 {
