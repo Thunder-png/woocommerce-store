@@ -173,13 +173,16 @@ function wcs_child_enqueue_assets() {
 			);
 		}
 
-        wp_enqueue_script(
-            'wcs-attribute-buttons',
-            get_stylesheet_directory_uri() . '/assets/js/wcs-attribute-buttons.js',
-            array( 'jquery', 'wc-add-to-cart-variation' ),
-            wcs_asset_version( 'assets/js/wcs-attribute-buttons.js', $child_theme->get( 'Version' ) ),
-            true
-        );
+		// Varyasyon attribute butonları sadece variable ürünlerde gerekli.
+		if ( $product instanceof WC_Product && $product->is_type( 'variable' ) ) {
+			wp_enqueue_script(
+				'wcs-attribute-buttons',
+				get_stylesheet_directory_uri() . '/assets/js/wcs-attribute-buttons.js',
+				array( 'jquery', 'wc-add-to-cart-variation' ),
+				wcs_asset_version( 'assets/js/wcs-attribute-buttons.js', $child_theme->get( 'Version' ) ),
+				true
+			);
+		}
 
         wp_enqueue_style(
             'wcs-product-detail',
@@ -203,6 +206,14 @@ function wcs_child_enqueue_assets() {
             wcs_asset_version( 'assets/js/wcs-ajax-add-to-cart.js', $child_theme->get( 'Version' ) ),
             true
         );
+
+		wp_localize_script(
+			'wcs-ajax-add-to-cart',
+			'wcsAjaxAddToCart',
+			array(
+				'cartUrl' => function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'cart' ) : home_url( '/cart/' ),
+			)
+		);
     }
 
     if (
