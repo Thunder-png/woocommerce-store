@@ -365,11 +365,15 @@ if ( $product->is_type( 'variable' ) ) {
 					</button>
 					<?php
 					/**
-					 * Add to cart form & related summary content.
+					 * Render only add-to-cart form.
 					 *
-					 * Calculator is injected via woocommerce_before_add_to_cart_form hook.
+					 * We intentionally avoid full `woocommerce_single_product_summary`
+					 * here to prevent duplicate title/price/excerpt and legacy dropdown
+					 * UI from appearing alongside the custom variation cards.
 					 */
-					do_action( 'woocommerce_single_product_summary' );
+					if ( function_exists( 'woocommerce_template_single_add_to_cart' ) ) {
+						woocommerce_template_single_add_to_cart();
+					}
 					?>
 				</div>
 			</footer>
