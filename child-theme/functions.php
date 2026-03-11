@@ -184,6 +184,28 @@ function wcs_child_enqueue_assets() {
 			);
 		}
 
+		// Adet arttıkça toplam fiyatın güncellenmesi için JS.
+		wp_enqueue_script(
+			'wcs-qty-total',
+			get_stylesheet_directory_uri() . '/assets/js/wcs-qty-total.js',
+			array(),
+			wcs_asset_version( 'assets/js/wcs-qty-total.js', $child_theme->get( 'Version' ) ),
+			true
+		);
+
+		if ( function_exists( 'wc_get_price_to_display' ) && $product instanceof WC_Product ) {
+			$unit_price_for_total = wc_get_price_to_display( $product );
+
+			wp_localize_script(
+				'wcs-qty-total',
+				'wcsQtyTotal',
+				array(
+					'currency'  => get_woocommerce_currency_symbol(),
+					'unitPrice' => $unit_price_for_total,
+				)
+			);
+		}
+
         wp_enqueue_style(
             'wcs-product-detail',
             get_stylesheet_directory_uri() . '/assets/css/product-detail.css',

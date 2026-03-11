@@ -81,11 +81,12 @@ foreach ( $pill_taxonomies as $pill_tax ) {
 }
 
 // Pricing & discount.
-$price_html       = $product->get_price_html();
-$regular_price    = (float) $product->get_regular_price();
-$sale_price       = (float) $product->get_sale_price();
-$has_sale         = $sale_price && $sale_price < $regular_price;
-$discount_percent = 0;
+$price_html        = $product->get_price_html();
+$regular_price     = (float) $product->get_regular_price();
+$sale_price        = (float) $product->get_sale_price();
+$has_sale          = $sale_price && $sale_price < $regular_price;
+$discount_percent  = 0;
+$unit_price_display = $product instanceof WC_Product ? wc_get_price_to_display( $product ) : 0;
 
 if ( $has_sale && $regular_price > 0 ) {
 	$discount_percent = round( ( ( $regular_price - $sale_price ) / $regular_price ) * 100 );
@@ -299,7 +300,7 @@ if ( $product->is_type( 'variable' ) ) {
 			<?php endif; ?>
 
 			<footer class="wcs-product-card__footer">
-				<div class="wcs-product-card__price-block">
+				<div class="wcs-product-card__price-block" data-wcs-unit-price="<?php echo esc_attr( $unit_price_display ); ?>">
 					<?php if ( $has_sale && $discount_percent > 0 && $regular_price > 0 ) : ?>
 						<div class="wcs-product-card__price-main">
 							<span class="wcs-product-card__price-current">
@@ -321,6 +322,15 @@ if ( $product->is_type( 'variable' ) ) {
 							</span>
 						</div>
 					<?php endif; ?>
+
+					<div class="wcs-product-card__price-total">
+						<span class="wcs-product-card__price-total-label">
+							<?php esc_html_e( 'Toplam:', 'woocommerce-store-child' ); ?>
+						</span>
+						<span class="wcs-product-card__price-total-value">
+							<?php echo wp_kses_post( wc_price( $unit_price_display ) ); ?>
+						</span>
+					</div>
 				</div>
 
 				<div class="wcs-product-card__cta-block">
