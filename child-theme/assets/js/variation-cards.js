@@ -19,8 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var cards = cardRoot.querySelectorAll('.wcs-product-card__variation');
 
     if (cards.length) {
-      var sizeKeys = ['attribute_pa_olcu', 'attribute_pa_en-boy-orani', 'attribute_pa_mukavemet'];
-
       function activateCard(card) {
         cards.forEach(function (c) {
           c.classList.remove('is-active');
@@ -43,11 +41,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         Object.keys(attrs).forEach(function (key) {
-          // Sadece ölçü ve mukavemet alanlarını otomatik doldur.
-          if (sizeKeys.indexOf(key) === -1) {
-            return;
-          }
-
           var value = attrs[key];
           var select = form.querySelector('select[name="' + key + '"]');
 
@@ -72,8 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
       activateCard(cards[0]);
     }
 
-    // Ölçü ve mukavemet satırlarını gizle, diğerleri (İp Kalınlığı, Göz Aralığı, Renk)
-    // kullanıcıya dropdown olarak görünsün.
+    // Varyasyon tablosunu tamamen gizle; seçim sadece kartlardan yapılacak.
     var variationRows = form.querySelectorAll('table.variations tr');
 
     variationRows.forEach(function (row) {
@@ -83,11 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      var name = select.name;
-
-      if (name === 'attribute_pa_olcu' || name === 'attribute_pa_en-boy-orani' || name === 'attribute_pa_mukavemet') {
-        row.style.display = 'none';
-      }
+      row.style.display = 'none';
     });
 
     // m² hesaplayıcıyı isteğe bağlı aç/kapat.

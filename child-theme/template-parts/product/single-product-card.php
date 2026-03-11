@@ -101,23 +101,37 @@ if ( $product->is_type( 'variable' ) ) {
 
 		$attrs = $variation->get_attributes();
 
-		// Prefer the \"Ölçü\" / size attribute as main label.
-		$size_label = '';
-		$size_attr_slugs = array( 'pa_olcu', 'pa_en-boy-orani' );
+		// Build human-friendly label from key attributes.
+		$label_parts = array();
 
-		foreach ( $size_attr_slugs as $size_slug ) {
-			$value = $variation->get_attribute( $size_slug );
-			if ( $value ) {
-				$size_label = $value;
-				break;
-			}
+		$size_value = $variation->get_attribute( 'pa_olcu' );
+		if ( ! $size_value ) {
+			$size_value = $variation->get_attribute( 'pa_en-boy-orani' );
+		}
+		if ( $size_value ) {
+			$label_parts[] = $size_value;
 		}
 
-		$label = $size_label;
+		$thickness = $variation->get_attribute( 'pa_ip-kalinligi' );
+		if ( $thickness ) {
+			$label_parts[] = $thickness;
+		}
 
-		// Fallback: build label from all attribute term names.
+		$mesh = $variation->get_attribute( 'pa_goz-araligi' );
+		if ( $mesh ) {
+			$label_parts[] = $mesh;
+		}
+
+		$color = $variation->get_attribute( 'pa_renk' );
+		if ( $color ) {
+			$label_parts[] = $color;
+		}
+
+		$label = implode( ', ', array_filter( $label_parts ) );
+
+		// Fallback: if still empty, join all attribute term names.
 		if ( '' === $label && ! empty( $attrs ) ) {
-			$label_parts = array();
+			$fallback_parts = array();
 
 			foreach ( $attrs as $attr_key => $attr_val ) {
 				if ( ! $attr_val ) {
@@ -128,11 +142,11 @@ if ( $product->is_type( 'variable' ) ) {
 				$term      = get_term_by( 'slug', $attr_val, 'pa_' . $clean_key );
 
 				if ( $term && ! is_wp_error( $term ) ) {
-					$label_parts[] = $term->name;
+					$fallback_parts[] = $term->name;
 				}
 			}
 
-			$label = implode( ' • ', $label_parts );
+			$label = implode( ' • ', $fallback_parts );
 		}
 
 		$var_regular = (float) $variation->get_regular_price();
