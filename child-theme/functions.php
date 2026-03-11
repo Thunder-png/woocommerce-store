@@ -183,6 +183,23 @@ function wcs_child_enqueue_assets() {
 add_action( 'wp_enqueue_scripts', 'wcs_child_enqueue_assets' );
 
 /**
+ * Disable WooCommerce's default JS variation handler on single product pages.
+ *
+ * We manage variation selection via custom card UI + JS, so the core
+ * `wc-add-to-cart-variation` script's front-end validation is no longer needed
+ * and conflicts with our behavior.
+ */
+function wcs_disable_default_variation_script() {
+    if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+        return;
+    }
+
+    wp_dequeue_script( 'wc-add-to-cart-variation' );
+    wp_deregister_script( 'wc-add-to-cart-variation' );
+}
+add_action( 'wp_enqueue_scripts', 'wcs_disable_default_variation_script', 20 );
+
+/**
  * Hide Astra native header globally so custom header is used site-wide.
  */
 function wcs_hide_astra_header_globally() {
