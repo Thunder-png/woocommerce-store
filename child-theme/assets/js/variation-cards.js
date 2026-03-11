@@ -56,6 +56,22 @@ document.addEventListener('DOMContentLoaded', function () {
           var event = new Event('change', { bubbles: true });
           select.dispatchEvent(event);
         });
+
+        // Set variation_id hidden field so WooCommerce validation passes.
+        var variationIdInput = form.querySelector('input.variation_id');
+        var variationId = card.getAttribute('data-variation-id');
+
+        if (variationIdInput && variationId) {
+          variationIdInput.value = variationId;
+        }
+
+        // Update main price block to selected variation price.
+        var mainPrice = cardRoot.querySelector('.wcs-product-card__price-current');
+        var cardPrice = card.querySelector('.wcs-product-card__variation-price');
+
+        if (mainPrice && cardPrice) {
+          mainPrice.innerHTML = cardPrice.innerHTML;
+        }
       }
 
       cards.forEach(function (card) {
