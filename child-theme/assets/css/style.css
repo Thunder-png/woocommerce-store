@@ -1,4 +1,4 @@
-﻿/* Global brand integration for WordPress + WooCommerce surfaces */
+/* Global brand integration for WordPress + WooCommerce surfaces */
 :root {
   --wcs-color-primary: var(--color-industrial-navy, #0f131e);
   --wcs-color-accent: var(--color-safety-red, #c12e37);
@@ -196,6 +196,93 @@ input[type='submit']:hover,
 .wcs-brand-footer a:focus {
   color: var(--wcs-color-accent);
   text-decoration: underline;
+}
+
+/* Cart sidebar (single product) */
+body.wcs-cart-sidebar-open {
+  overflow: hidden;
+}
+
+.wcs-cart-sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-out;
+  z-index: 9990;
+}
+
+.wcs-cart-sidebar-overlay.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.wcs-cart-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: min(380px, 100%);
+  background: #ffffff;
+  box-shadow: -12px 0 40px rgba(0, 0, 0, 0.35);
+  transform: translateX(100%);
+  transition: transform 0.25s ease-out;
+  z-index: 9991;
+  display: flex;
+  flex-direction: column;
+}
+
+.wcs-cart-sidebar.is-open {
+  transform: translateX(0);
+}
+
+.wcs-cart-sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid var(--wcs-border);
+}
+
+.wcs-cart-sidebar__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.wcs-cart-sidebar__close {
+  background: transparent;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  padding: 0;
+  color: var(--wcs-color-text);
+}
+
+.wcs-cart-sidebar__close:hover {
+  border-color: var(--wcs-border);
+}
+
+.wcs-cart-sidebar__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 1.1rem 1.25rem;
+}
+
+.wcs-cart-sidebar__content .widget_shopping_cart_content {
+  /* Woo mini-cart default wrapper; keep layout readable in narrow panel */
+}
+
+@media (max-width: 600px) {
+  .wcs-cart-sidebar {
+    width: 100%;
+  }
 }
 
 

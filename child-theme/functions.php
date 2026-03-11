@@ -169,6 +169,14 @@ function wcs_child_enqueue_assets() {
             array( 'wcs-custom-style' ),
             wcs_asset_version( 'assets/css/product-detail.css', $child_theme->get( 'Version' ) )
         );
+
+        wp_enqueue_script(
+            'wcs-cart-sidebar',
+            get_stylesheet_directory_uri() . '/assets/js/wcs-cart-sidebar.js',
+            array( 'jquery', 'wc-cart-fragments' ),
+            wcs_asset_version( 'assets/js/wcs-cart-sidebar.js', $child_theme->get( 'Version' ) ),
+            true
+        );
     }
 
     if (
@@ -402,6 +410,30 @@ function wcs_render_brand_footer() {
     <?php
 }
 add_action( 'wp_footer', 'wcs_render_brand_footer', 20 );
+
+/**
+ * Render slide-in cart sidebar container on single product pages.
+ */
+function wcs_render_cart_sidebar() {
+	if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+		return;
+	}
+	?>
+	<div class="wcs-cart-sidebar-overlay" aria-hidden="true"></div>
+	<aside class="wcs-cart-sidebar" aria-label="<?php esc_attr_e( 'Sepet özeti', 'woocommerce-store-child' ); ?>">
+		<header class="wcs-cart-sidebar__header">
+			<h2 class="wcs-cart-sidebar__title">
+				<?php esc_html_e( 'Sepetiniz', 'woocommerce-store-child' ); ?>
+			</h2>
+			<button type="button" class="wcs-cart-sidebar__close" aria-label="<?php esc_attr_e( 'Sepeti kapat', 'woocommerce-store-child' ); ?>">&times;</button>
+		</header>
+		<div class="wcs-cart-sidebar__content">
+			<?php woocommerce_mini_cart(); ?>
+		</div>
+	</aside>
+	<?php
+}
+add_action( 'wp_footer', 'wcs_render_cart_sidebar', 25 );
 
 
 /**
