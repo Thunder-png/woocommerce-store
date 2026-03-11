@@ -177,6 +177,14 @@ function wcs_child_enqueue_assets() {
             wcs_asset_version( 'assets/js/wcs-cart-sidebar.js', $child_theme->get( 'Version' ) ),
             true
         );
+
+        wp_enqueue_script(
+            'wcs-ajax-add-to-cart',
+            get_stylesheet_directory_uri() . '/assets/js/wcs-ajax-add-to-cart.js',
+            array( 'jquery', 'wc-add-to-cart', 'wc-cart-fragments' ),
+            wcs_asset_version( 'assets/js/wcs-ajax-add-to-cart.js', $child_theme->get( 'Version' ) ),
+            true
+        );
     }
 
     if (
