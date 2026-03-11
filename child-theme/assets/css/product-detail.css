@@ -372,12 +372,7 @@
   color: #c12e37;
 }
 
-/* WooCommerce varsayılan dropdown varyasyon formunu gizle
-   (kartlar seçimi yönetecek, form arka planda çalışmaya devam edecek) */
-.single-product form.variations_form table.variations {
-  display: none !important;
-}
-
+/* WooCommerce varyasyon formu: tablo görünsün, JS belirli satırları gizliyor. */
 .single-product form.variations_form .single_variation_wrap {
   margin-top: 0.75rem;
 }
