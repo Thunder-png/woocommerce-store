@@ -297,6 +297,35 @@ function wcs_render_price_calculator() {
 
             <label for="wcs-height"><?php esc_html_e( 'Height (m)', 'woocommerce-store-child' ); ?></label>
             <input id="wcs-height" name="wcs_height" type="number" min="0" step="0.01" inputmode="decimal" />
+
+            <label for="wcs-thickness"><?php esc_html_e( 'İp Kalınlığı (mm)', 'woocommerce-store-child' ); ?></label>
+            <select id="wcs-thickness" name="wcs_thickness">
+                <option value=""><?php esc_html_e( 'Seçiniz', 'woocommerce-store-child' ); ?></option>
+                <option value="1.5">1.5 mm</option>
+                <option value="2">2 mm</option>
+                <option value="2.5">2.5 mm</option>
+                <option value="3">3 mm</option>
+                <option value="4">4 mm</option>
+                <option value="6">6 mm</option>
+            </select>
+
+            <label for="wcs-mesh"><?php esc_html_e( 'Göz Boyutu', 'woocommerce-store-child' ); ?></label>
+            <select id="wcs-mesh" name="wcs_mesh">
+                <option value=""><?php esc_html_e( 'Seçiniz', 'woocommerce-store-child' ); ?></option>
+                <option value="2x2">2x2</option>
+                <option value="4x4">4x4</option>
+                <option value="5x5">5x5</option>
+                <option value="10x10">10x10</option>
+                <option value="12x12">12x12</option>
+                <option value="13x13">13x13</option>
+            </select>
+
+            <label for="wcs-color"><?php esc_html_e( 'Renk Grubu', 'woocommerce-store-child' ); ?></label>
+            <select id="wcs-color" name="wcs_color">
+                <option value="standard"><?php esc_html_e( 'Standart (Beyaz)', 'woocommerce-store-child' ); ?></option>
+                <option value="colored"><?php esc_html_e( 'Renkli', 'woocommerce-store-child' ); ?></option>
+                <option value="black"><?php esc_html_e( 'Siyah / Gri', 'woocommerce-store-child' ); ?></option>
+            </select>
         </div>
 
         <div class="wcs-calculator__results" aria-live="polite">

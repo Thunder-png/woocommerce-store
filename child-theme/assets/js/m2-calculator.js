@@ -16,68 +16,42 @@
 
   const format = (value) => `${value.toFixed(2)} ${currency}`.trim();
 
-  function normalize(text) {
-    return String(text || "")
-      .toLowerCase()
-      .trim();
-  }
-
-  function parseThicknessMm(text) {
-    var t = normalize(text);
-    var match = t.match(/([\d.,]+)/);
-    if (!match) {
-      return null;
-    }
-    var num = parseFloat(match[1].replace(",", "."));
-    return Number.isFinite(num) ? num : null;
-  }
-
-  function parseMesh(text) {
-    var t = normalize(text);
-    var match = t.match(/(\d+)\s*[x×*]\s*(\d+)/i);
-    if (!match) {
-      return null;
-    }
-    return match[1] + "x" + match[2];
-  }
-
   function resolvePricePerM2() {
-    const form = document.querySelector(".single-product form.variations_form");
-    if (!form) {
+    const thicknessSelect = document.getElementById("wcs-thickness");
+    const meshSelect = document.getElementById("wcs-mesh");
+    const colorSelect = document.getElementById("wcs-color");
+
+    if (!thicknessSelect || !meshSelect || !colorSelect) {
       return fallbackPricePerM2;
     }
 
-    const thicknessSelect = form.querySelector('select[name^="attribute_pa_ip-kalinligi"]');
-    const meshSelect = form.querySelector('select[name^="attribute_pa_goz-araligi"]');
-    const colorSelect = form.querySelector('select[name^="attribute_pa_renk"]');
+    const thicknessValue = thicknessSelect.value; // "1.5", "2", "4" ...
+    const mesh = meshSelect.value; // "2x2", "4x4", ...
+    const rawColor = colorSelect.value || "standard"; // form değeri
+    var colorGroup = "standard";
 
-    const thicknessText =
-      thicknessSelect && thicknessSelect.options[thicknessSelect.selectedIndex]
-        ? thicknessSelect.options[thicknessSelect.selectedIndex].text
-        : "";
-    const meshText =
-      meshSelect && meshSelect.options[meshSelect.selectedIndex]
-        ? meshSelect.options[meshSelect.selectedIndex].text
-        : "";
-    const colorText =
-      colorSelect && colorSelect.options[colorSelect.selectedIndex]
-        ? colorSelect.options[colorSelect.selectedIndex].text
-        : "";
+    // Renk grupları:
+    // - "black": sadece siyah
+    // - "colored": gri, mavi, sarı, turuncu, yeşil vb.
+    var rawColorNorm = String(rawColor).toLowerCase();
+    if (rawColorNorm.indexOf("siyah") !== -1) {
+      colorGroup = "black";
+    } else if (
+      rawColorNorm.indexOf("gri") !== -1 ||
+      rawColorNorm.indexOf("mavi") !== -1 ||
+      rawColorNorm.indexOf("sarı") !== -1 ||
+      rawColorNorm.indexOf("sari") !== -1 ||
+      rawColorNorm.indexOf("turuncu") !== -1 ||
+      rawColorNorm.indexOf("yeşil") !== -1 ||
+      rawColorNorm.indexOf("yesil") !== -1
+    ) {
+      colorGroup = "colored";
+    }
 
-    const thicknessMm = parseThicknessMm(thicknessText); // örn: 1.5, 2, 4
-    const mesh = parseMesh(meshText); // örn: "2x2", "4x4", "5x5"
-    const c = normalize(colorText); // örn: "beyaz", "siyah", "gri", "standart renk"
+    const thicknessMm = thicknessValue ? parseFloat(thicknessValue) : null;
 
     if (!thicknessMm || !mesh) {
       return fallbackPricePerM2;
-    }
-
-    // Renk grubu tespiti.
-    var colorGroup = "standard";
-    if (c.indexOf("siyah") !== -1 || c.indexOf("gri") !== -1) {
-      colorGroup = "black";
-    } else if (c.indexOf("renkli") !== -1) {
-      colorGroup = "colored";
     }
 
     // Temel tablo (renkten bağımsız fiyatlar).
@@ -117,14 +91,14 @@
         basePrice = null;
     }
 
-    // Renkli ve siyah/gri için override'lar.
+    // Renkli ve siyah/siyah-gri için override'lar.
     if (thicknessMm === 4 && mesh === "5x5" && colorGroup === "colored") {
       // 4 mm 5x5 = 105 - Renkli
       basePrice = 105;
     }
 
-    if (thicknessMm === 1.5 && mesh === "2x2" && colorGroup === "black") {
-      // 1.5 mm 2x2 = 50 - Siyah/Gri
+    if (thicknessMm === 1.5 && mesh === "2x2" && colorGroup === "colored") {
+      // 1.5 mm 2x2 = 50 - Siyah/Gri (renkli gruba dahil)
       basePrice = 50;
     }
 
@@ -177,12 +151,11 @@
   widthInput.addEventListener("input", calculate);
   heightInput.addEventListener("input", calculate);
 
-  // Attribute seçimi değiştiğinde de fiyatı güncelle.
-  var form = document.querySelector(".single-product form.variations_form");
-  if (form) {
-    var attrSelects = form.querySelectorAll('select[name^="attribute_"]');
-    attrSelects.forEach(function (select) {
-      select.addEventListener("change", calculate);
-    });
-  }
+  // Hesaplamayı, ip kalınlığı / göz boyutu / renk değişiminde de tetikle.
+  ["wcs-thickness", "wcs-mesh", "wcs-color"].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) {
+      el.addEventListener("change", calculate);
+    }
+  });
 })();
