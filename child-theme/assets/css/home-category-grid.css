@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
-   WCS HOME — CATEGORY GRID
-   Hero altı 7 kartlık kategori vitrini
+   WCS HOME — CUSTOM PRODUCT GRID
+   Hero altı özel ölçü ürün kartları
    ═══════════════════════════════════════════════════════════════ */
 
 .wcs-home-categories {
@@ -55,10 +55,6 @@
   transform: translateY(-4px);
   box-shadow: 0 18px 40px rgba(15, 19, 30, 0.12);
   border-color: rgba(193, 46, 55, 0.28);
-}
-
-.wcs-home-category-card__media {
-  display: none;
 }
 
 .wcs-home-category-card__img {
@@ -122,13 +118,23 @@
   color: #ffffff;
 }
 
+.wcs-home-product-card__price {
+  margin: 0 0 0.2rem;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.wcs-home-product-card__price .amount {
+  color: #ffffff;
+  font-weight: 700;
+}
+
 .wcs-home-category-card__subtitle {
   margin: 0;
   font-size: 0.86rem;
   color: rgba(248, 248, 248, 0.85);
 }
 
-/* Responsive */
 @media (max-width: 1023px) {
   .wcs-home-categories {
     padding: 3rem 1.1rem 3.25rem;
@@ -152,4 +158,3 @@
     grid-template-columns: 1fr;
   }
 }
-
