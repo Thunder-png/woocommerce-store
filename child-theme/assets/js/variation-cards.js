@@ -113,6 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (typeof nextValue !== 'string' || !nextValue.length) {
           return;
         }
+      }
 
         if (select.value !== nextValue) {
           select.value = nextValue;
@@ -158,6 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
           jQueryInstance(form).trigger('found_variation', [variationData]);
         }
       }
+    }
 
       var cardPrice = card.querySelector('.wcs-product-card__variation-price');
       if (mainPrice && cardPrice && cardPrice.innerHTML.trim()) {
