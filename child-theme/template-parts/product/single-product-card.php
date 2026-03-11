@@ -266,42 +266,6 @@ if ( $product->is_type( 'variable' ) ) {
 				</div>
 			<?php endif; ?>
 
-			<?php if ( ! empty( $variation_cards ) ) : ?>
-				<section class="wcs-product-card__variations" aria-label="<?php esc_attr_e( 'Boyut seçenekleri', 'woocommerce-store-child' ); ?>">
-					<h2 class="wcs-product-card__section-title">
-						<?php esc_html_e( 'Boyut Seçenekleri', 'woocommerce-store-child' ); ?>
-					</h2>
-
-					<div class="wcs-product-card__variation-grid">
-						<?php foreach ( $variation_cards as $var_card ) : ?>
-							<button
-								type="button"
-								class="wcs-product-card__variation"
-								data-variation-id="<?php echo esc_attr( $var_card['id'] ); ?>"
-								data-attributes="<?php echo esc_attr( wp_json_encode( $var_card['attributes'] ) ); ?>"
-								aria-pressed="false"
-							>
-								<div class="wcs-product-card__variation-header">
-									<span class="wcs-product-card__variation-label">
-										<?php echo esc_html( $var_card['label'] ); ?>
-									</span>
-
-									<?php if ( $var_card['discount'] > 0 ) : ?>
-										<span class="wcs-product-card__badge-discount">
-											-<?php echo esc_html( $var_card['discount'] ); ?>%
-										</span>
-									<?php endif; ?>
-								</div>
-
-								<div class="wcs-product-card__variation-price">
-									<?php echo wp_kses_post( $var_card['price_html'] ); ?>
-								</div>
-							</button>
-						<?php endforeach; ?>
-					</div>
-				</section>
-			<?php endif; ?>
-
 			<?php if ( ! empty( $usage_terms ) ) : ?>
 				<section class="wcs-product-card__usage" aria-label="<?php esc_attr_e( 'Kullanım alanları', 'woocommerce-store-child' ); ?>">
 					<h2 class="wcs-product-card__section-title">

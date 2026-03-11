@@ -382,12 +382,6 @@
   color: #c12e37;
 }
 
-/* WooCommerce varyasyon formu */
-.single-product .wcs-product-card form.variations_form .variations,
-.single-product .wcs-product-card form.variations_form .reset_variations {
-  display: none !important;
-}
-
 .single-product form.variations_form .single_variation_wrap {
   margin-top: 0.75rem;
 }
