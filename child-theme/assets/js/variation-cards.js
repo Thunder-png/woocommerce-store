@@ -90,6 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!select) {
           return;
         }
+      }
 
         var nextValue = attrs[selectName];
 
@@ -121,6 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
           cardAttrs = null;
         }
       }
+    }
 
       // Variation JSON bulunamazsa, kart üzerindeki attribute payload'u kullan.
       if (!attrs) {
