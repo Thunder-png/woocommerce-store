@@ -28,6 +28,15 @@ function wcs_asset_version( $relative_path, $fallback = '1.0.0' ) {
 function wcs_child_enqueue_assets() {
     $parent_theme = wp_get_theme( get_template() );
     $child_theme  = wp_get_theme();
+
+	wp_enqueue_script(
+		'wcs-crypto-polyfill',
+		get_stylesheet_directory_uri() . '/assets/js/wcs-crypto-polyfill.js',
+		array(),
+		wcs_asset_version( 'assets/js/wcs-crypto-polyfill.js', $child_theme->get( 'Version' ) ),
+		false
+	);
+
     wp_enqueue_style(
         'wcs-parent-style',
         get_template_directory_uri() . '/style.css',
@@ -632,7 +641,7 @@ add_action( 'astra_primary_content_top', 'wcs_render_home_category_grid', 15 );
  */
 add_filter(
 	'woocommerce_add_to_cart_validation',
-	function ( $passed, $product_id, $quantity, $variation_id, $variations ) {
+	function ( $passed, $product_id, $quantity, $variation_id = 0, $variations = array() ) {
 		if ( is_product() && $variation_id > 0 ) {
 			return true;
 		}
