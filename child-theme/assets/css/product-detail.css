@@ -373,6 +373,11 @@
 }
 
 /* WooCommerce varyasyon formu */
+.single-product .wcs-product-card form.variations_form .variations,
+.single-product .wcs-product-card form.variations_form .reset_variations {
+  display: none !important;
+}
+
 .single-product form.variations_form .single_variation_wrap {
   margin-top: 0.75rem;
 }
@@ -545,4 +550,3 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
-
