@@ -99,16 +99,6 @@ function wcs_child_enqueue_assets() {
         wcs_asset_version( 'template-parts/header/shop-header.css', $child_theme->get( 'Version' ) )
     );
 
-	/**
-	 * m² hesaplayıcının aktif olacağı ürünler.
-	 *
-	 * Şimdilik el ile ID listesi; ileride kategori/taxonomi kuralına çevrilebilir.
-	 */
-	$m2_enabled_product_ids = apply_filters(
-		'wcs_m2_enabled_product_ids',
-		array()
-	);
-
     if ( is_front_page() ) {
         wp_enqueue_style(
             'wcs-home-category-grid',
@@ -148,7 +138,12 @@ function wcs_child_enqueue_assets() {
 
         $price_per_m2 = $product instanceof WC_Product ? (float) wc_get_price_to_display( $product ) : 0;
 		$product_id   = $product instanceof WC_Product ? $product->get_id() : 0;
-		$m2_enabled   = $product_id && in_array( $product_id, $m2_enabled_product_ids, true );
+
+		// m² hesaplayıcı, \"özel ölçü\" product tag'ine sahip ürünlerde aktif.
+		$m2_enabled   = $product_id && (
+			has_term( 'ozel-olcu', 'product_tag', $product_id ) ||
+			has_term( 'özel ölçü', 'product_tag', $product_id )
+		);
 
 		if ( $m2_enabled ) {
 			wp_enqueue_script(
@@ -334,12 +329,17 @@ function wcs_render_price_calculator() {
 		return;
 	}
 
-	$m2_enabled_product_ids = apply_filters(
-		'wcs_m2_enabled_product_ids',
-		array()
-	);
+	$product_id = $product->get_id();
 
-	if ( ! in_array( $product->get_id(), $m2_enabled_product_ids, true ) ) {
+	if ( ! $product_id ) {
+		return;
+	}
+
+	// Sadece \"özel ölçü\" etiketine sahip ürünlerde hesaplayıcıyı göster.
+	if (
+		! has_term( 'ozel-olcu', 'product_tag', $product_id )
+		&& ! has_term( 'özel ölçü', 'product_tag', $product_id )
+	) {
 		return;
 	}
     ?>
