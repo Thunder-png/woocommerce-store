@@ -14,9 +14,44 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var cards = Array.from(cardRoot.querySelectorAll('.wcs-product-card__variation'));
     var mainPrice = cardRoot.querySelector('.wcs-product-card__price-current');
+    var variationIdInput = form.querySelector('input[name="variation_id"]');
+    var jQueryInstance = window.jQuery;
 
     function getVariationSelects() {
       return Array.from(form.querySelectorAll('select[name^="attribute_"]'));
+    }
+
+    function getProductVariations() {
+      var raw = form.getAttribute('data-product_variations');
+
+      if (!raw || raw === 'false') {
+        return [];
+      }
+
+      try {
+        var parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function getVariationDataById(variationId) {
+      var targetId = Number(variationId);
+
+      return getProductVariations().find(function (variation) {
+        return Number(variation.variation_id) === targetId;
+      }) || null;
+    }
+
+    function triggerSelectChange(select) {
+      // Native event for vanilla listeners.
+      select.dispatchEvent(new Event('change', { bubbles: true }));
+
+      // jQuery trigger for WooCommerce variation form handlers.
+      if (jQueryInstance) {
+        jQueryInstance(select).trigger('change');
+      }
     }
 
     function setCardState(activeCard) {
@@ -25,10 +60,6 @@ document.addEventListener('DOMContentLoaded', function () {
         card.classList.toggle('is-active', isActive);
         card.setAttribute('aria-pressed', isActive ? 'true' : 'false');
       });
-    }
-
-    function dispatchSelectChange(select) {
-      select.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
     function fillMissingAttributes() {
@@ -43,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (fallbackOption) {
           select.value = fallbackOption.value;
-          dispatchSelectChange(select);
+          triggerSelectChange(select);
         }
       });
     }
@@ -59,38 +90,51 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!select) {
           return;
         }
+      }
 
         var nextValue = attrs[selectName];
 
         if (typeof nextValue !== 'string' || !nextValue.length) {
           return;
         }
-      }
 
         if (select.value !== nextValue) {
           select.value = nextValue;
-          dispatchSelectChange(select);
+          triggerSelectChange(select);
         }
       });
 
-      // Sadece kart seçimi ile sepete eklenebilsin diye, seçilmeyen attribute'leri otomatik doldur.
+      // Visible kart seçimi dışında kalan attribute'ler için validasyon fallback.
       fillMissingAttributes();
     }
 
     function activateCard(card) {
-      var raw = card.getAttribute('data-attributes');
-      var attrs = null;
+      var rawCardAttrs = card.getAttribute('data-attributes');
+      var cardAttrs = null;
+      var variationId = card.getAttribute('data-variation-id');
+      var variationData = getVariationDataById(variationId);
+      var attrs = variationData && variationData.attributes ? variationData.attributes : null;
 
-      if (raw) {
+      if (rawCardAttrs) {
         try {
-          attrs = JSON.parse(raw);
+          cardAttrs = JSON.parse(rawCardAttrs);
         } catch (error) {
-          attrs = null;
+          cardAttrs = null;
         }
+      }
+    }
+
+      // Variation JSON bulunamazsa, kart üzerindeki attribute payload'u kullan.
+      if (!attrs) {
+        attrs = cardAttrs;
       }
 
       setCardState(card);
       syncAttributesToForm(attrs);
+
+      if (variationIdInput && variationId) {
+        variationIdInput.value = variationId;
+      }
 
       var cardPrice = card.querySelector('.wcs-product-card__variation-price');
       if (mainPrice && cardPrice && cardPrice.innerHTML.trim()) {
@@ -108,28 +152,40 @@ document.addEventListener('DOMContentLoaded', function () {
       activateCard(cards[0]);
     }
 
-    form.addEventListener('found_variation', function (event) {
-      var variation = event.detail && event.detail[0] ? event.detail[0] : null;
+    if (jQueryInstance) {
+      jQueryInstance(form).on('found_variation.wc-variation-form', function (_, variation) {
+        if (!variation || !variation.variation_id) {
+          return;
+        }
 
-      if (!variation || !variation.variation_id) {
-        return;
-      }
+        cards.forEach(function (card) {
+          var id = Number(card.getAttribute('data-variation-id'));
+          if (id === Number(variation.variation_id)) {
+            setCardState(card);
+          }
+        });
 
-      cards.forEach(function (card) {
-        var id = Number(card.getAttribute('data-variation-id'));
-        if (id === Number(variation.variation_id)) {
-          setCardState(card);
+        if (variationIdInput) {
+          variationIdInput.value = variation.variation_id;
+        }
+
+        if (mainPrice && variation.price_html) {
+          mainPrice.innerHTML = variation.price_html;
         }
       });
-
-      if (mainPrice && variation.price_html) {
-        mainPrice.innerHTML = variation.price_html;
-      }
-    });
+    }
 
     form.addEventListener('submit', function () {
-      // Submit anında boş attribute kalırsa Woo validasyonu bloklamasın.
       fillMissingAttributes();
+
+      // Submit öncesi aktif karttan variation_id garanti et.
+      var activeCard = cardRoot.querySelector('.wcs-product-card__variation.is-active');
+      if (variationIdInput && activeCard) {
+        var selectedId = activeCard.getAttribute('data-variation-id');
+        if (selectedId) {
+          variationIdInput.value = selectedId;
+        }
+      }
     });
 
     var variationRows = form.querySelectorAll('table.variations tr');

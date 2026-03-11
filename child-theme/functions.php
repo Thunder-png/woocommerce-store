@@ -150,7 +150,7 @@ function wcs_child_enqueue_assets() {
         wp_enqueue_script(
             'wcs-variation-cards',
             get_stylesheet_directory_uri() . '/assets/js/variation-cards.js',
-            array( 'jquery' ),
+            array( 'jquery', 'wc-add-to-cart-variation' ),
             wcs_asset_version( 'assets/js/variation-cards.js', $child_theme->get( 'Version' ) ),
             true
         );
