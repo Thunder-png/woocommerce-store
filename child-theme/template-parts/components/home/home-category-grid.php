@@ -30,17 +30,8 @@ if ( is_wp_error( $categories ) || empty( $categories ) ) {
 $section_id = 'wcs-home-categories';
 ?>
 
-<section id="<?php echo esc_attr( $section_id ); ?>" class="wcs-home-categories" aria-labelledby="wcs-home-products-title">
+<section id="<?php echo esc_attr( $section_id ); ?>" class="wcs-home-categories">
 	<div class="wcs-home-categories__inner">
-		<header class="wcs-home-categories__header">
-			<h2 id="wcs-home-products-title" class="wcs-home-categories__title">
-				<?php esc_html_e( 'Kategori Kartları', 'woocommerce-store-child' ); ?>
-			</h2>
-			<p class="wcs-home-categories__subtitle">
-				<?php esc_html_e( 'Güvenlik filesi çözümlerini kullanım alanına göre hızlıca keşfedin.', 'woocommerce-store-child' ); ?>
-			</p>
-		</header>
-
 		<div class="wcs-home-categories__grid" role="list">
 			<?php foreach ( $categories as $category ) : ?>
 				<?php
