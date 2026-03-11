@@ -549,4 +549,35 @@ function wcs_render_home_category_grid() {
 }
 add_action( 'astra_primary_content_top', 'wcs_render_home_category_grid', 15 );
 
+/**
+ * Relax add-to-cart validation for card-based variation picker.
+ *
+ * Our UI her varyasyonu tek bir kart olarak seçtirdiği için,
+ * gönderilen istekte geçerli bir variation_id varsa
+ * eksik attribute uyarısını bastırıyoruz.
+ *
+ * @param bool  $passed       Whether validation passed.
+ * @param int   $product_id   Product ID.
+ * @param int   $quantity     Quantity.
+ * @param int   $variation_id Variation ID.
+ * @param array $variations   Posted variation attributes.
+ * @return bool
+ */
+function wcs_relax_variation_add_to_cart_validation( $passed, $product_id, $quantity, $variation_id = 0, $variations = array() ) {
+	if ( is_admin() ) {
+		return $passed;
+	}
+
+	if ( ! is_product() ) {
+		return $passed;
+	}
+
+	if ( $variation_id > 0 ) {
+		return true;
+	}
+
+	return $passed;
+}
+add_filter( 'woocommerce_add_to_cart_validation', 'wcs_relax_variation_add_to_cart_validation', 20, 5 );
+
 
