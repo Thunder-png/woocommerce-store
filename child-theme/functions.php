@@ -99,6 +99,16 @@ function wcs_child_enqueue_assets() {
         wcs_asset_version( 'template-parts/header/shop-header.css', $child_theme->get( 'Version' ) )
     );
 
+	/**
+	 * m² hesaplayıcının aktif olacağı ürünler.
+	 *
+	 * Şimdilik el ile ID listesi; ileride kategori/taxonomi kuralına çevrilebilir.
+	 */
+	$m2_enabled_product_ids = apply_filters(
+		'wcs_m2_enabled_product_ids',
+		array()
+	);
+
     if ( is_front_page() ) {
         wp_enqueue_style(
             'wcs-home-category-grid',
@@ -137,32 +147,36 @@ function wcs_child_enqueue_assets() {
         global $product;
 
         $price_per_m2 = $product instanceof WC_Product ? (float) wc_get_price_to_display( $product ) : 0;
+		$product_id   = $product instanceof WC_Product ? $product->get_id() : 0;
+		$m2_enabled   = $product_id && in_array( $product_id, $m2_enabled_product_ids, true );
 
-        wp_enqueue_script(
-            'wcs-m2-calculator',
-            get_stylesheet_directory_uri() . '/assets/js/m2-calculator.js',
-            array(),
-            wcs_asset_version( 'assets/js/m2-calculator.js', $child_theme->get( 'Version' ) ),
-            true
-        );
+		if ( $m2_enabled ) {
+			wp_enqueue_script(
+				'wcs-m2-calculator',
+				get_stylesheet_directory_uri() . '/assets/js/m2-calculator.js',
+				array(),
+				wcs_asset_version( 'assets/js/m2-calculator.js', $child_theme->get( 'Version' ) ),
+				true
+			);
 
-        wp_enqueue_script(
-            'wcs-calculator-toggle',
-            get_stylesheet_directory_uri() . '/assets/js/wcs-calculator-toggle.js',
-            array(),
-            wcs_asset_version( 'assets/js/wcs-calculator-toggle.js', $child_theme->get( 'Version' ) ),
-            true
-        );
+			wp_enqueue_script(
+				'wcs-calculator-toggle',
+				get_stylesheet_directory_uri() . '/assets/js/wcs-calculator-toggle.js',
+				array(),
+				wcs_asset_version( 'assets/js/wcs-calculator-toggle.js', $child_theme->get( 'Version' ) ),
+				true
+			);
 
-        wp_localize_script(
-            'wcs-m2-calculator',
-            'wcsCalculator',
-            array(
-                'pricePerM2' => $price_per_m2,
-                'vatRate'    => 0.20,
-                'currency'   => get_woocommerce_currency_symbol(),
-            )
-        );
+			wp_localize_script(
+				'wcs-m2-calculator',
+				'wcsCalculator',
+				array(
+					'pricePerM2' => $price_per_m2,
+					'vatRate'    => 0.20,
+					'currency'   => get_woocommerce_currency_symbol(),
+				)
+			);
+		}
 
         wp_enqueue_script(
             'wcs-attribute-buttons',
@@ -310,9 +324,24 @@ add_filter( 'astra_woo_shop_sidebar_init', '__return_false' );
  * Render calculator fields for single product pages.
  */
 function wcs_render_price_calculator() {
-    if ( ! function_exists( 'is_product' ) || ! is_product() ) {
-        return;
-    }
+	if ( ! function_exists( 'is_product' ) || ! is_product() ) {
+		return;
+	}
+
+	global $product;
+
+	if ( ! ( $product instanceof WC_Product ) ) {
+		return;
+	}
+
+	$m2_enabled_product_ids = apply_filters(
+		'wcs_m2_enabled_product_ids',
+		array()
+	);
+
+	if ( ! in_array( $product->get_id(), $m2_enabled_product_ids, true ) ) {
+		return;
+	}
     ?>
     <section class="wcs-calculator" aria-label="Price calculator">
         <h3><?php esc_html_e( 'm² Price Calculator', 'woocommerce-store-child' ); ?></h3>
