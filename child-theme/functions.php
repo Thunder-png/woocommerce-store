@@ -550,4 +550,20 @@ function wcs_render_home_category_grid() {
 }
 add_action( 'astra_primary_content_top', 'wcs_render_home_category_grid', 15 );
 
+/**
+ * Kart tabanlı seçicide geçerli variation_id varsa attribute uyuşmazlığı uyarısını yumuşat.
+ */
+add_filter(
+	'woocommerce_add_to_cart_validation',
+	function ( $passed, $product_id, $quantity, $variation_id, $variations ) {
+		if ( is_product() && $variation_id > 0 ) {
+			return true;
+		}
+
+		return $passed;
+	},
+	20,
+	5
+);
+
 

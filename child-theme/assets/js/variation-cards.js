@@ -65,6 +65,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       });
 
+      // Seçilen kartın variation_id değerini gizli inputa yaz.
+      var variationIdInput = form.querySelector('input[name="variation_id"]');
+      var cardVariationId = card.getAttribute('data-variation-id');
+      if (variationIdInput && cardVariationId) {
+        variationIdInput.value = cardVariationId;
+      }
+
       var cardPrice = card.querySelector('.wcs-product-card__variation-price');
       if (mainPrice && cardPrice && cardPrice.innerHTML.trim()) {
         mainPrice.innerHTML = cardPrice.innerHTML;
