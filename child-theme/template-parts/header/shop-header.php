@@ -33,7 +33,7 @@ $lottie_url = get_stylesheet_directory_uri() . '/assets/branding/logo/logo-lotti
                 </form>
             <?php endif; ?>
 
-            <a class="wcs-shop-header__icon-link" href="<?php echo esc_url( wc_get_page_permalink( 'cart' ) ); ?>" aria-label="<?php esc_attr_e( 'Sepeti görüntüle', 'woocommerce-store-child' ); ?>">
+            <a class="wcs-shop-header__icon-link" href="<?php echo esc_url( wc_get_page_permalink( 'cart' ) ); ?>" data-wcs-cart-toggle="true" aria-label="<?php esc_attr_e( 'Sepeti görüntüle', 'woocommerce-store-child' ); ?>">
                 <i class="bi bi-cart3" aria-hidden="true"></i>
             </a>
         </div>

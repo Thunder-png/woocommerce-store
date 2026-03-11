@@ -18,6 +18,17 @@
   $(function () {
     var $sidebar = $('.wcs-cart-sidebar');
     var $overlay = $('.wcs-cart-sidebar-overlay');
+    var $cartToggle = $('[data-wcs-cart-toggle=\"true\"]');
+
+    // Header sepet ikonundan sidebar açma (sidebar varsa).
+    if ($cartToggle.length) {
+      $cartToggle.on('click', function (e) {
+        if ($sidebar.length && $overlay.length) {
+          e.preventDefault();
+          openSidebar($sidebar, $overlay);
+        }
+      });
+    }
 
     if (!$sidebar.length || !$overlay.length) {
       return;
