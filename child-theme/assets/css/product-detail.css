@@ -218,6 +218,16 @@
   transform: translateY(-1px);
 }
 
+.single-product .wcs-product-card__variation.is-active {
+  border-color: rgba(193, 46, 55, 0.95);
+  box-shadow: 0 0 0 2px rgba(193, 46, 55, 0.2), 0 10px 26px rgba(15, 19, 30, 0.12);
+}
+
+.single-product .wcs-product-card__variation:focus-visible {
+  outline: 2px solid rgba(193, 46, 55, 0.9);
+  outline-offset: 1px;
+}
+
 .single-product .wcs-product-card__variation-header {
   display: flex;
   justify-content: space-between;
@@ -373,6 +383,11 @@
 }
 
 /* WooCommerce varyasyon formu */
+.single-product .wcs-product-card form.variations_form .variations,
+.single-product .wcs-product-card form.variations_form .reset_variations {
+  display: none !important;
+}
+
 .single-product form.variations_form .single_variation_wrap {
   margin-top: 0.75rem;
 }
@@ -545,4 +560,3 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
-

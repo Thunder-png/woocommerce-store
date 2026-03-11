@@ -28,22 +28,31 @@ $review_count = $product->get_review_count();
 $is_in_stock  = $product->is_in_stock();
 
 // Attribute helper: get terms for a taxonomy (e.g. pa_renk).
-function wcs_get_product_terms_labels( $product_id, $taxonomy ) {
-	$terms = get_the_terms( $product_id, $taxonomy );
+if ( ! function_exists( 'wcs_get_product_terms_labels' ) ) {
+	/**
+	 * Return product terms in lightweight label format.
+	 *
+	 * @param int    $product_id Product ID.
+	 * @param string $taxonomy   Product taxonomy key.
+	 * @return array<int,array{slug:string,name:string}>
+	 */
+	function wcs_get_product_terms_labels( $product_id, $taxonomy ) {
+		$terms = get_the_terms( $product_id, $taxonomy );
 
-	if ( is_wp_error( $terms ) || empty( $terms ) ) {
-		return array();
+		if ( is_wp_error( $terms ) || empty( $terms ) ) {
+			return array();
+		}
+
+		return array_map(
+			static function ( $term ) {
+				return array(
+					'slug' => $term->slug,
+					'name' => $term->name,
+				);
+			},
+			$terms
+		);
 	}
-
-	return array_map(
-		static function ( $term ) {
-			return array(
-				'slug' => $term->slug,
-				'name' => $term->name,
-			);
-		},
-		$terms
-	);
 }
 
 // Color badge (pa_renk).
@@ -99,7 +108,16 @@ if ( $product->is_type( 'variable' ) ) {
 			continue;
 		}
 
-		$attrs = $variation->get_attributes();
+		$attrs             = $variation->get_attributes();
+		$normalized_attrs  = array();
+
+		foreach ( $attrs as $attr_key => $attr_value ) {
+			if ( '' === $attr_value ) {
+				continue;
+			}
+
+			$normalized_attrs[ wc_variation_attribute_name( $attr_key ) ] = $attr_value;
+		}
 
 		// Build human-friendly label from key attributes.
 		$label_parts = array();
@@ -165,7 +183,7 @@ if ( $product->is_type( 'variable' ) ) {
 			'regular_price'   => $var_regular,
 			'sale_price'      => $var_sale,
 			'discount'        => $var_discount,
-			'attributes'      => $attrs,
+			'attributes'      => $normalized_attrs,
 		);
 	}
 }
@@ -256,10 +274,12 @@ if ( $product->is_type( 'variable' ) ) {
 
 					<div class="wcs-product-card__variation-grid">
 						<?php foreach ( $variation_cards as $var_card ) : ?>
-							<div
+							<button
+								type="button"
 								class="wcs-product-card__variation"
 								data-variation-id="<?php echo esc_attr( $var_card['id'] ); ?>"
 								data-attributes="<?php echo esc_attr( wp_json_encode( $var_card['attributes'] ) ); ?>"
+								aria-pressed="false"
 							>
 								<div class="wcs-product-card__variation-header">
 									<span class="wcs-product-card__variation-label">
@@ -276,7 +296,7 @@ if ( $product->is_type( 'variable' ) ) {
 								<div class="wcs-product-card__variation-price">
 									<?php echo wp_kses_post( $var_card['price_html'] ); ?>
 								</div>
-							</div>
+							</button>
 						<?php endforeach; ?>
 					</div>
 				</section>
@@ -345,15 +365,18 @@ if ( $product->is_type( 'variable' ) ) {
 					</button>
 					<?php
 					/**
-					 * Add to cart form & related summary content.
+					 * Render only add-to-cart form.
 					 *
-					 * Calculator is injected via woocommerce_before_add_to_cart_form hook.
+					 * We intentionally avoid full `woocommerce_single_product_summary`
+					 * here to prevent duplicate title/price/excerpt and legacy dropdown
+					 * UI from appearing alongside the custom variation cards.
 					 */
-					do_action( 'woocommerce_single_product_summary' );
+					if ( function_exists( 'woocommerce_template_single_add_to_cart' ) ) {
+						woocommerce_template_single_add_to_cart();
+					}
 					?>
 				</div>
 			</footer>
 		</div>
 	</div>
 </section>
-
