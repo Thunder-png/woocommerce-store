@@ -137,6 +137,14 @@ function wcs_child_enqueue_assets() {
             true
         );
 
+        wp_enqueue_script(
+            'wcs-calculator-toggle',
+            get_stylesheet_directory_uri() . '/assets/js/wcs-calculator-toggle.js',
+            array(),
+            wcs_asset_version( 'assets/js/wcs-calculator-toggle.js', $child_theme->get( 'Version' ) ),
+            true
+        );
+
         wp_localize_script(
             'wcs-m2-calculator',
             'wcsCalculator',
