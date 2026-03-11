@@ -22,7 +22,7 @@
   overflow: hidden;
   background: var(--wcs-dark);
   max-width: 1360px;
-  margin: 3.5rem auto 3.75rem;
+  margin: 3.5rem auto 2rem;
   border-radius: 26px;
   box-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
 }
