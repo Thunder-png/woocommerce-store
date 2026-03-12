@@ -36,6 +36,7 @@ function noa_init() {
 	require_once NOA_PLUGIN_DIR . 'includes/ajax-handlers.php';
 	require_once NOA_PLUGIN_DIR . 'includes/user-creation.php';
 	require_once NOA_PLUGIN_DIR . 'includes/admin-meta-box.php';
+	require_once NOA_PLUGIN_DIR . 'includes/admin-activation-page.php';
 
 	// Register hooks.
 	add_action( 'wp_enqueue_scripts', 'noa_enqueue_assets' );
