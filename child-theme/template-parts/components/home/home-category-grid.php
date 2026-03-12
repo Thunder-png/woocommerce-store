@@ -19,9 +19,9 @@ if ( taxonomy_exists( 'product_cat' ) ) {
 
 	$requested_category_slugs = array(
 		'balkon-guvenlik-filesi',
-		'cocuk-filesi',
-		'havuz-filesi',
-		'kedi-filesi',
+		'cocuk-filesi-file-urunleri',
+		'havuz-filesi-file-urunleri',
+		'kedi-filesi-file-urunleri',
 	);
 
 	$terms_by_slug = get_terms(
