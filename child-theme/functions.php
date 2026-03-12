@@ -942,3 +942,107 @@ function wcs_flush_warranty_rewrite_rules() {
 	flush_rewrite_rules();
 }
 add_action( 'after_switch_theme', 'wcs_flush_warranty_rewrite_rules' );
+
+/**
+ * WooCommerce My Account kayıt akışı: ad soyad alanı, doğrulama ve profil kaydı.
+ */
+function wcs_register_form_name_field() {
+	$full_name = isset( $_POST['account_first_name'] ) ? wp_unslash( (string) $_POST['account_first_name'] ) : '';
+	?>
+	<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
+		<label for="reg_account_first_name">
+			<?php esc_html_e( 'Ad Soyad', 'woocommerce-store-child' ); ?>
+			<span class="required">*</span>
+		</label>
+		<input type="text" class="woocommerce-Input woocommerce-Input--text input-text" name="account_first_name" id="reg_account_first_name" autocomplete="name" value="<?php echo esc_attr( $full_name ); ?>" />
+	</p>
+	<?php
+}
+add_action( 'woocommerce_register_form_start', 'wcs_register_form_name_field' );
+
+/**
+ * Validate custom name field on registration.
+ *
+ * @param WP_Error $errors   Validation errors.
+ * @param string   $username Submitted username.
+ * @param string   $email    Submitted email.
+ * @return WP_Error
+ */
+function wcs_validate_register_name( $errors, $username, $email ) {
+	$full_name = isset( $_POST['account_first_name'] ) ? trim( (string) wp_unslash( $_POST['account_first_name'] ) ) : '';
+
+	if ( '' === $full_name ) {
+		$errors->add( 'account_first_name_error', __( 'Lütfen adınızı ve soyadınızı girin.', 'woocommerce-store-child' ) );
+	}
+
+	return $errors;
+}
+add_filter( 'woocommerce_registration_errors', 'wcs_validate_register_name', 10, 3 );
+
+/**
+ * Save custom name field to user profile after registration.
+ *
+ * @param int $customer_id Customer ID.
+ */
+function wcs_save_register_name( $customer_id ) {
+	if ( ! $customer_id ) {
+		return;
+	}
+
+	$full_name = isset( $_POST['account_first_name'] ) ? trim( (string) wp_unslash( $_POST['account_first_name'] ) ) : '';
+
+	if ( '' === $full_name ) {
+		return;
+	}
+
+	update_user_meta( $customer_id, 'first_name', $full_name );
+
+	wp_update_user(
+		array(
+			'ID'           => $customer_id,
+			'display_name' => $full_name,
+		)
+	);
+}
+add_action( 'woocommerce_created_customer', 'wcs_save_register_name', 20 );
+
+/**
+ * Force redirect to My Account after registration.
+ *
+ * @param string $redirect Redirect URL.
+ * @return string
+ */
+function wcs_registration_redirect_to_my_account( $redirect ) {
+	if ( function_exists( 'wc_get_page_permalink' ) ) {
+		return wc_get_page_permalink( 'myaccount' );
+	}
+
+	return $redirect;
+}
+add_filter( 'woocommerce_registration_redirect', 'wcs_registration_redirect_to_my_account' );
+
+/**
+ * Ensure new customers are logged in automatically after registration.
+ *
+ * @return bool
+ */
+function wcs_enable_auto_login_after_registration() {
+	return true;
+}
+add_filter( 'woocommerce_registration_auth_new_customer', 'wcs_enable_auto_login_after_registration' );
+
+/**
+ * Redirect to My Account after logout.
+ *
+ * @param string $redirect_url Default redirect URL.
+ * @return string
+ */
+function wcs_logout_redirect_to_my_account( $redirect_url ) {
+	if ( function_exists( 'wc_get_page_permalink' ) ) {
+		return wc_get_page_permalink( 'myaccount' );
+	}
+
+	return $redirect_url;
+}
+add_filter( 'woocommerce_logout_default_redirect_url', 'wcs_logout_redirect_to_my_account' );
+
