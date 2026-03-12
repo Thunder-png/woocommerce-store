@@ -550,3 +550,268 @@ body.wcs-cart-sidebar-open {
   gap: 0.65rem;
   margin-top: 1rem;
 }
+
+/* ===========================
+   Garanti Aktivasyon Sayfası
+   =========================== */
+
+.wcs-guarantee-doc {
+  --g-bg: var(--wcs-color-bg);
+  --g-surface: var(--wcs-surface);
+  --g-card: #ffffff;
+  --g-border: var(--wcs-border);
+  --g-accent: var(--wcs-color-accent);
+  --g-accent-soft: rgba(193, 46, 55, 0.06);
+  --g-text: var(--wcs-color-text);
+  --g-text-muted: rgba(43, 46, 55, 0.75);
+
+  max-width: 920px;
+  margin: 2.5rem auto 3.5rem;
+  padding: 0 1rem 2rem;
+}
+
+.wcs-guarantee-doc__inner {
+  background: var(--g-surface);
+  border: 1px solid var(--g-border);
+  border-radius: 16px;
+  padding: 1.75rem 1.5rem 2rem;
+  box-shadow: 0 16px 40px rgba(15, 19, 30, 0.06);
+}
+
+.wcs-guarantee-doc__header {
+  text-align: left;
+  margin-bottom: 1.75rem;
+}
+
+.wcs-guarantee-doc__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--g-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.wcs-guarantee-doc__title {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.wcs-guarantee-doc__subtitle {
+  margin: 0.4rem 0 0;
+  font-size: 0.9rem;
+  color: var(--g-text-muted);
+}
+
+.wcs-guarantee-doc .section-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--g-accent);
+  margin: 1.9rem 0 0.9rem;
+  padding-left: 0.55rem;
+  border-left: 2px solid var(--g-accent);
+}
+
+.wcs-guarantee-doc .accordion {
+  border: 1px solid var(--g-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--g-card);
+}
+
+.wcs-guarantee-doc .accordion + .accordion {
+  margin-top: 0.75rem;
+}
+
+.wcs-guarantee-doc details {
+  background: transparent;
+}
+
+.wcs-guarantee-doc details + details {
+  border-top: 1px solid var(--g-border);
+}
+
+.wcs-guarantee-doc summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--g-text);
+  user-select: none;
+  position: relative;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.wcs-guarantee-doc summary::-webkit-details-marker {
+  display: none;
+}
+
+.wcs-guarantee-doc summary:hover {
+  background: rgba(15, 19, 30, 0.02);
+}
+
+.wcs-guarantee-doc details[open] > summary {
+  color: var(--g-accent);
+  background: var(--g-accent-soft);
+}
+
+.wcs-guarantee-doc .sum-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  background: #ffffff;
+  border: 1px solid rgba(15, 19, 30, 0.06);
+}
+
+.wcs-guarantee-doc details[open] .sum-icon {
+  border-color: rgba(193, 46, 55, 0.4);
+}
+
+.wcs-guarantee-doc .sum-chevron {
+  margin-left: auto;
+  width: 18px;
+  height: 18px;
+  opacity: 0.55;
+  transition: transform 0.24s ease, opacity 0.18s ease;
+}
+
+.wcs-guarantee-doc details[open] .sum-chevron {
+  transform: rotate(180deg);
+  opacity: 1;
+}
+
+.wcs-guarantee-doc .acc-body {
+  padding: 0 1.4rem 1.2rem 3.4rem;
+  font-size: 0.9rem;
+  color: var(--g-text-muted);
+  line-height: 1.75;
+}
+
+.wcs-guarantee-doc .acc-body h4 {
+  margin: 1.1rem 0 0.5rem;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--wcs-color-primary);
+}
+
+.wcs-guarantee-doc .acc-body h4:first-child {
+  margin-top: 0.1rem;
+}
+
+.wcs-guarantee-doc .acc-body p {
+  margin: 0 0 0.65rem;
+}
+
+.wcs-guarantee-doc .acc-body ul {
+  margin: 0.35rem 0 0.75rem 1.2rem;
+}
+
+.wcs-guarantee-doc .acc-body ul li {
+  margin-bottom: 0.3rem;
+}
+
+.wcs-guarantee-doc .acc-body ul li::marker {
+  color: var(--g-accent);
+}
+
+.wcs-guarantee-doc .acc-body ol {
+  margin: 0.35rem 0 0.75rem 1.2rem;
+}
+
+.wcs-guarantee-doc .acc-body ol li {
+  margin-bottom: 0.55rem;
+}
+
+.wcs-guarantee-doc .note-box {
+  margin-top: 0.9rem;
+  padding: 0.75rem 0.9rem;
+  background: rgba(15, 19, 30, 0.02);
+  border-left: 2px solid var(--g-accent);
+  border-radius: 0 8px 8px 0;
+  font-size: 0.82rem;
+  color: var(--g-text-muted);
+}
+
+.wcs-guarantee-doc .tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--g-accent-soft);
+  color: var(--g-accent);
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+  margin-bottom: 0.75rem;
+}
+
+.wcs-guarantee-doc .step {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 0.9rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--g-border);
+}
+
+.wcs-guarantee-doc .step:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.wcs-guarantee-doc .step-num {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--g-accent);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.1rem;
+}
+
+.wcs-guarantee-doc .step-body strong {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--wcs-color-primary);
+  margin-bottom: 0.2rem;
+}
+
+.wcs-guarantee-doc .step-body p {
+  margin: 0;
+}
+
+.wcs-guarantee-doc__form-note {
+  margin-top: 0.75rem;
+  font-size: 0.82rem;
+  color: var(--g-text-muted);
+}
+
+@media (max-width: 768px) {
+  .wcs-guarantee-doc {
+    margin: 1.5rem auto 2.5rem;
+  }
+
+  .wcs-guarantee-doc__inner {
+    padding: 1.25rem 1rem 1.6rem;
+  }
+
+  .wcs-guarantee-doc .acc-body {
+    padding: 0 1.1rem 1.1rem 2.4rem;
+  }
+}

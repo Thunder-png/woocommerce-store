@@ -3,8 +3,7 @@
    ═══════════════════════════════════════════════════════════════ */
 
 .wcs-cart-shell,
-.wcs-checkout-shell,
-.wcs-account-shell {
+.wcs-checkout-shell {
   max-width: 1160px;
   margin: 2.5rem auto 3rem;
   padding: 0 1rem;

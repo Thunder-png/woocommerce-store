@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karaca File — Ürün Dokümantasyonu</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --card: #1c1c1c;
+    --border: #2a2a2a;
+    --accent: #c8a96e;
+    --accent-dim: rgba(200,169,110,0.12);
+    --text: #e8e0d0;
+    --text-muted: #8a8070;
+    --radius: 4px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 24px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 40% at 50% -10%, rgba(200,169,110,0.08), transparent);
+    pointer-events: none;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 8px;
+  }
+  .brand-icon {
+    width: 44px; height: 44px;
+    background: var(--accent);
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .brand-icon svg { width: 26px; height: 26px; }
+  .brand-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: var(--text);
+  }
+  .brand-name span { color: var(--accent); }
+  header p {
+    color: var(--text-muted);
+    font-size: .82rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+  .contact-strip {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    font-size: .78rem;
+    color: var(--text-muted);
+  }
+  .contact-strip a { color: var(--accent); text-decoration: none; }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 820px;
+    margin: 48px auto 80px;
+    padding: 0 20px;
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: .68rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 40px 0 14px;
+    padding-left: 4px;
+    border-left: 2px solid var(--accent);
+    padding-left: 10px;
+  }
+
+  /* ── ACCORDION ── */
+  .accordion { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .accordion + .accordion { margin-top: 2px; }
+
+  details { background: var(--card); }
+  details + details { border-top: 1px solid var(--border); }
+
+  summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 20px;
+    font-size: .95rem;
+    font-weight: 500;
+    color: var(--text);
+    user-select: none;
+    transition: background .2s;
+    position: relative;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover { background: rgba(255,255,255,.03); }
+
+  details[open] > summary {
+    color: var(--accent);
+    background: var(--accent-dim);
+  }
+
+  .sum-icon {
+    width: 28px; height: 28px; flex-shrink: 0;
+    background: var(--accent-dim);
+    border: 1px solid rgba(200,169,110,.25);
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .85rem;
+  }
+  details[open] .sum-icon { background: rgba(200,169,110,.22); }
+
+  .sum-chevron {
+    margin-left: auto;
+    width: 18px; height: 18px;
+    opacity: .5;
+    transition: transform .25s;
+  }
+  details[open] .sum-chevron { transform: rotate(180deg); opacity: 1; }
+
+  .acc-body {
+    padding: 0 20px 22px 62px;
+    font-size: .88rem;
+    color: #c8bfb0;
+    line-height: 1.8;
+  }
+
+  /* ── CONTENT STYLES ── */
+  .acc-body h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: .95rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 18px 0 6px;
+  }
+  .acc-body h4:first-child { margin-top: 4px; }
+
+  .acc-body p { margin-bottom: 10px; }
+
+  .acc-body ul {
+    padding-left: 18px;
+    margin-bottom: 10px;
+  }
+  .acc-body ul li {
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .acc-body ul li::marker { color: var(--accent); }
+
+  .acc-body ol {
+    padding-left: 20px;
+    margin-bottom: 10px;
+  }
+  .acc-body ol li { margin-bottom: 8px; }
+  .acc-body ol li strong { color: var(--text); }
+
+  .note-box {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: rgba(200,169,110,.07);
+    border-left: 2px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-size: .83rem;
+    color: var(--text-muted);
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: .68rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid rgba(200,169,110,.25);
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-bottom: 12px;
+  }
+
+  .materials-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .mat-item {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 7px 10px;
+    font-size: .82rem;
+  }
+  .mat-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+
+  .step {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .step:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .step-num {
+    width: 26px; height: 26px; flex-shrink: 0;
+    background: var(--accent);
+    color: #0e0e0e;
+    font-weight: 700;
+    font-size: .78rem;
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 2px;
+  }
+  .step-body strong { display: block; color: var(--text); margin-bottom: 3px; font-size: .88rem; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 32px 20px;
+    font-size: .75rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#0e0e0e" stroke-width="2.2" stroke-linecap="round">
+        <path d="M3 6h18M3 12h18M3 18h18"/>
+        <circle cx="6" cy="6" r="1.5" fill="#0e0e0e" stroke="none"/>
+        <circle cx="6" cy="12" r="1.5" fill="#0e0e0e" stroke="none"/>
+        <circle cx="6" cy="18" r="1.5" fill="#0e0e0e" stroke="none"/>
+      </svg>
+    </div>
+    <span class="brand-name">By <span>Karaca</span> File</span>
+  </div>
+  <p>Güvenlik Filesi — Ürün Dokümantasyonu</p>
+  <div class="contact-strip">
+    <span>📞 <a href="tel:+908503802006">+90 850 380 20 06</a></span>
+    <span>✉️ <a href="mailto:info@karacafile.com.tr">info@karacafile.com.tr</a></span>
+    <span>🌐 <a href="https://www.karacafile.com.tr" target="_blank">karacafile.com.tr</a></span>
+  </div>
+</header>
+
+<main>
+
+  <!-- ═══════════════════════════════ KURULUM REHBERİ ═══════════════════════════════ -->
+  <p class="section-label">Kurulum Rehberi</p>
+
+  <div class="accordion">
+
+    <details open>
+      <summary>
+        <span class="sum-icon">📋</span>
+        Ön Bilgi
+        <svg class="sum-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <div class="acc-body">
+        <p>Karaca File ürünleri, balkonlarınızı ve açık alanlarınızı evcil hayvanlarınız ve çocuklarınız için güvenli hale getirmek üzere tasarlanmıştır. Bu file, <strong>[X metre]</strong> yüksekliğe kadar olan balkonlar ve pencereler için uygundur; <strong>0 ile 50°C</strong> arasındaki iklim koşullarında kullanılabilir.</p>
+        <p>Bu kurulum rehberi, güvenliğinizi doğru ve güvenli bir şekilde monte etmeniz için adım adım talimatlar içermektedir. Kurulum sırasında dikkat edilmesi gereken noktaları ve gerekli malzemeleri yerleştirmiş. Ayrıca sayfanın QR kodunu taratarak detaylı kurulum videosuna ulaşabilirsiniz.</p>
+        <div class="note-box">💡 Eğer yüksekte çalışıyorsanız ve bu konuda deneyiminiz yoksa, mutlaka bir profesyonelden yardım alın. Güvenliğiniz için profesyonel destek almak her zaman iyi bir tercihtir.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-icon">🔧</span>
+        Gerekli Malzemeler
+        <svg class="sum-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <div class="acc-body">
+        <div class="tag">Zorunlu Ekipmanlar</div>
+        <div class="materials-grid">
+          <div class="mat-item"><span class="mat-dot"></span>Karaca File Güvenlik Filesi</div>
+          <div class="mat-item"><span class="mat-dot"></span>Matkap (kanat delikleri için)</div>
+          <div class="mat-item"><span class="mat-dot"></span>Dübel ve Vida Kanallar</div>
+          <div class="mat-item"><span class="mat-dot"></span>Statik Halat</div>
+          <div class="mat-item"><span class="mat-dot"></span>Metre (ölçüm için)</div>
+          <div class="mat-item"><span class="mat-dot"></span>Makas / Bıçak (halat kesimi)</div>
+          <div class="mat-item"><span class="mat-dot"></span>Güvenlik Kemeri / Bel Halat</div>
+          <div class="mat-item"><span class="mat-dot"></span>Eldiven (koruma amaçlı)</div>
+          <div class="mat-item"><span class="mat-dot"></span>Güvenlik Gözlüğü</div>
+          <div class="mat-item"><span class="mat-dot"></span>Tornavida / Pense (gerekirse)</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-icon">🏗️</span>
+        Kurulum Adımları
+        <svg class="sum-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <div class="acc-body">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>Alan Hazırlığı</strong>
+            Kurulumu yapacağınız alanı temizleyin. Ölçüleri kontrol edin ve fileyi uygun boyutlarda hazırlayın.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Kanat Deliklerinin Açılması</strong>
+            Kanatlarınızı ve köşelerde işaretleme noktalarını belirleyin. Metre ile ölçüm yaparak matkapla delikleri açın. <em>Delikler arası mesafe maksimum 50 cm olmalıdır.</em> Dübelleri yerleştirin.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>Kanalların Montajı</strong>
+            Dübelle vida kullanarak kanat ve kanalları yerleştirin. Kanalların sağlam olduğundan emin olun.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>Gerdirme Halat Montajı</strong>
+            Köşe kanallardan bir halat gerek tip bir profil gibi geçirin.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <strong>File Yerleştirme</strong>
+            Fileyi yerleştirmeden önce, filenin etrafındaki deliklerden bir halat içten ve dıştan geçirin. Halatı file kenarındaki deliklerden geçirerek fileyi kanallara düzgün şekilde bağlayın. Fileyi kanallara takarak köşelere sabitleyin.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <strong>Halat Sabitleme</strong>
+            Gerdirme işlemi bittikten sonra halatlar ve fileyi kanallara takın.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">7</div>
+          <div class="step-body">
+            <strong>Güvenlik Kontrolü</strong>
+            Tüm kanallar ve halatların sıkıca sabitlendiğinden emin olun. Fileyi elle (yaklaşık 10 kg basınçla) kontrol edin; filede gevşeme olmamalı ve halatlar sağlam olmalıdır. Kurulumu tamamladıktan sonra sağlığınızı kontrol edin.
+          </div>
+        </div>
+      </div>
+    </details>
+
+  </div><!-- /accordion -->
+
+
+  <!-- ═══════════════════════════════ KULLANIM KOŞULLARI ═══════════════════════════════ -->
+  <p class="section-label">Kullanım Koşulları</p>
+
+  <div class="accordion">
+
+    <details>
+      <summary>
+        <span class="sum-icon">🔩</span>
+        Ürünün Kurulumu
+        <svg class="sum-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <div class="acc-body">
+        <p>Ürünün kurulumu yetkili kişiler tarafından veya ürünle birlikte verilen montaj talimatlarına uygun şekilde yapılmalıdır. Güvenlik esasları, ürünün tüm bağlantı noktalarının sağlam ve güvenli olduğundan emin olunmasını gerektirir.</p>
+        <p>Uygun şekilde kurulmaz ise ürünün kullanımı ve güvenliği olumsuz etkileyebilir. Eğer kurulum müşteri tarafından yapılırsa ve bir sorun yaşanırsa, müşteri Karaca File müşteri hizmetleriyle iletişime geçerek destek alabilir; ancak oluşabilecek ek masraflar müşteriye aittir.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-icon">📌</span>
+        Kullanım Şartları
+        <svg class="sum-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <div class="acc-body">
+        <p>File, balkon, pencere veya benzer alanlarda ağ olarak kullanım için tasarlanmıştır. Ürünü amacına uygun olarak kullanınız. Filelerın ağır yük altında kalmaması için alıcıların temas ettirilmemesi gerekir.</p>
+        <p>Filelerın maksimum taşıma kapasitesi <strong>70 / 300 kg</strong>'dır. Bu kapasitenin üzerindeki yükler filenin hasar görmesine ve işlevini yitirmesine neden olabilir.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-icon">🧹</span>
+        Bakım ve Kontrol
+        <svg class="sum-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <div class="acc-body">
+        <p>Filelerın uzun ömürlü olması için düzenli bakım yapılması önerilir. <strong>Her 6 ayda bir</strong> fileyi yırtılma veya bağlantı noktalarında gevşeme açısından kontrol ediniz.</p>
+        <p>Fileyi ılık su ve hafif sabunla temizleyiniz; güçlü kimyasal maddeler kullanmaktan kaçınınız.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-icon">⚠️</span>
+        Sorumluluk Reddi
+        <svg class="sum-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <div class="acc-body">
+        <p>Karaca File, ürünün kullanıcılar tarafından amacına uygun olmayan kullanımından (örneğin, yük taşıma veya ip olarak kullanma) veya bakım ihmalinden kaynaklanabilecek herhangi bir hasar veya kaza durumunda sorumluluk kabul etmez.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-icon">⏳</span>
+        Ürünün Kullanım Süresi
+        <svg class="sum-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <div class="acc-body">
+        <p>Ürünün ömrü, kullanıldığı çevresel koşullara ve bakım düzenine bağlıdır. Uzun süreli doğrudan güneş ışığı, yüksek nem veya aşırı sıcaklık (50°C üzeri) ürünün ömrünü kısaltabilir.</p>
+        <p>Düzenli bakım yapılırsa ve uygun kullanım koşullarına uyulursa ürünün uzun ömürlü olması sağlanabilir. Ürün üzerinde herhangi bir deformasyon veya yıpranma fark edilirse filenin güvenliği tehlikeye girer. Bu durumda ürünün değiştirilmesi önerilir.</p>
+      </div>
+    </details>
+
+  </div><!-- /accordion -->
+
+
+  <!-- ═══════════════════════════════ GARANTİ ═══════════════════════════════ -->
+  <p class="section-label">Garanti Belgesi</p>
+
+  <div class="accordion">
+
+    <details>
+      <summary>
+        <span class="sum-icon">🛡️</span>
+        Garanti Süresi ve Şartları
+        <svg class="sum-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <div class="acc-body">
+        <div class="tag">5 Yıl Garanti</div>
+        <p>Güvenlik filesi, Karaca File tarafından çürüme ve yırtılmaya karşı <strong>5 yıl garanti</strong> altındadır. Bu süre içinde ürün, talimatlara uygun şekilde kullanıldığı takdirde çürüme veya yırtılma durumunda <strong>ücretsiz tamir veya değiştirme</strong> hizmeti sunulacaktır.</p>
+        <p>Garanti kapsamındaki hizmetten yararlanabilmek için ürünle birlikte verilen garanti belgesinin saklanması zorunludur. Belge kaybolursa web sitesindeki satın alma kaydı ile garanti talebinde bulunulabilir.</p>
+        <p>Garanti süresi, ürünün satın alındığı tarihten itibaren başlar ve 5 yıl boyunca geçerlidir. Garanti belgesini güvenli bir yerde saklamanız önerilir.</p>
+        <div class="note-box">⚠️ Ürünün amacı dışında kullanılması veya talimatlara uyulmaması durumunda ürünün güvenlik özellikleri ve garanti geçerliliği tehlikeye girebilir.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-icon">✅</span>
+        Garanti Kapsamı
+        <svg class="sum-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <div class="acc-body">
+        <p>Garanti, ürünün normal kullanım koşulları altında çürümemesini ve yırtılmamasını kapsar. Ürünün montaj talimatlarına ve kullanım kılavuzuna uygun şekilde kullanılması gerekmektedir.</p>
+        <h4>Garanti Kapsamı Dışındaki Durumlar:</h4>
+        <ul>
+          <li>50°C üzeri sıcaklık, %80 üzeri nem veya aşırı güneş ışığına maruz kalma</li>
+          <li>Yanlış veya hatalı kullanım</li>
+          <li>Kullanım talimatlarına aykırı kullanımdan doğan hasar ve yırtılmalar</li>
+          <li>Kimyasal koşullardan kaynaklanan hasar (asit veya alkali temas)</li>
+          <li>Yetkisiz kişilerce yapılan tamir veya değişiklikler</li>
+        </ul>
+        <div class="note-box">Eğer ürün yetkisiz kişilerce tamir edilmişse, garanti geçersiz olur; ancak müşteri 30 gün içinde durumu bildirirse ve ürün şirket tarafından onaylanırsa garanti yeniden geçerli olabilir.</div>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-icon">👤</span>
+        Müşteri'nin Garanti Sorumlulukları
+        <svg class="sum-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <div class="acc-body">
+        <p>Müşteri, garanti hakları süresi boyunca bu garanti belgesini saklamakla yükümlüdür. Belgenin kaybolması durumunda, müşteri ürünün seri numarası veya şirket web sitesindeki satın alma kaydı ile garanti talebinde bulunabilir.</p>
+        <p>Ürün faturası ibraz edilmelidir. Ürün faturası veya satın alma kaydı ile garanti başlatılmaktadır.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>
+        <span class="sum-icon">📞</span>
+        Garanti Hizmetinin Alınması
+        <svg class="sum-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </summary>
+      <div class="acc-body">
+        <p>Garanti kapsamında hizmet almak isteyen müşteriler Karaca File müşteri hizmetleri ile iletişime geçmelidir. Şirket, tüm servis işlemlerini değerlendirmekte ve uygun görüldüğü takdirde tamamlamayı taahhüt eder.</p>
+        <p>Tüm servis işlemleri <strong>en geç 14 iş günü</strong> içinde gerçekleştirilecektir.</p>
+        <p>Eğer ürün satın alınamaz ya da değiştirilemezse, aynı model veya eşdeğer bir model ile değiştirme işlemi Karaca File müşteri hizmetleri tarafından ücretsiz olarak sunulacaktır.</p>
+      </div>
+    </details>
+
+  </div><!-- /accordion -->
+
+</main>
+
+<footer>
+  <p>© By Karaca File &nbsp;|&nbsp; <a href="tel:+908503802006">+90 850 380 20 06</a> &nbsp;|&nbsp; <a href="mailto:info@karacafile.com.tr">info@karacafile.com.tr</a> &nbsp;|&nbsp; <a href="https://www.karacafile.com.tr" target="_blank">karacafile.com.tr</a></p>
+</footer>
+
+</body>
+</html>
