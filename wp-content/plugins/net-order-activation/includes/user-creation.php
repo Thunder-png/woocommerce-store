@@ -31,10 +31,10 @@ function noa_verify_order_token( $order_id, $activation_code, $phone_number, $to
 function noa_ajax_create_user_and_link_order() {
 	check_ajax_referer( 'noa_activation_nonce', 'nonce' );
 
-	if ( ! noa_rate_limited( 'create_user_and_link_order' ) ) {
+	if ( ! noa_rate_limited( 'create_user_and_link_order', 3, 900 ) ) {
 		wp_send_json_error(
 			array(
-				'message' => __( 'Too many attempts. Please try again later.', 'net-order-activation' ),
+				'message' => __( 'Çok fazla deneme yaptınız. Lütfen biraz sonra tekrar deneyin.', 'net-order-activation' ),
 			),
 			429
 		);
@@ -52,7 +52,7 @@ function noa_ajax_create_user_and_link_order() {
 	if ( ! $name || ! $email || ! $password || ! $order_id || ! $activation_code || ! $phone_number || ! $order_token ) {
 		wp_send_json_error(
 			array(
-				'message' => __( 'Please fill in all required fields.', 'net-order-activation' ),
+				'message' => __( 'Lütfen tüm zorunlu alanları doldurun.', 'net-order-activation' ),
 			)
 		);
 	}
@@ -60,7 +60,7 @@ function noa_ajax_create_user_and_link_order() {
 	if ( ! is_email( $email ) ) {
 		wp_send_json_error(
 			array(
-				'message' => __( 'Please provide a valid email address.', 'net-order-activation' ),
+				'message' => __( 'Lütfen geçerli bir e-posta adresi girin.', 'net-order-activation' ),
 			)
 		);
 	}
@@ -68,7 +68,7 @@ function noa_ajax_create_user_and_link_order() {
 	if ( strlen( $password ) < 6 ) {
 		wp_send_json_error(
 			array(
-				'message' => __( 'Please choose a stronger password (at least 6 characters).', 'net-order-activation' ),
+				'message' => __( 'Lütfen en az 6 karakterden oluşan daha güçlü bir şifre seçin.', 'net-order-activation' ),
 			)
 		);
 	}
@@ -76,7 +76,7 @@ function noa_ajax_create_user_and_link_order() {
 	if ( ! $privacy ) {
 		wp_send_json_error(
 			array(
-				'message' => __( 'You must agree to the privacy policy to continue.', 'net-order-activation' ),
+				'message' => __( 'Devam etmek için gizlilik politikasını kabul etmelisiniz.', 'net-order-activation' ),
 			)
 		);
 	}
@@ -84,7 +84,7 @@ function noa_ajax_create_user_and_link_order() {
 	if ( ! noa_validate_phone( $phone_number ) ) {
 		wp_send_json_error(
 			array(
-				'message' => __( 'Please provide a valid phone number.', 'net-order-activation' ),
+				'message' => __( 'Lütfen geçerli bir telefon numarası girin.', 'net-order-activation' ),
 			)
 		);
 	}
@@ -94,7 +94,7 @@ function noa_ajax_create_user_and_link_order() {
 	if ( ! $order ) {
 		wp_send_json_error(
 			array(
-				'message' => __( 'Order not found.', 'net-order-activation' ),
+				'message' => __( 'Sipariş bulunamadı.', 'net-order-activation' ),
 			)
 		);
 	}
@@ -103,7 +103,7 @@ function noa_ajax_create_user_and_link_order() {
 	if ( ! noa_verify_order_token( $order_id, $activation_code, $phone_number, $order_token ) ) {
 		wp_send_json_error(
 			array(
-				'message' => __( 'Order verification failed. Please restart the activation process.', 'net-order-activation' ),
+				'message' => __( 'Sipariş doğrulaması başarısız oldu. Lütfen aktivasyon sürecine baştan başlayın.', 'net-order-activation' ),
 			)
 		);
 	}
@@ -112,7 +112,7 @@ function noa_ajax_create_user_and_link_order() {
 	if ( $stored_activation_code !== $activation_code ) {
 		wp_send_json_error(
 			array(
-				'message' => __( 'Activation code mismatch.', 'net-order-activation' ),
+				'message' => __( 'Aktivasyon kodu eşleşmiyor.', 'net-order-activation' ),
 			)
 		);
 	}
@@ -121,7 +121,7 @@ function noa_ajax_create_user_and_link_order() {
 	if ( $activation_status ) {
 		wp_send_json_error(
 			array(
-				'message' => __( 'This order has already been activated.', 'net-order-activation' ),
+				'message' => __( 'Bu sipariş daha önce aktive edilmiş.', 'net-order-activation' ),
 			)
 		);
 	}
@@ -129,7 +129,7 @@ function noa_ajax_create_user_and_link_order() {
 	if ( ! noa_validate_phone_match( $order, $phone_number ) ) {
 		wp_send_json_error(
 			array(
-				'message' => __( 'Phone number does not match our records.', 'net-order-activation' ),
+				'message' => __( 'Telefon numarası kayıtlarımızla eşleşmiyor.', 'net-order-activation' ),
 			)
 		);
 	}
@@ -158,7 +158,7 @@ function noa_ajax_create_user_and_link_order() {
 		if ( is_wp_error( $user_id ) ) {
 			wp_send_json_error(
 				array(
-					'message' => __( 'Could not create user account. Please contact support.', 'net-order-activation' ),
+					'message' => __( 'Kullanıcı hesabı oluşturulamadı. Lütfen destek ile iletişime geçin.', 'net-order-activation' ),
 				)
 			);
 		}
@@ -176,6 +176,14 @@ function noa_ajax_create_user_and_link_order() {
 		$user->set_role( 'customer' );
 	}
 
+	// Automatically sign the customer in so that "Sign In" sonucu gerçek bir oturum açma / kayıt deneyimi olur.
+	if ( function_exists( 'wc_set_customer_auth_cookie' ) ) {
+		wc_set_customer_auth_cookie( $user_id );
+	} else {
+		wp_set_current_user( $user_id );
+		wp_set_auth_cookie( $user_id, true );
+	}
+
 	// Link order to user.
 	$order->update_meta_data( 'linked_user_id', $user_id );
 	$order->update_meta_data( 'activation_status', true );
@@ -186,7 +194,7 @@ function noa_ajax_create_user_and_link_order() {
 
 	wp_send_json_success(
 		array(
-			'message'    => __( 'Your account has been created and your order has been linked.', 'net-order-activation' ),
+			'message'    => __( 'Hesabınız oluşturuldu ve siparişiniz hesabınıza başarıyla bağlandı.', 'net-order-activation' ),
 			'redirectTo' => apply_filters( 'noa_activation_success_redirect', wc_get_page_permalink( 'myaccount' ) ),
 		)
 	);

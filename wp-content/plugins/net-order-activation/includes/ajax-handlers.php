@@ -143,10 +143,10 @@ function noa_validate_phone_match( $order, $phone ) {
 function noa_ajax_verify_activation() {
 	check_ajax_referer( 'noa_activation_nonce', 'nonce' );
 
-	if ( ! noa_rate_limited( 'verify_activation' ) ) {
+	if ( ! noa_rate_limited( 'verify_activation', 3, 900 ) ) {
 		wp_send_json_error(
 			array(
-				'message' => __( 'Too many attempts. Please try again later.', 'net-order-activation' ),
+				'message' => __( 'Çok fazla deneme yaptınız. Lütfen biraz sonra tekrar deneyin.', 'net-order-activation' ),
 			),
 			429
 		);
@@ -155,51 +155,51 @@ function noa_ajax_verify_activation() {
 	$activation_code = isset( $_POST['activation_code'] ) ? sanitize_text_field( wp_unslash( $_POST['activation_code'] ) ) : '';
 	$phone_number    = isset( $_POST['phone_number'] ) ? sanitize_text_field( wp_unslash( $_POST['phone_number'] ) ) : '';
 
-	if ( '' === $activation_code || '' === $phone_number ) {
-		wp_send_json_error(
-			array(
-				'message' => __( 'Please provide both activation code and phone number.', 'net-order-activation' ),
-			)
-		);
-	}
+		if ( '' === $activation_code || '' === $phone_number ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Lütfen hem aktivasyon kodunu hem de telefon numarasını girin.', 'net-order-activation' ),
+				)
+			);
+		}
 
-	if ( ! noa_validate_phone( $phone_number ) ) {
-		wp_send_json_error(
-			array(
-				'message' => __( 'Please provide a valid phone number.', 'net-order-activation' ),
-			)
-		);
-	}
+		if ( ! noa_validate_phone( $phone_number ) ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Lütfen geçerli bir telefon numarası girin.', 'net-order-activation' ),
+				)
+			);
+		}
 
 	// Placeholder for future reCAPTCHA verification.
 
 	$order = noa_find_order_by_activation_code( $activation_code );
 
-	if ( ! $order ) {
-		wp_send_json_error(
-			array(
-				'message' => __( 'Order not found. Please check your activation code.', 'net-order-activation' ),
-			)
-		);
-	}
+		if ( ! $order ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Sipariş bulunamadı. Lütfen aktivasyon kodunuzu kontrol edin.', 'net-order-activation' ),
+				)
+			);
+		}
 
 	$activation_status = $order->get_meta( 'activation_status' );
 
-	if ( (bool) $activation_status ) {
-		wp_send_json_error(
-			array(
-				'message' => __( 'This order has already been activated.', 'net-order-activation' ),
-			)
-		);
-	}
+		if ( (bool) $activation_status ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Bu sipariş daha önce aktive edilmiş.', 'net-order-activation' ),
+				)
+			);
+		}
 
-	if ( ! noa_validate_phone_match( $order, $phone_number ) ) {
-		wp_send_json_error(
-			array(
-				'message' => __( 'Phone number does not match our records.', 'net-order-activation' ),
-			)
-		);
-	}
+		if ( ! noa_validate_phone_match( $order, $phone_number ) ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Telefon numarası kayıtlarımızla eşleşmiyor.', 'net-order-activation' ),
+				)
+			);
+		}
 
 	$items        = $order->get_items();
 	$first_item   = reset( $items );

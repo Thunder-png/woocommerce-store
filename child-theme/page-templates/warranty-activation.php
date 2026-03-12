@@ -131,9 +131,12 @@ get_header();
 							</svg>
 						</summary>
 						<div class="acc-body">
-							<?php echo do_shortcode( '[wcs_warranty_activation]' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+							<?php
+							// Net Order Activation plugin form (QR / sipariş aktivasyonu).
+							echo do_shortcode( '[net_order_activation]' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							?>
 							<p class="wcs-guarantee-doc__form-note">
-								Formu gönderdikten sonra, aktivasyon kaydınız incelenerek en kısa sürede onaylanacaktır.
+								Formu tamamlayarak siparişinizi hesabınıza kaydedebilir ve garanti sürecinizi başlatabilirsiniz.
 							</p>
 						</div>
 					</details>
