@@ -1,0 +1,142 @@
+/* Wrapper */
+.noa-activation-wrapper {
+	max-width: 640px;
+	margin: 0 auto;
+	padding: 24px 16px 40px;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Hero */
+.noa-hero {
+	text-align: center;
+	margin-bottom: 24px;
+}
+
+.noa-hero h1 {
+	font-size: 1.8rem;
+	margin: 0 0 8px;
+}
+
+.noa-hero p {
+	margin: 0;
+	color: #555d66;
+}
+
+/* Steps */
+.noa-step {
+	display: none;
+	background: #ffffff;
+	border-radius: 8px;
+	padding: 20px 18px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+	margin-bottom: 20px;
+}
+
+.noa-step.is-active {
+	display: block;
+}
+
+.noa-step h2 {
+	margin-top: 0;
+	font-size: 1.2rem;
+}
+
+/* Fields */
+.noa-field {
+	margin-bottom: 16px;
+}
+
+.noa-field label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 4px;
+}
+
+.noa-field input[type="text"],
+.noa-field input[type="tel"],
+.noa-field input[type="email"],
+.noa-field input[type="password"] {
+	width: 100%;
+	padding: 10px 12px;
+	border-radius: 4px;
+	border: 1px solid #ccd0d4;
+	font-size: 14px;
+}
+
+.noa-field input:focus {
+	outline: none;
+	border-color: #007cba;
+	box-shadow: 0 0 0 1px rgba(0, 124, 186, 0.2);
+}
+
+.noa-privacy label {
+	font-weight: 400;
+}
+
+/* Button */
+.noa-button {
+	display: inline-block;
+	padding: 10px 20px;
+	border-radius: 4px;
+	background-color: #007cba;
+	color: #ffffff;
+	border: none;
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.noa-button:hover,
+.noa-button:focus {
+	background-color: #005f8d;
+}
+
+/* Loading state */
+.is-loading {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+/* Messages */
+.noa-message {
+	margin-top: 10px;
+	font-size: 0.9rem;
+}
+
+.noa-message.noa-error {
+	color: #cc1818;
+}
+
+.noa-message.noa-success {
+	color: #008a20;
+}
+
+/* Order Card */
+.noa-order-card {
+	background: #f8f9f9;
+	border-radius: 6px;
+	padding: 12px 12px 10px;
+	margin-bottom: 16px;
+}
+
+.noa-order-card p {
+	margin: 0 0 6px;
+}
+
+/* Admin meta box small styles (fallback if not in admin CSS) */
+.status-activated {
+	color: #008a20;
+	font-weight: 600;
+}
+
+.status-not-activated {
+	color: #cc1818;
+	font-weight: 600;
+}
+
+@media (min-width: 768px) {
+	.noa-activation-wrapper {
+		padding-top: 40px;
+	}
+}
+
