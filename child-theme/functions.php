@@ -714,4 +714,137 @@ add_filter(
 	5
 );
 
+/**
+ * Warranty setup keys.
+ */
+function wcs_get_warranty_start_meta_key() {
+	return '_wcs_warranty_started_at';
+}
+
+/**
+ * Save warranty start date when a new user registers.
+ *
+ * @param int $user_id Newly created user ID.
+ */
+function wcs_activate_warranty_on_registration( $user_id ) {
+	if ( ! $user_id ) {
+		return;
+	}
+
+	update_user_meta( $user_id, wcs_get_warranty_start_meta_key(), (string) current_time( 'timestamp' ) );
+}
+add_action( 'user_register', 'wcs_activate_warranty_on_registration', 20 );
+
+/**
+ * Get stored warranty start timestamp for a user.
+ *
+ * @param int $user_id User ID.
+ * @return int
+ */
+function wcs_get_warranty_start_timestamp( $user_id ) {
+	$started_at = (int) get_user_meta( $user_id, wcs_get_warranty_start_meta_key(), true );
+
+	return $started_at > 0 ? $started_at : 0;
+}
+
+/**
+ * Build warranty details array for account and activation pages.
+ *
+ * @param int $user_id User ID.
+ * @return array<string,string|int>
+ */
+function wcs_get_warranty_details( $user_id ) {
+	$started_at = wcs_get_warranty_start_timestamp( $user_id );
+
+	if ( ! $started_at ) {
+		return array();
+	}
+
+	$wp_timezone = wp_timezone();
+	$start_date  = new DateTimeImmutable( '@' . $started_at );
+	$start_date  = $start_date->setTimezone( $wp_timezone );
+
+	$product_ends_at = $start_date->modify( '+5 years' );
+	$install_ends_at = $start_date->modify( '+2 years' );
+
+	return array(
+		'started_at'        => $started_at,
+		'start_date'        => wp_date( 'd.m.Y', $started_at ),
+		'product_expires'   => $product_ends_at->format( 'd.m.Y' ),
+		'installation_expires' => $install_ends_at->format( 'd.m.Y' ),
+	);
+}
+
+/**
+ * Return warranty page url used in dashboard call-to-action.
+ *
+ * @return string
+ */
+function wcs_get_warranty_page_url() {
+	$page = get_page_by_path( 'garanti-aktivasyonu' );
+
+	if ( $page instanceof WP_Post ) {
+		return get_permalink( $page );
+	}
+
+	return home_url( '/garanti-aktivasyonu/' );
+}
+
+/**
+ * Render warranty activation content via shortcode.
+ *
+ * @return string
+ */
+function wcs_render_warranty_activation_shortcode() {
+	ob_start();
+	?>
+	<section class="wcs-warranty-page" aria-label="Garanti aktivasyonu">
+		<h1><?php esc_html_e( 'Garanti Belgesi ve Aktivasyon', 'woocommerce-store-child' ); ?></h1>
+		<p>
+			<?php esc_html_e( 'Ürün kutusundaki QR kodu okutarak bu sayfaya ulaştınız. Garanti süreci üyelikle başlar.', 'woocommerce-store-child' ); ?>
+		</p>
+
+		<div class="wcs-warranty-page__document">
+			<h2><?php esc_html_e( 'Garanti Belgesi', 'woocommerce-store-child' ); ?></h2>
+			<ul>
+				<li><?php esc_html_e( 'Ürün garantisi: 5 yıl', 'woocommerce-store-child' ); ?></li>
+				<li><?php esc_html_e( 'Montaj garantisi: 2 yıl', 'woocommerce-store-child' ); ?></li>
+				<li><?php esc_html_e( 'Garanti başlangıcı: üyelik oluşturulduğu tarih', 'woocommerce-store-child' ); ?></li>
+			</ul>
+		</div>
+
+		<?php if ( is_user_logged_in() ) : ?>
+			<?php
+			$user_id    = get_current_user_id();
+			$started_at = wcs_get_warranty_start_timestamp( $user_id );
+
+			if ( ! $started_at ) {
+				wcs_activate_warranty_on_registration( $user_id );
+			}
+
+			$details = wcs_get_warranty_details( $user_id );
+			?>
+			<div class="wcs-warranty-page__status is-active">
+				<p><strong><?php esc_html_e( 'Garantiniz aktif.', 'woocommerce-store-child' ); ?></strong></p>
+				<p><?php echo esc_html( sprintf( __( 'Başlangıç: %s', 'woocommerce-store-child' ), $details['start_date'] ) ); ?></p>
+				<p><?php echo esc_html( sprintf( __( 'Ürün garantisi bitiş: %s', 'woocommerce-store-child' ), $details['product_expires'] ) ); ?></p>
+				<p><?php echo esc_html( sprintf( __( 'Montaj garantisi bitiş: %s', 'woocommerce-store-child' ), $details['installation_expires'] ) ); ?></p>
+				<p>
+					<a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>">
+						<?php esc_html_e( 'My Account sayfasında görüntüle', 'woocommerce-store-child' ); ?>
+					</a>
+				</p>
+			</div>
+		<?php else : ?>
+			<div class="wcs-warranty-page__status">
+				<p><strong><?php esc_html_e( 'Garanti başlangıcı için üye olun veya giriş yapın.', 'woocommerce-store-child' ); ?></strong></p>
+				<?php echo do_shortcode( '[woocommerce_my_account]' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</div>
+		<?php endif; ?>
+	</section>
+	<?php
+
+	return (string) ob_get_clean();
+}
+add_shortcode( 'wcs_warranty_activation', 'wcs_render_warranty_activation_shortcode' );
 
