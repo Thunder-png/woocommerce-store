@@ -10,15 +10,65 @@ defined( 'ABSPATH' ) || exit;
 $categories = array();
 
 if ( taxonomy_exists( 'product_cat' ) ) {
-	$categories = get_terms(
+	$requested_category_names = array(
+		'Balkon Güvenlik Filesi',
+		'Çocuk Filesi',
+		'Havuz Filesi',
+		'Kedi Filesi',
+	);
+
+	$requested_category_slugs = array(
+		'balkon-guvenlik-filesi',
+		'cocuk-filesi',
+		'havuz-filesi',
+		'kedi-filesi',
+	);
+
+	$terms_by_slug = get_terms(
 		array(
 			'taxonomy'   => 'product_cat',
 			'hide_empty' => true,
-			'number'     => 3,
-			'orderby'    => 'menu_order',
-			'order'      => 'ASC',
+			'slug'       => $requested_category_slugs,
 		)
 	);
+
+	if ( ! is_wp_error( $terms_by_slug ) && ! empty( $terms_by_slug ) ) {
+		$terms_by_slug_map = array();
+
+		foreach ( $terms_by_slug as $term ) {
+			$terms_by_slug_map[ $term->slug ] = $term;
+		}
+
+		foreach ( $requested_category_slugs as $slug ) {
+			if ( isset( $terms_by_slug_map[ $slug ] ) ) {
+				$categories[] = $terms_by_slug_map[ $slug ];
+			}
+		}
+	}
+
+	if ( empty( $categories ) ) {
+		$terms_by_name = get_terms(
+			array(
+				'taxonomy'   => 'product_cat',
+				'hide_empty' => true,
+				'name'       => $requested_category_names,
+			)
+		);
+
+		if ( ! is_wp_error( $terms_by_name ) && ! empty( $terms_by_name ) ) {
+			$terms_by_name_map = array();
+
+			foreach ( $terms_by_name as $term ) {
+				$terms_by_name_map[ $term->name ] = $term;
+			}
+
+			foreach ( $requested_category_names as $name ) {
+				if ( isset( $terms_by_name_map[ $name ] ) ) {
+					$categories[] = $terms_by_name_map[ $name ];
+				}
+			}
+		}
+	}
 }
 
 $custom_products = array();
@@ -43,7 +93,7 @@ if ( function_exists( 'wc_get_products' ) ) {
 	}
 }
 
-$has_categories = ! is_wp_error( $categories ) && ! empty( $categories );
+$has_categories = ! empty( $categories );
 $has_products   = ! empty( $custom_products );
 
 if ( ! $has_categories && ! $has_products ) {
@@ -55,9 +105,9 @@ if ( ! $has_categories && ! $has_products ) {
 	<section class="wcs-home-categories wcs-home-categories--top" aria-label="<?php esc_attr_e( 'Kategori kartları', 'woocommerce-store-child' ); ?>">
 		<div class="wcs-home-categories__inner">
 			<header class="wcs-home-categories__divider" aria-hidden="true">
-				<span><?php esc_html_e( 'Kategori Kartları (3 Adet)', 'woocommerce-store-child' ); ?></span>
+				<span><?php esc_html_e( 'Kategori Kartları (4 Adet)', 'woocommerce-store-child' ); ?></span>
 			</header>
-			<div class="wcs-home-categories__grid" role="list">
+			<div class="wcs-home-categories__grid wcs-home-categories__grid--categories" role="list">
 				<?php foreach ( $categories as $category ) : ?>
 					<?php
 					$thumb_id  = get_term_meta( $category->term_id, 'thumbnail_id', true );
@@ -96,7 +146,7 @@ if ( ! $has_categories && ! $has_products ) {
 				<h2 class="wcs-home-categories__title"><?php esc_html_e( 'İstediğiniz ölçüde ürünler', 'woocommerce-store-child' ); ?></h2>
 				<p class="wcs-home-categories__subtitle"><?php esc_html_e( 'Özel ölçüye uygun ürünleri keşfedin ve ihtiyacınıza göre kolayca sipariş verin.', 'woocommerce-store-child' ); ?></p>
 			</header>
-			<div class="wcs-home-categories__grid" role="list">
+			<div class="wcs-home-categories__grid wcs-home-categories__grid--products" role="list">
 				<?php foreach ( $custom_products as $product ) : ?>
 					<?php
 					if ( ! $product instanceof WC_Product ) {
