@@ -800,34 +800,70 @@ function wcs_get_warranty_page_url() {
  * @return string
  */
 function wcs_render_warranty_activation_shortcode() {
+	$details = array();
+
+	if ( is_user_logged_in() ) {
+		$user_id    = get_current_user_id();
+		$started_at = wcs_get_warranty_start_timestamp( $user_id );
+
+		if ( ! $started_at ) {
+			wcs_activate_warranty_on_registration( $user_id );
+		}
+
+		$details = wcs_get_warranty_details( $user_id );
+	}
+
 	ob_start();
 	?>
 	<section class="wcs-warranty-page" aria-label="Garanti aktivasyonu">
-		<h1><?php esc_html_e( 'Garanti Belgesi ve Aktivasyon', 'woocommerce-store-child' ); ?></h1>
-		<p>
-			<?php esc_html_e( 'Ürün kutusundaki QR kodu okutarak bu sayfaya ulaştınız. Garanti süreci üyelikle başlar.', 'woocommerce-store-child' ); ?>
-		</p>
+		<header class="wcs-warranty-page__header">
+			<p class="wcs-warranty-page__eyebrow"><?php esc_html_e( 'By Karaca File', 'woocommerce-store-child' ); ?></p>
+			<h1><?php esc_html_e( 'Garanti Belgesi ve Kurulum Dokümantasyonu', 'woocommerce-store-child' ); ?></h1>
+			<p class="wcs-warranty-page__lead">
+				<?php esc_html_e( 'QR kod ile bu sayfaya ulaştınız. Garanti başlangıcı üyelik/giriş anında otomatik olarak yapılır.', 'woocommerce-store-child' ); ?>
+			</p>
+		</header>
 
-		<div class="wcs-warranty-page__document">
-			<h2><?php esc_html_e( 'Garanti Belgesi', 'woocommerce-store-child' ); ?></h2>
-			<ul>
-				<li><?php esc_html_e( 'Ürün garantisi: 5 yıl', 'woocommerce-store-child' ); ?></li>
-				<li><?php esc_html_e( 'Montaj garantisi: 2 yıl', 'woocommerce-store-child' ); ?></li>
-				<li><?php esc_html_e( 'Garanti başlangıcı: üyelik oluşturulduğu tarih', 'woocommerce-store-child' ); ?></li>
-			</ul>
+		<p class="wcs-warranty-page__section-label"><?php esc_html_e( 'Garanti Aktivasyonu', 'woocommerce-store-child' ); ?></p>
+
+		<div class="wcs-warranty-page__accordion">
+			<details open>
+				<summary>
+					<span class="wcs-warranty-page__icon">📄</span>
+					<?php esc_html_e( 'Garanti Belgesi', 'woocommerce-store-child' ); ?>
+					<span class="wcs-warranty-page__chevron" aria-hidden="true">▾</span>
+				</summary>
+				<div class="wcs-warranty-page__panel">
+					<ul>
+						<li><?php esc_html_e( 'Ürün Garantisi: 5 yıl', 'woocommerce-store-child' ); ?></li>
+						<li><?php esc_html_e( 'Montaj Garantisi: 2 yıl', 'woocommerce-store-child' ); ?></li>
+						<li><?php esc_html_e( 'Başlangıç Tarihi: Üyelik oluşturma / giriş sonrası aktivasyon tarihi', 'woocommerce-store-child' ); ?></li>
+					</ul>
+					<p class="wcs-warranty-page__note">
+						<?php esc_html_e( 'Garanti bilgilerinizi My Account panelinden her zaman takip edebilirsiniz.', 'woocommerce-store-child' ); ?>
+					</p>
+				</div>
+			</details>
+
+			<details>
+				<summary>
+					<span class="wcs-warranty-page__icon">🛠️</span>
+					<?php esc_html_e( 'Kurulum ve Kullanım Notları', 'woocommerce-store-child' ); ?>
+					<span class="wcs-warranty-page__chevron" aria-hidden="true">▾</span>
+				</summary>
+				<div class="wcs-warranty-page__panel">
+					<ol>
+						<li><?php esc_html_e( 'Kurulumda bağlantı noktalarının sağlamlığını kontrol edin.', 'woocommerce-store-child' ); ?></li>
+						<li><?php esc_html_e( 'Her 6 ayda bir görsel kontrol ve bakım yapın.', 'woocommerce-store-child' ); ?></li>
+						<li><?php esc_html_e( 'Ürünü amacı dışında ağır yük taşıma için kullanmayın.', 'woocommerce-store-child' ); ?></li>
+					</ol>
+				</div>
+			</details>
 		</div>
 
-		<?php if ( is_user_logged_in() ) : ?>
-			<?php
-			$user_id    = get_current_user_id();
-			$started_at = wcs_get_warranty_start_timestamp( $user_id );
+		<p class="wcs-warranty-page__section-label"><?php esc_html_e( 'Hesap Durumu', 'woocommerce-store-child' ); ?></p>
 
-			if ( ! $started_at ) {
-				wcs_activate_warranty_on_registration( $user_id );
-			}
-
-			$details = wcs_get_warranty_details( $user_id );
-			?>
+		<?php if ( ! empty( $details ) ) : ?>
 			<div class="wcs-warranty-page__status is-active">
 				<p><strong><?php esc_html_e( 'Garantiniz aktif.', 'woocommerce-store-child' ); ?></strong></p>
 				<p><?php echo esc_html( sprintf( __( 'Başlangıç: %s', 'woocommerce-store-child' ), $details['start_date'] ) ); ?></p>
