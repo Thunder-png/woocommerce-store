@@ -169,6 +169,7 @@ function noa_render_admin_activation_page() {
 						<th><?php esc_html_e( 'Customer', 'net-order-activation' ); ?></th>
 						<th><?php esc_html_e( 'Phone', 'net-order-activation' ); ?></th>
 						<th><?php esc_html_e( 'Activation Code', 'net-order-activation' ); ?></th>
+						<th><?php esc_html_e( 'Activation URL', 'net-order-activation' ); ?></th>
 						<th><?php esc_html_e( 'Activation Status', 'net-order-activation' ); ?></th>
 						<th><?php esc_html_e( 'Linked User', 'net-order-activation' ); ?></th>
 						<th><?php esc_html_e( 'Actions', 'net-order-activation' ); ?></th>
@@ -206,6 +207,33 @@ function noa_render_admin_activation_page() {
 										</button>
 									<?php endif; ?>
 								</form>
+							</td>
+							<td>
+								<?php
+								if ( $activation_code && ! $activation_status ) {
+									$page      = get_page_by_path( 'order-activate' );
+									$base_url  = $page ? get_permalink( $page ) : home_url( '/order-activate/' );
+									$act_url   = add_query_arg(
+										'code',
+										rawurlencode( $activation_code ),
+										$base_url
+									);
+									?>
+									<input
+										type="text"
+										class="noa-activation-url"
+										readonly
+										value="<?php echo esc_attr( $act_url ); ?>"
+										style="width: 180px;"
+									/>
+									<button type="button" class="button button-small noa-copy-activation-url">
+										<?php esc_html_e( 'Copy', 'net-order-activation' ); ?>
+									</button>
+									<?php
+								} else {
+									echo '&mdash;';
+								}
+								?>
 							</td>
 							<td>
 								<?php
@@ -256,6 +284,29 @@ function noa_render_admin_activation_page() {
 					var input = form.querySelector('input[name="noa_activation_code"]');
 					if (input) {
 						input.value = generateCode();
+					}
+				});
+			});
+
+			// Copy activation URL to clipboard.
+			document.querySelectorAll('.noa-copy-activation-url').forEach(function(btn) {
+				btn.addEventListener('click', function() {
+					var container = btn.closest('td');
+					if (!container) {
+						return;
+					}
+					var input = container.querySelector('.noa-activation-url');
+					if (!input) {
+						return;
+					}
+
+					input.focus();
+					input.select();
+
+					try {
+						document.execCommand('copy');
+					} catch (e) {
+						// Fallback: selection is still made, user can press Ctrl+C.
 					}
 				});
 			});

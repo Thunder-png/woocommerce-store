@@ -2,6 +2,20 @@
 (function ($) {
 	'use strict';
 
+	// URL'deki ?code= parametresini oku ve aktivasyon formundaki alana yaz.
+	$(function () {
+		if (typeof URLSearchParams === 'undefined') {
+			return;
+		}
+
+		var urlParams = new URLSearchParams(window.location.search);
+		var codeFromUrl = urlParams.get('code');
+
+		if (codeFromUrl) {
+			$('#noa_activation_code').val(codeFromUrl);
+		}
+	});
+
 	function showStep(stepId) {
 		$('.noa-step').removeClass('is-active');
 		$(stepId).addClass('is-active');

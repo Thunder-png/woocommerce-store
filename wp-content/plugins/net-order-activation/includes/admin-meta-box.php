@@ -56,6 +56,27 @@ function noa_render_order_meta_box( $post ) {
 		}
 		?>
 	</p>
+	<?php if ( $activation_code && ! $activation_status ) : ?>
+		<?php
+		$page          = get_page_by_path( 'order-activate' );
+		$base_url      = $page ? get_permalink( $page ) : home_url( '/order-activate/' );
+		$activation_url = add_query_arg(
+			'code',
+			rawurlencode( $activation_code ),
+			$base_url
+		);
+		?>
+		<p>
+			<strong><?php esc_html_e( 'Activation URL', 'net-order-activation' ); ?></strong><br />
+			<input
+				type="text"
+				readonly
+				value="<?php echo esc_attr( $activation_url ); ?>"
+				style="width:100%;"
+				onfocus="this.select();"
+			/>
+		</p>
+	<?php endif; ?>
 	<?php if ( $linked_user_id ) : ?>
 		<p>
 			<strong><?php esc_html_e( 'Linked User', 'net-order-activation' ); ?></strong><br />
