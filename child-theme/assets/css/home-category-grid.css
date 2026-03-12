@@ -1,11 +1,20 @@
 /* ═══════════════════════════════════════════════════════════════
-   WCS HOME — CUSTOM PRODUCT GRID
-   Hero altı özel ölçü ürün kartları
+   WCS HOME — CATEGORY + CUSTOM PRODUCT GRID
+   Hero altı kategori kartları ve özel ölçü ürünler
    ═══════════════════════════════════════════════════════════════ */
 
 .wcs-home-categories {
-  padding: 1.5rem 1.25rem 3.75rem;
+  padding: 1.5rem 1.25rem 3.25rem;
   background: var(--wcs-color-bg, var(--color-structure-white, #f8f8f8));
+}
+
+.wcs-home-categories--top {
+  padding-top: 1.25rem;
+  padding-bottom: 2.1rem;
+}
+
+.wcs-home-custom-products {
+  padding-top: 0.75rem;
 }
 
 .wcs-home-categories__inner {
@@ -13,9 +22,35 @@
   margin: 0 auto;
 }
 
+.wcs-home-categories__divider {
+  position: relative;
+  margin: 0 0 1rem;
+  text-align: center;
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(43, 46, 55, 0.7);
+}
+
+.wcs-home-categories__divider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 1px solid rgba(15, 19, 30, 0.12);
+}
+
+.wcs-home-categories__divider span {
+  position: relative;
+  z-index: 1;
+  padding: 0 0.85rem;
+  background: var(--wcs-color-bg, var(--color-structure-white, #f8f8f8));
+}
+
 .wcs-home-categories__header {
   text-align: left;
-  margin-bottom: 2.25rem;
+  margin-bottom: 2rem;
 }
 
 .wcs-home-categories__title {
@@ -42,7 +77,7 @@
 
 .wcs-home-category-card {
   background: #111417;
-  border-radius: 22px;
+  border-radius: 20px;
   overflow: hidden;
   border: 1px solid rgba(15, 19, 30, 0.18);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
@@ -59,7 +94,7 @@
 
 .wcs-home-category-card__img {
   width: 100%;
-  height: 190px;
+  height: 220px;
   object-fit: cover;
   display: block;
   transition: transform 0.25s ease;
@@ -72,7 +107,7 @@
 
 .wcs-home-category-card__media-placeholder {
   width: 100%;
-  height: 180px;
+  height: 220px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -100,22 +135,33 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 1.3rem 1.5rem;
+  padding: 1.1rem 1.25rem;
   background: linear-gradient(
     180deg,
     rgba(0, 0, 0, 0.05) 0%,
     rgba(0, 0, 0, 0.35) 45%,
-    rgba(0, 0, 0, 0.85) 100%
+    rgba(0, 0, 0, 0.86) 100%
   );
 }
 
 .wcs-home-category-card__title {
   margin: 0 0 0.15rem;
   font-family: var(--font-heading, 'Inter', sans-serif);
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: #ffffff;
+  color: #fff;
+}
+
+.wcs-home-product-card__price {
+  margin: 0 0 0.2rem;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.wcs-home-product-card__price .amount {
+  color: #fff;
+  font-weight: 700;
 }
 
 .wcs-home-product-card__price {
@@ -137,7 +183,12 @@
 
 @media (max-width: 1023px) {
   .wcs-home-categories {
-    padding: 3rem 1.1rem 3.25rem;
+    padding: 2.75rem 1.1rem 3rem;
+  }
+
+  .wcs-home-categories--top {
+    padding-top: 1rem;
+    padding-bottom: 1.9rem;
   }
 
   .wcs-home-categories__grid {
@@ -147,11 +198,12 @@
 
 @media (max-width: 767px) {
   .wcs-home-categories {
-    padding: 2.5rem 1rem 3rem;
+    padding: 2.35rem 1rem 2.8rem;
   }
 
-  .wcs-home-categories__header {
-    text-align: left;
+  .wcs-home-categories__divider {
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
   }
 
   .wcs-home-categories__grid {
