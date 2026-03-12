@@ -60,8 +60,8 @@ function noa_enqueue_assets() {
 	// Load assets if we're on the original /activate page,
 	// or any page that uses the activation shortcode/template.
 	$page_uses_activation_shortcode = has_shortcode( (string) $post->post_content, 'net_order_activation' );
-	$page_template                  = get_page_template_slug( $post );
-	$page_uses_activation_template  = ( 'warranty-activation.php' === $page_template );
+	$page_template_slug             = get_page_template_slug( $post );
+	$page_uses_activation_template  = ( $page_template_slug && false !== strpos( $page_template_slug, 'warranty-activation.php' ) );
 
 	if ( 'activate' !== $post->post_name && ! $page_uses_activation_shortcode && ! $page_uses_activation_template ) {
 		return;
