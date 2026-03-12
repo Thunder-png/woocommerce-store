@@ -164,17 +164,6 @@
   font-weight: 700;
 }
 
-.wcs-home-product-card__price {
-  margin: 0 0 0.2rem;
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.wcs-home-product-card__price .amount {
-  color: #ffffff;
-  font-weight: 700;
-}
-
 .wcs-home-category-card__subtitle {
   margin: 0;
   font-size: 0.86rem;

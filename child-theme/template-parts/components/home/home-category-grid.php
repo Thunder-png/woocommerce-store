@@ -7,12 +7,19 @@
 
 defined( 'ABSPATH' ) || exit;
 
-if ( ! function_exists( 'wc_get_products' ) ) {
-	return;
-}
+$categories = array();
 
-$custom_tag_slugs = array( 'ozel-olcu', 'özel-ölçü', 'özel-olcu' );
-$products         = array();
+if ( taxonomy_exists( 'product_cat' ) ) {
+	$categories = get_terms(
+		array(
+			'taxonomy'   => 'product_cat',
+			'hide_empty' => true,
+			'number'     => 3,
+			'orderby'    => 'menu_order',
+			'order'      => 'ASC',
+		)
+	);
+}
 
 $custom_products = array();
 
