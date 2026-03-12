@@ -714,4 +714,231 @@ add_filter(
 	5
 );
 
+/**
+ * Warranty setup keys.
+ */
+function wcs_get_warranty_start_meta_key() {
+	return '_wcs_warranty_started_at';
+}
 
+/**
+ * Save warranty start date when a new user registers.
+ *
+ * @param int $user_id Newly created user ID.
+ */
+function wcs_activate_warranty_on_registration( $user_id ) {
+	if ( ! $user_id ) {
+		return;
+	}
+
+	update_user_meta( $user_id, wcs_get_warranty_start_meta_key(), (string) current_time( 'timestamp' ) );
+}
+add_action( 'user_register', 'wcs_activate_warranty_on_registration', 20 );
+
+/**
+ * Get stored warranty start timestamp for a user.
+ *
+ * @param int $user_id User ID.
+ * @return int
+ */
+function wcs_get_warranty_start_timestamp( $user_id ) {
+	$started_at = (int) get_user_meta( $user_id, wcs_get_warranty_start_meta_key(), true );
+
+	return $started_at > 0 ? $started_at : 0;
+}
+
+/**
+ * Build warranty details array for account and activation pages.
+ *
+ * @param int $user_id User ID.
+ * @return array<string,string|int>
+ */
+function wcs_get_warranty_details( $user_id ) {
+	$started_at = wcs_get_warranty_start_timestamp( $user_id );
+
+	if ( ! $started_at ) {
+		return array();
+	}
+
+	$wp_timezone = wp_timezone();
+	$start_date  = new DateTimeImmutable( '@' . $started_at );
+	$start_date  = $start_date->setTimezone( $wp_timezone );
+
+	$product_ends_at = $start_date->modify( '+5 years' );
+	$install_ends_at = $start_date->modify( '+2 years' );
+
+	return array(
+		'started_at'        => $started_at,
+		'start_date'        => wp_date( 'd.m.Y', $started_at ),
+		'product_expires'   => $product_ends_at->format( 'd.m.Y' ),
+		'installation_expires' => $install_ends_at->format( 'd.m.Y' ),
+	);
+}
+
+/**
+ * Return warranty page url used in dashboard call-to-action.
+ *
+ * @return string
+ */
+function wcs_get_warranty_page_url() {
+	$page = get_page_by_path( 'garanti-aktivasyon' );
+
+	if ( ! ( $page instanceof WP_Post ) ) {
+		$page = get_page_by_path( 'garanti-aktivasyonu' );
+	}
+
+	if ( $page instanceof WP_Post ) {
+		return get_permalink( $page );
+	}
+
+	return home_url( '/garanti-aktivasyon/' );
+}
+
+/**
+ * Render warranty activation content via shortcode.
+ *
+ * @return string
+ */
+function wcs_render_warranty_activation_shortcode() {
+	$details = array();
+
+	if ( is_user_logged_in() ) {
+		$user_id    = get_current_user_id();
+		$started_at = wcs_get_warranty_start_timestamp( $user_id );
+
+		if ( ! $started_at ) {
+			wcs_activate_warranty_on_registration( $user_id );
+		}
+
+		$details = wcs_get_warranty_details( $user_id );
+	}
+
+	ob_start();
+	?>
+	<section class="wcs-warranty-page" aria-label="Garanti aktivasyonu">
+		<header class="wcs-warranty-page__header">
+			<p class="wcs-warranty-page__eyebrow"><?php esc_html_e( 'By Karaca File', 'woocommerce-store-child' ); ?></p>
+			<h1><?php esc_html_e( 'Garanti Belgesi ve Kurulum Dokümantasyonu', 'woocommerce-store-child' ); ?></h1>
+			<p class="wcs-warranty-page__lead">
+				<?php esc_html_e( 'QR kod ile bu sayfaya ulaştınız. Garanti başlangıcı üyelik/giriş anında otomatik olarak yapılır.', 'woocommerce-store-child' ); ?>
+			</p>
+		</header>
+
+		<p class="wcs-warranty-page__section-label"><?php esc_html_e( 'Garanti Aktivasyonu', 'woocommerce-store-child' ); ?></p>
+
+		<div class="wcs-warranty-page__accordion">
+			<details open>
+				<summary>
+					<span class="wcs-warranty-page__icon">📄</span>
+					<?php esc_html_e( 'Garanti Belgesi', 'woocommerce-store-child' ); ?>
+					<span class="wcs-warranty-page__chevron" aria-hidden="true">▾</span>
+				</summary>
+				<div class="wcs-warranty-page__panel">
+					<ul>
+						<li><?php esc_html_e( 'Ürün Garantisi: 5 yıl', 'woocommerce-store-child' ); ?></li>
+						<li><?php esc_html_e( 'Montaj Garantisi: 2 yıl', 'woocommerce-store-child' ); ?></li>
+						<li><?php esc_html_e( 'Başlangıç Tarihi: Üyelik oluşturma / giriş sonrası aktivasyon tarihi', 'woocommerce-store-child' ); ?></li>
+					</ul>
+					<p class="wcs-warranty-page__note">
+						<?php esc_html_e( 'Garanti bilgilerinizi My Account panelinden her zaman takip edebilirsiniz.', 'woocommerce-store-child' ); ?>
+					</p>
+				</div>
+			</details>
+
+			<details>
+				<summary>
+					<span class="wcs-warranty-page__icon">🛠️</span>
+					<?php esc_html_e( 'Kurulum ve Kullanım Notları', 'woocommerce-store-child' ); ?>
+					<span class="wcs-warranty-page__chevron" aria-hidden="true">▾</span>
+				</summary>
+				<div class="wcs-warranty-page__panel">
+					<ol>
+						<li><?php esc_html_e( 'Kurulumda bağlantı noktalarının sağlamlığını kontrol edin.', 'woocommerce-store-child' ); ?></li>
+						<li><?php esc_html_e( 'Her 6 ayda bir görsel kontrol ve bakım yapın.', 'woocommerce-store-child' ); ?></li>
+						<li><?php esc_html_e( 'Ürünü amacı dışında ağır yük taşıma için kullanmayın.', 'woocommerce-store-child' ); ?></li>
+					</ol>
+				</div>
+			</details>
+		</div>
+
+		<p class="wcs-warranty-page__section-label"><?php esc_html_e( 'Hesap Durumu', 'woocommerce-store-child' ); ?></p>
+
+		<?php if ( ! empty( $details ) ) : ?>
+			<div class="wcs-warranty-page__status is-active">
+				<p><strong><?php esc_html_e( 'Garantiniz aktif.', 'woocommerce-store-child' ); ?></strong></p>
+				<p><?php echo esc_html( sprintf( __( 'Başlangıç: %s', 'woocommerce-store-child' ), $details['start_date'] ) ); ?></p>
+				<p><?php echo esc_html( sprintf( __( 'Ürün garantisi bitiş: %s', 'woocommerce-store-child' ), $details['product_expires'] ) ); ?></p>
+				<p><?php echo esc_html( sprintf( __( 'Montaj garantisi bitiş: %s', 'woocommerce-store-child' ), $details['installation_expires'] ) ); ?></p>
+				<p>
+					<a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>">
+						<?php esc_html_e( 'My Account sayfasında görüntüle', 'woocommerce-store-child' ); ?>
+					</a>
+				</p>
+			</div>
+		<?php else : ?>
+			<div class="wcs-warranty-page__status">
+				<p><strong><?php esc_html_e( 'Garanti başlangıcı için üye olun veya giriş yapın.', 'woocommerce-store-child' ); ?></strong></p>
+				<?php echo do_shortcode( '[woocommerce_my_account]' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</div>
+		<?php endif; ?>
+	</section>
+	<?php
+
+	return (string) ob_get_clean();
+}
+add_shortcode( 'wcs_warranty_activation', 'wcs_render_warranty_activation_shortcode' );
+
+
+
+/**
+ * Add rewrite support for warranty activation page slug.
+ */
+function wcs_register_warranty_activation_rewrite() {
+	add_rewrite_rule( '^garanti-aktivasyon/?$', 'index.php?wcs_warranty_activation=1', 'top' );
+	add_rewrite_rule( '^garanti-aktivasyonu/?$', 'index.php?wcs_warranty_activation=1', 'top' );
+}
+add_action( 'init', 'wcs_register_warranty_activation_rewrite', 20 );
+
+/**
+ * Register query var for warranty activation virtual page.
+ *
+ * @param array<int,string> $vars Existing query vars.
+ * @return array<int,string>
+ */
+function wcs_register_warranty_activation_query_var( $vars ) {
+	$vars[] = 'wcs_warranty_activation';
+
+	return $vars;
+}
+add_filter( 'query_vars', 'wcs_register_warranty_activation_query_var' );
+
+/**
+ * Render warranty activation template even if no page exists in admin.
+ */
+function wcs_render_virtual_warranty_activation_page() {
+	if ( ! get_query_var( 'wcs_warranty_activation' ) ) {
+		return;
+	}
+
+	global $wp_query;
+	$wp_query->is_404 = false;
+	status_header( 200 );
+	nocache_headers();
+
+	$template_path = trailingslashit( get_stylesheet_directory() ) . 'page-templates/warranty-activation.php';
+
+	if ( file_exists( $template_path ) ) {
+		include $template_path;
+		exit;
+	}
+}
+add_action( 'template_redirect', 'wcs_render_virtual_warranty_activation_page', 1 );
+
+/**
+ * Flush rewrite rules when child theme is switched.
+ */
+function wcs_flush_warranty_rewrite_rules() {
+	wcs_register_warranty_activation_rewrite();
+	flush_rewrite_rules();
+}
+add_action( 'after_switch_theme', 'wcs_flush_warranty_rewrite_rules' );
