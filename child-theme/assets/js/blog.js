@@ -14,5 +14,4 @@
       answer.hidden = expanded;
     });
   });
-})();*** End Patch```}>>();
-{"cursor": 0, "id": "functions.ApplyPatch"}>assistant to=functions.ApplyPatch мунасistantიცინო to=functions.ApplyPatch ***!
+})();
