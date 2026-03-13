@@ -1,0 +1,90 @@
+<?php
+/**
+ * Generic archive template (categories, dates, tags).
+ *
+ * For the main blog index (/blog) see home.php.
+ *
+ * @package WooCommerce_Store_Child
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+get_header();
+
+$archive_title       = get_the_archive_title();
+$archive_description = get_the_archive_description();
+?>
+
+<main id="primary" class="wcs-blog wcs-blog--archive">
+	<header class="wcs-blog-archive__hero">
+		<nav class="wcs-blog-breadcrumb" aria-label="İçerik yolu">
+			<?php
+			if ( function_exists( 'render_blog_breadcrumb' ) ) {
+				render_blog_breadcrumb();
+			}
+			?>
+		</nav>
+
+		<div class="wcs-blog-archive__hero-inner">
+			<p class="wcs-blog-archive__eyebrow">By Karaca File · Blog</p>
+			<h1 class="wcs-blog-archive__title">
+				<?php echo wp_kses_post( $archive_title ); ?>
+			</h1>
+			<?php if ( $archive_description ) : ?>
+				<div class="wcs-blog-archive__lead">
+					<?php echo wp_kses_post( wpautop( $archive_description ) ); ?>
+				</div>
+			<?php else : ?>
+				<p class="wcs-blog-archive__lead">
+					Güvenlik filesi ile ilgili tüm içerikler bu arşivde listeleniyor.
+					İhtiyacınıza göre kategori ve filtreleri kullanabilirsiniz.
+				</p>
+			<?php endif; ?>
+		</div>
+
+		<div class="wcs-blog-archive__meta-bar">
+			<?php get_search_form(); ?>
+
+			<div class="wcs-blog-archive__categories" aria-label="Blog kategorileri">
+				<?php
+				if ( function_exists( 'wcs_blog_render_category_filter' ) ) {
+					wcs_blog_render_category_filter();
+				}
+				?>
+			</div>
+		</div>
+	</header>
+
+	<section class="wcs-blog-archive__grid" aria-label="Blog yazıları">
+		<?php if ( have_posts() ) : ?>
+			<div class="wcs-blog-archive__grid-inner">
+				<?php
+				while ( have_posts() ) :
+					the_post();
+
+					get_template_part( 'template-parts/blog/post-card' );
+				endwhile;
+				?>
+			</div>
+
+			<div class="wcs-blog-archive__pagination">
+				<?php
+				the_posts_pagination(
+					array(
+						'prev_text' => __( 'Önceki', 'woocommerce-store-child' ),
+						'next_text' => __( 'Sonraki', 'woocommerce-store-child' ),
+					)
+				);
+				?>
+			</div>
+		<?php else : ?>
+			<p class="wcs-blog-archive__empty">
+				Bu arşiv için sonuç bulunamadı. Diğer kategorilerdeki yazılarımıza göz atabilirsiniz.
+			</p>
+		<?php endif; ?>
+	</section>
+</main>
+
+<?php
+get_footer();
+
