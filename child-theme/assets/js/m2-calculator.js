@@ -5,6 +5,9 @@
   const priceOutput = document.getElementById("wcs-price");
   const vatOutput = document.getElementById("wcs-vat");
   const totalOutput = document.getElementById("wcs-total");
+  const areaHidden = document.getElementById("wcs-area-hidden");
+  const unitPriceHidden = document.getElementById("wcs-unit-price-hidden");
+  const totalHidden = document.getElementById("wcs-total-hidden");
 
   if (!widthInput || !heightInput || !areaOutput || !priceOutput || !vatOutput || !totalOutput) {
     return;
@@ -15,6 +18,20 @@
   const currency = (window.wcsCalculator && window.wcsCalculator.currency) || "";
 
   const format = (value) => `${value.toFixed(2)} ${currency}`.trim();
+
+  function setHiddenValues(area, unitPrice, total) {
+    if (areaHidden) {
+      areaHidden.value = Number.isFinite(area) && area > 0 ? area.toFixed(4) : "";
+    }
+
+    if (unitPriceHidden) {
+      unitPriceHidden.value = Number.isFinite(unitPrice) && unitPrice > 0 ? unitPrice.toFixed(2) : "";
+    }
+
+    if (totalHidden) {
+      totalHidden.value = Number.isFinite(total) && total > 0 ? total.toFixed(2) : "";
+    }
+  }
 
   function resolvePricePerM2() {
     const thicknessSelect = document.getElementById("wcs-thickness");
@@ -133,6 +150,7 @@
       priceOutput.textContent = format(0);
       vatOutput.textContent = format(0);
       totalOutput.textContent = format(0);
+      setHiddenValues(0, 0, 0);
       return;
     }
 
@@ -146,6 +164,7 @@
     priceOutput.textContent = format(price);
     vatOutput.textContent = format(vat);
     totalOutput.textContent = format(total);
+    setHiddenValues(area, pricePerM2, total);
   }
 
   widthInput.addEventListener("input", calculate);
@@ -158,4 +177,6 @@
       el.addEventListener("change", calculate);
     }
   });
+
+  calculate();
 })();

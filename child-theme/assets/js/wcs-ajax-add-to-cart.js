@@ -61,6 +61,9 @@
     var height = parseFloat($("#wcs-height").val());
     var thickness = $("#wcs-thickness").val();
     var mesh = $("#wcs-mesh").val();
+    var areaVal = parseFloat($("#wcs-area-hidden").val());
+    var unitPriceVal = parseFloat($("#wcs-unit-price-hidden").val());
+    var totalVal = parseFloat($("#wcs-total-hidden").val());
 
     var missing = [];
 
@@ -78,6 +81,18 @@
 
     if (!mesh) {
       missing.push("göz boyutu");
+    }
+
+    if (!Number.isFinite(areaVal) || areaVal <= 0) {
+      missing.push("m² hesap değeri");
+    }
+
+    if (!Number.isFinite(unitPriceVal) || unitPriceVal <= 0) {
+      missing.push("birim fiyat");
+    }
+
+    if (!Number.isFinite(totalVal) || totalVal <= 0) {
+      missing.push("hesaplanan toplam");
     }
 
     if (missing.length === 0) {
@@ -99,10 +114,9 @@
   // Kullanıcı alanları düzenledikçe uyarıyı kaldır.
   $(document).on(
     "input change",
-    "#wcs-width, #wcs-height, #wcs-thickness, #wcs-mesh",
+    "#wcs-width, #wcs-height, #wcs-thickness, #wcs-mesh, #wcs-color",
     function () {
       clearCalculatorError();
     }
   );
 })(window.jQuery);
-
