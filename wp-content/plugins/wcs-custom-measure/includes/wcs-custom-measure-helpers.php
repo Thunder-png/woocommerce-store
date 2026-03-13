@@ -48,7 +48,7 @@ function wcs_cm_product_data_fields() {
 		return;
 	}
 
-	echo '<div class="options_group show_if_simple show_if_variable">';
+	echo '<div class="options_group show_if_simple show_if_variable show_if_wcs_custom_measure">';
 
 	woocommerce_wp_checkbox(
 		array(

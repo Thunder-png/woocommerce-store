@@ -59,3 +59,40 @@ function wcs_cm_product_class( $classname, $product_type, $post_type ) {
 }
 add_filter( 'woocommerce_product_class', 'wcs_cm_product_class', 10, 3 );
 
+/**
+ * Ensure pricing fields are visible for custom measure type in admin.
+ */
+function wcs_cm_admin_product_type_script() {
+	if ( ! function_exists( 'get_current_screen' ) ) {
+		return;
+	}
+
+	$screen = get_current_screen();
+
+	if ( ! $screen || 'product' !== $screen->id ) {
+		return;
+	}
+	?>
+	<script>
+	jQuery( function( $ ) {
+		function wcsShowPricingForCustomMeasure() {
+			if ( $( '#product-type' ).val() === 'wcs_custom_measure' ) {
+				$( '#general_product_data' ).show();
+				$( '#general_product_data .pricing' ).show();
+				$( '#general_product_data .show_if_simple' ).show();
+			}
+		}
+
+		$( 'body' ).on( 'woocommerce-product-type-change', function( event, val ) {
+			if ( val === 'wcs_custom_measure' ) {
+				wcsShowPricingForCustomMeasure();
+			}
+		} );
+
+		wcsShowPricingForCustomMeasure();
+	} );
+	</script>
+	<?php
+}
+add_action( 'admin_footer', 'wcs_cm_admin_product_type_script' );
+

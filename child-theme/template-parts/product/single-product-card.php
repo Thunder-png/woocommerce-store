@@ -17,11 +17,11 @@ if ( ! $product instanceof WC_Product ) {
 	return;
 }
 
-$product_id   = $product->get_id();
-$is_simple    = $product->is_type( 'simple' );
-$is_variable  = $product->is_type( 'variable' );
-$m2_enabled   = function_exists( 'wcs_is_m2_calculator_enabled' )
-	? wcs_is_m2_calculator_enabled( $product_id )
+$product_id  = $product->get_id();
+$is_simple   = $product->is_type( 'simple' );
+$is_variable = $product->is_type( 'variable' );
+$m2_enabled  = function_exists( 'wcs_is_custom_measure_product' )
+	? wcs_is_custom_measure_product( $product )
 	: false;
 
 // Basic product data.
@@ -304,6 +304,10 @@ if ( $product->is_type( 'variable' ) ) {
 				</section>
 			<?php endif; ?>
 
+			<?php
+			$is_purchasable_directly = $is_simple || $product->is_type( 'wcs_custom_measure' );
+			?>
+
 			<footer class="wcs-product-card__footer">
 				<div class="wcs-product-card__price-block" data-wcs-unit-price="<?php echo esc_attr( $unit_price_display ); ?>">
 					<?php if ( $has_sale && $discount_percent > 0 && $regular_price > 0 ) : ?>
@@ -339,7 +343,7 @@ if ( $product->is_type( 'variable' ) ) {
 				</div>
 
 				<div class="wcs-product-card__cta-block">
-					<?php if ( $is_simple ) : ?>
+					<?php if ( $is_purchasable_directly ) : ?>
 						<?php if ( $m2_enabled ) : ?>
 							<button class="wcs-calculator-toggle" type="button">
 								<?php esc_html_e( 'Özel ölçü (m² hesapla)', 'woocommerce-store-child' ); ?>
