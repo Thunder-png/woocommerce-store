@@ -23,6 +23,65 @@ function wcs_asset_version( $relative_path, $fallback = '1.0.0' ) {
 }
 
 /**
+ * Check whether m² calculator should be enabled for a product.
+ *
+ * @param WC_Product|int|null $product Product object or product ID.
+ * @return bool
+ */
+function wcs_is_m2_enabled_product( $product ) {
+	if ( ! $product instanceof WC_Product ) {
+		$product = wc_get_product( $product );
+	}
+
+	if ( ! ( $product instanceof WC_Product ) ) {
+		return false;
+	}
+
+	$attribute_slug = 'pa_ozel-olcu';
+
+	$has_m2_attribute = static function( WC_Product $target_product ) use ( $attribute_slug ) {
+		$attributes = $target_product->get_attributes();
+
+		if ( ! is_array( $attributes ) || empty( $attributes ) ) {
+			return false;
+		}
+
+		$lookup_keys = array(
+			$attribute_slug,
+			'attribute_' . $attribute_slug,
+			sanitize_title( $attribute_slug ),
+			sanitize_title( str_replace( 'pa_', '', $attribute_slug ) ),
+		);
+
+		foreach ( $lookup_keys as $lookup_key ) {
+			if ( array_key_exists( $lookup_key, $attributes ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	};
+
+	if ( $has_m2_attribute( $product ) ) {
+		return true;
+	}
+
+	if ( $product->is_type( 'variation' ) ) {
+		$parent_id = $product->get_parent_id();
+
+		if ( $parent_id ) {
+			$parent_product = wc_get_product( $parent_id );
+
+			if ( $parent_product instanceof WC_Product && $has_m2_attribute( $parent_product ) ) {
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+/**
  * Enqueue child theme assets.
  */
 function wcs_child_enqueue_assets() {
@@ -137,13 +196,7 @@ function wcs_child_enqueue_assets() {
         global $product;
 
         $price_per_m2 = $product instanceof WC_Product ? (float) wc_get_price_to_display( $product ) : 0;
-		$product_id   = $product instanceof WC_Product ? $product->get_id() : 0;
-
-		// m² hesaplayıcı, \"özel ölçü\" product tag'ine sahip ürünlerde aktif.
-		$m2_enabled   = $product_id && (
-			has_term( 'ozel-olcu', 'product_tag', $product_id ) ||
-			has_term( 'özel ölçü', 'product_tag', $product_id )
-		);
+		$m2_enabled = wcs_is_m2_enabled_product( $product );
 
 		if ( $m2_enabled ) {
 			wp_enqueue_script(
@@ -362,17 +415,7 @@ function wcs_render_price_calculator() {
 		return;
 	}
 
-	$product_id = $product->get_id();
-
-	if ( ! $product_id ) {
-		return;
-	}
-
-	// Sadece \"özel ölçü\" etiketine sahip ürünlerde hesaplayıcıyı göster.
-	if (
-		! has_term( 'ozel-olcu', 'product_tag', $product_id )
-		&& ! has_term( 'özel ölçü', 'product_tag', $product_id )
-	) {
+	if ( ! wcs_is_m2_enabled_product( $product ) ) {
 		return;
 	}
     ?>
@@ -1045,4 +1088,3 @@ function wcs_logout_redirect_to_my_account( $redirect_url ) {
 	return $redirect_url;
 }
 add_filter( 'woocommerce_logout_default_redirect_url', 'wcs_logout_redirect_to_my_account' );
-
