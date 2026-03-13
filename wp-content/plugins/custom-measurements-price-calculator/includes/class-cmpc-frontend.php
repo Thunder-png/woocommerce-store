@@ -9,6 +9,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 class CMPC_Frontend {
 
 	/**
+	 * Resolve the current product safely for single product context.
+	 *
+	 * @return WC_Product|null
+	 */
+	private static function get_current_product() {
+		global $product;
+
+		if ( $product instanceof WC_Product ) {
+			return $product;
+		}
+
+		if ( function_exists( 'get_queried_object_id' ) ) {
+			$product_id = (int) get_queried_object_id();
+			if ( $product_id > 0 ) {
+				$queried_product = wc_get_product( $product_id );
+				if ( $queried_product instanceof WC_Product ) {
+					return $queried_product;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Init hooks.
 	 */
 	public static function init() {
@@ -25,7 +50,7 @@ class CMPC_Frontend {
 			return;
 		}
 
-		global $product;
+		$product = self::get_current_product();
 
 		if ( ! ( $product instanceof WC_Product ) || ! CMPC_Helpers::is_custom_measure_product( $product ) ) {
 			return;
@@ -66,7 +91,7 @@ class CMPC_Frontend {
 	 * Render measurement calculator block on single product page.
 	 */
 	public static function render_measurement_block() {
-		global $product;
+		$product = self::get_current_product();
 
 		if ( ! ( $product instanceof WC_Product ) || ! CMPC_Helpers::is_custom_measure_product( $product ) ) {
 			return;
@@ -190,4 +215,3 @@ class CMPC_Frontend {
 		return $valid;
 	}
 }
-
