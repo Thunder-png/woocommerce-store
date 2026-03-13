@@ -20,6 +20,9 @@ if ( ! $product instanceof WC_Product ) {
 $product_id   = $product->get_id();
 $is_simple    = $product->is_type( 'simple' );
 $is_variable  = $product->is_type( 'variable' );
+$m2_enabled   = function_exists( 'wcs_is_m2_calculator_enabled' )
+	? wcs_is_m2_calculator_enabled( $product_id )
+	: false;
 
 // Basic product data.
 $title        = get_the_title( $product_id );
@@ -337,9 +340,11 @@ if ( $product->is_type( 'variable' ) ) {
 
 				<div class="wcs-product-card__cta-block">
 					<?php if ( $is_simple ) : ?>
-						<button class="wcs-calculator-toggle" type="button">
-							<?php esc_html_e( 'Özel ölçü (m² hesapla)', 'woocommerce-store-child' ); ?>
-						</button>
+						<?php if ( $m2_enabled ) : ?>
+							<button class="wcs-calculator-toggle" type="button">
+								<?php esc_html_e( 'Özel ölçü (m² hesapla)', 'woocommerce-store-child' ); ?>
+							</button>
+						<?php endif; ?>
 
 						<?php
 						if ( function_exists( 'woocommerce_template_single_add_to_cart' ) ) {

@@ -192,11 +192,13 @@ function wcs_child_enqueue_assets() {
         );
     }
 
-    if ( function_exists( 'is_product' ) && is_product() ) {
+	if ( function_exists( 'is_product' ) && is_product() ) {
         global $product;
 
         $price_per_m2 = $product instanceof WC_Product ? (float) wc_get_price_to_display( $product ) : 0;
-		$m2_enabled = wcs_is_m2_enabled_product( $product );
+		$product_id   = $product instanceof WC_Product ? $product->get_id() : 0;
+
+		$m2_enabled   = wcs_is_m2_calculator_enabled( $product_id );
 
 		if ( $m2_enabled ) {
 			wp_enqueue_script(
@@ -310,6 +312,23 @@ function wcs_child_enqueue_assets() {
 }
 add_action( 'wp_enqueue_scripts', 'wcs_child_enqueue_assets' );
 
+/**
+ * Determine whether the m² calculator is enabled for a product.
+ *
+ * @param int $product_id Product ID.
+ * @return bool
+ */
+function wcs_is_m2_calculator_enabled( $product_id ) {
+	$product_id = absint( $product_id );
+
+	if ( ! $product_id ) {
+		return false;
+	}
+
+	return has_term( 'ozel-olcu', 'product_tag', $product_id )
+		|| has_term( 'özel ölçü', 'product_tag', $product_id );
+}
+
 
 /**
  * Hide Astra native header globally so custom header is used site-wide.
@@ -415,7 +434,13 @@ function wcs_render_price_calculator() {
 		return;
 	}
 
-	if ( ! wcs_is_m2_enabled_product( $product ) ) {
+	$product_id = $product->get_id();
+
+	if ( ! $product_id ) {
+		return;
+	}
+
+	if ( ! wcs_is_m2_calculator_enabled( $product_id ) ) {
 		return;
 	}
     ?>
