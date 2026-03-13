@@ -61,9 +61,6 @@ add_filter( 'woocommerce_product_class', 'wcs_cm_product_class', 10, 3 );
 
 /**
  * Ensure pricing fields are visible for custom measure type in admin.
- *
- * Uses a small deferred script so that it runs after WooCommerce's own
- * product-type UI logic.
  */
 function wcs_cm_admin_product_type_script() {
 	if ( ! function_exists( 'get_current_screen' ) ) {
@@ -77,38 +74,23 @@ function wcs_cm_admin_product_type_script() {
 	}
 	?>
 	<script>
-	(function( $ ) {
-		function wcsRevealPricingPanels() {
-			$( '#general_product_data' ).show();
-			$( '#general_product_data .pricing' ).show();
-			$( '#general_product_data .show_if_simple' ).show();
-			$( '.show_if_wcs_custom_measure' ).show();
+	jQuery( function( $ ) {
+		function wcsShowPricingForCustomMeasure() {
+			if ( $( '#product-type' ).val() === 'wcs_custom_measure' ) {
+				$( '#general_product_data' ).show();
+				$( '#general_product_data .pricing' ).show();
+				$( '#general_product_data .show_if_simple' ).show();
+			}
 		}
 
-		// After WooCommerce has finished handling type change.
-		$( 'body' ).on( 'woocommerce-product-type-change-done', function( event, val ) {
-			if ( 'wcs_custom_measure' === val ) {
-				wcsRevealPricingPanels();
-			}
-		} );
-
-		// Fallback for older WooCommerce: listen to the basic event as well.
 		$( 'body' ).on( 'woocommerce-product-type-change', function( event, val ) {
-			if ( 'wcs_custom_measure' === val ) {
-				// Defer slightly so WC's own show/hide logic runs first.
-				setTimeout( wcsRevealPricingPanels, 50 );
+			if ( val === 'wcs_custom_measure' ) {
+				wcsShowPricingForCustomMeasure();
 			}
 		} );
 
-		// On page load, defer until after WC's document.ready handlers.
-		$( function() {
-			setTimeout( function() {
-				if ( $( '#product-type' ).val() === 'wcs_custom_measure' ) {
-					wcsRevealPricingPanels();
-				}
-			}, 50 );
-		} );
-	})( jQuery );
+		wcsShowPricingForCustomMeasure();
+	} );
 	</script>
 	<?php
 }

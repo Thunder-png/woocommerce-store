@@ -26,12 +26,11 @@ function wcs_is_custom_measure_product( $product ) {
 		return false;
 	}
 
-	// Primary: product type is our custom type.
-	if ( $product->is_type( 'wcs_custom_measure' ) ) {
-		return true;
+	// Bu eklenti artık yalnızca simple product + checkbox ile çalışır.
+	if ( ! $product->is_type( 'simple' ) ) {
+		return false;
 	}
 
-	// Secondary: explicit product meta flag for other types.
 	$enabled = $product->get_meta( '_wcs_custom_measure_enabled', true );
 
 	return (bool) $enabled;
@@ -78,21 +77,4 @@ function wcs_cm_save_product_meta( $post_id ) {
 	update_post_meta( $post_id, '_wcs_custom_measure_enabled', 'yes' );
 }
 add_action( 'woocommerce_process_product_meta', 'wcs_cm_save_product_meta', 10, 1 );
-
-/**
- * Ensure product_type taxonomy is set to wcs_custom_measure when selected.
- *
- * This avoids writing to the legacy _product_type meta and keeps WooCommerce's
- * own type handling intact.
- *
- * @param int $post_id Product ID.
- */
-function wcs_cm_force_product_type_term( $post_id ) {
-	if ( ! isset( $_POST['product-type'] ) || 'wcs_custom_measure' !== $_POST['product-type'] ) {
-		return;
-	}
-
-	wp_set_object_terms( $post_id, 'wcs_custom_measure', 'product_type' );
-}
-add_action( 'woocommerce_process_product_meta', 'wcs_cm_force_product_type_term', 1 );
 

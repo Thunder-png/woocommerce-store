@@ -305,7 +305,8 @@ if ( $product->is_type( 'variable' ) ) {
 			<?php endif; ?>
 
 			<?php
-			$is_purchasable_directly = $is_simple || $product->is_type( 'wcs_custom_measure' );
+			// Özel ölçü sistemi simple product + checkbox ile çalışır.
+			$is_purchasable_directly = $is_simple;
 			?>
 
 			<footer class="wcs-product-card__footer">
