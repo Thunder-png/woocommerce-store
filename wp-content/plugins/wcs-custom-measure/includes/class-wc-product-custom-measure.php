@@ -45,13 +45,17 @@ add_filter( 'product_type_selector', 'wcs_cm_register_product_type' );
 /**
  * Map product type to class.
  *
- * @param array<string,string> $types Existing classes.
- * @return array<string,string>
+ * @param string $classname   Resolved class name.
+ * @param string $product_type Product type slug.
+ * @param string $post_type   Post type (usually 'product').
+ * @return string
  */
-function wcs_cm_product_class( $types ) {
-	$types['wcs_custom_measure'] = WC_Product_Custom_Measure::class;
+function wcs_cm_product_class( $classname, $product_type, $post_type ) {
+	if ( 'wcs_custom_measure' === $product_type ) {
+		return WC_Product_Custom_Measure::class;
+	}
 
-	return $types;
+	return $classname;
 }
-add_filter( 'woocommerce_product_class', 'wcs_cm_product_class', 10, 1 );
+add_filter( 'woocommerce_product_class', 'wcs_cm_product_class', 10, 3 );
 
