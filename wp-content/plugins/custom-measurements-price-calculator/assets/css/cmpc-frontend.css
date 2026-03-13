@@ -1,66 +1,366 @@
+/* ========================================
+   CMPC Frontend Styles
+   Astra Child Theme Compatible
+   ======================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap');
+
+:root {
+  --cmpc-accent: #2563eb;
+  --cmpc-accent-light: #eff6ff;
+  --cmpc-accent-hover: #1d4ed8;
+  --cmpc-success: #16a34a;
+  --cmpc-success-light: #f0fdf4;
+  --cmpc-error: #dc2626;
+  --cmpc-error-light: #fef2f2;
+  --cmpc-text: #111827;
+  --cmpc-text-muted: #6b7280;
+  --cmpc-text-light: #9ca3af;
+  --cmpc-border: #e5e7eb;
+  --cmpc-border-focus: #93c5fd;
+  --cmpc-bg: #ffffff;
+  --cmpc-bg-surface: #f9fafb;
+  --cmpc-shadow: 0 1px 3px 0 rgba(0,0,0,0.08), 0 1px 2px -1px rgba(0,0,0,0.06);
+  --cmpc-shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.06);
+  --cmpc-radius: 12px;
+  --cmpc-radius-sm: 8px;
+  --cmpc-font: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --cmpc-transition: 0.2s ease;
+}
+
+/* ----------------------------------------
+   Box Container
+   ---------------------------------------- */
+
 .cmpc-box {
-  border: 1px solid #ddd;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  border-radius: 4px;
-  background-color: #fafafa;
+  font-family: var(--cmpc-font) !important;
+  background: var(--cmpc-bg);
+  border: 1.5px solid var(--cmpc-border) !important;
+  border-radius: var(--cmpc-radius) !important;
+  padding: 1.5rem !important;
+  margin: 1.5rem 0 1.75rem !important;
+  box-shadow: var(--cmpc-shadow);
+  transition: box-shadow var(--cmpc-transition), border-color var(--cmpc-transition);
+  box-sizing: border-box;
+}
+
+.cmpc-box:focus-within {
+  box-shadow: var(--cmpc-shadow-md);
+  border-color: var(--cmpc-border-focus) !important;
+}
+
+/* ----------------------------------------
+   Header
+   ---------------------------------------- */
+
+.cmpc-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--cmpc-border);
+}
+
+.cmpc-header-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--cmpc-accent-light);
+  border-radius: var(--cmpc-radius-sm);
+  flex-shrink: 0;
+}
+
+.cmpc-header-icon svg {
+  width: 18px;
+  height: 18px;
+  color: var(--cmpc-accent);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .cmpc-title {
-  margin: 0 0 0.75rem;
-  font-size: 1.1rem;
-  font-weight: 600;
+  margin: 0 !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  color: var(--cmpc-text) !important;
+  letter-spacing: -0.01em;
+  line-height: 1.3 !important;
 }
+
+.cmpc-subtitle {
+  font-size: 0.78rem;
+  color: var(--cmpc-text-muted);
+  margin: 2px 0 0;
+  line-height: 1.3;
+}
+
+/* ----------------------------------------
+   Input Grid
+   ---------------------------------------- */
 
 .cmpc-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.75rem 1rem;
-  margin-bottom: 1rem;
+  gap: 0.875rem 1rem;
+  margin-bottom: 1.125rem;
+}
+
+.cmpc-field {
+  position: relative;
 }
 
 .cmpc-field label {
-  display: block;
-  margin-bottom: 0.25rem;
-  font-size: 0.9rem;
+  display: flex !important;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 6px !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  color: var(--cmpc-text-muted) !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1 !important;
+}
+
+.cmpc-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .cmpc-field input[type="number"] {
-  width: 100%;
-  padding: 0.4rem 0.5rem;
-  font-size: 0.95rem;
-  box-sizing: border-box;
+  width: 100% !important;
+  height: 44px !important;
+  padding: 0 2.75rem 0 0.875rem !important;
+  font-size: 1rem !important;
+  font-family: var(--cmpc-font) !important;
+  font-weight: 500 !important;
+  color: var(--cmpc-text) !important;
+  background: var(--cmpc-bg) !important;
+  border: 1.5px solid var(--cmpc-border) !important;
+  border-radius: var(--cmpc-radius-sm) !important;
+  box-shadow: none !important;
+  outline: none !important;
+  transition: border-color var(--cmpc-transition), box-shadow var(--cmpc-transition);
+  box-sizing: border-box !important;
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
+.cmpc-field input[type="number"]::-webkit-outer-spin-button,
+.cmpc-field input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.cmpc-field input[type="number"]:focus {
+  border-color: var(--cmpc-accent) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
+}
+
+.cmpc-field input[type="number"].cmpc-input-error {
+  border-color: var(--cmpc-error) !important;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+}
+
+.cmpc-field input[type="number"].cmpc-input-valid {
+  border-color: var(--cmpc-success) !important;
+}
+
+.cmpc-unit-badge {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--cmpc-text-light);
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: 0.03em;
+  background: var(--cmpc-bg-surface);
+  border: 1px solid var(--cmpc-border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  line-height: 1.4;
+}
+
+.cmpc-field-hint {
+  font-size: 0.72rem;
+  color: var(--cmpc-text-light);
+  margin-top: 5px;
+  line-height: 1.4;
+  min-height: 1.1em;
+  transition: color var(--cmpc-transition);
+}
+
+.cmpc-field-hint.cmpc-hint-error {
+  color: var(--cmpc-error);
+}
+
+/* ----------------------------------------
+   Visual area indicator
+   ---------------------------------------- */
+
+.cmpc-area-visual {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.75rem 0.875rem;
+  background: var(--cmpc-bg-surface);
+  border: 1px solid var(--cmpc-border);
+  border-radius: var(--cmpc-radius-sm);
+  margin-bottom: 1rem;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.25s ease, transform 0.25s ease, border-color 0.2s ease;
+  pointer-events: none;
+}
+
+.cmpc-area-visual.cmpc-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.cmpc-area-rect-wrap {
+  flex-shrink: 0;
+}
+
+.cmpc-area-rect-svg {
+  display: block;
+}
+
+.cmpc-area-info {
+  font-size: 0.8rem;
+  color: var(--cmpc-text-muted);
+  line-height: 1.55;
+}
+
+.cmpc-area-info strong {
+  color: var(--cmpc-text);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+/* ----------------------------------------
+   Summary / Price Panel
+   ---------------------------------------- */
+
 .cmpc-summary {
-  border-top: 1px solid #e2e2e2;
-  padding-top: 0.75rem;
+  background: var(--cmpc-bg-surface);
+  border: 1px solid var(--cmpc-border);
+  border-radius: var(--cmpc-radius-sm);
+  padding: 0.875rem 1rem;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.cmpc-summary.cmpc-has-value {
+  background: var(--cmpc-accent-light);
+  border-color: #bfdbfe;
 }
 
 .cmpc-summary-row {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.25rem;
-  font-size: 0.9rem;
+  align-items: center;
+  padding: 0.325rem 0;
+}
+
+.cmpc-summary-row + .cmpc-summary-row {
+  border-top: 1px dashed var(--cmpc-border);
 }
 
 .cmpc-summary-total {
-  margin-top: 0.5rem;
-  font-weight: 600;
+  margin-top: 0.5rem !important;
+  padding-top: 0.625rem !important;
+  border-top: 1.5px solid var(--cmpc-border) !important;
+}
+
+.cmpc-summary-total .cmpc-label {
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  color: var(--cmpc-text) !important;
+}
+
+.cmpc-summary-total .cmpc-value {
+  font-size: 1.125rem !important;
+  font-weight: 700 !important;
+  color: var(--cmpc-accent) !important;
+  letter-spacing: -0.02em;
+  transition: color 0.2s ease;
 }
 
 .cmpc-label {
-  color: #555;
+  color: var(--cmpc-text-muted);
+  font-size: 0.85rem;
+  font-weight: 400;
 }
 
 .cmpc-value {
-  color: #111;
+  color: var(--cmpc-text);
+  font-weight: 500;
+  font-size: 0.875rem;
 }
 
-/* Mobile */
+/* Calculation chips */
+.cmpc-calc-formula {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.cmpc-chip {
+  font-size: 0.72rem;
+  color: var(--cmpc-text-muted);
+  background: var(--cmpc-bg);
+  border: 1px solid var(--cmpc-border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+}
+
+.cmpc-chip-op {
+  font-size: 0.72rem;
+  color: var(--cmpc-text-light);
+}
+
+/* Loading pulse */
+.cmpc-value.cmpc-calculating {
+  animation: cmpc-pulse 0.9s ease-in-out infinite;
+}
+
+@keyframes cmpc-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* ----------------------------------------
+   Responsive
+   ---------------------------------------- */
+
 @media (max-width: 600px) {
+  .cmpc-box {
+    padding: 1.125rem !important;
+    border-radius: 10px !important;
+  }
+
   .cmpc-grid {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .cmpc-summary-total .cmpc-value {
+    font-size: 1rem !important;
   }
 }
 

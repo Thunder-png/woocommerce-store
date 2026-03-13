@@ -79,50 +79,83 @@ class CMPC_Frontend {
 		}
 		?>
 		<div class="cmpc-box" aria-label="<?php esc_attr_e( 'Özel Ölçü Hesaplama', 'custom-measurements-price-calculator' ); ?>">
-			<h3 class="cmpc-title"><?php esc_html_e( 'Özel Ölçü Hesaplama', 'custom-measurements-price-calculator' ); ?></h3>
+
+			<div class="cmpc-header">
+				<div class="cmpc-header-icon" aria-hidden="true">
+					<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+						<path d="M3 3h18v4H3zM3 10h4v11H3zM17 10h4v11h-4z"/>
+						<path d="M7 21h10" stroke-dasharray="2 2"/>
+					</svg>
+				</div>
+				<div>
+					<h3 class="cmpc-title"><?php esc_html_e( 'Özel Ölçü Hesaplama', 'custom-measurements-price-calculator' ); ?></h3>
+					<p class="cmpc-subtitle"><?php esc_html_e( 'En ve boy değerlerini girerek fiyatı hesaplayın', 'custom-measurements-price-calculator' ); ?></p>
+				</div>
+			</div>
 
 			<div class="cmpc-grid">
 				<div class="cmpc-field">
-					<label for="cmpc-width"><?php esc_html_e( 'En (metre)', 'custom-measurements-price-calculator' ); ?></label>
-					<input
-						id="cmpc-width"
-						name="cmpc_width"
-						type="number"
-						min="0"
-						step="0.01"
-						inputmode="decimal"
-						required
-					/>
+					<label for="cmpc-width"><?php esc_html_e( 'En', 'custom-measurements-price-calculator' ); ?></label>
+					<div class="cmpc-input-wrap">
+						<input
+							id="cmpc-width"
+							name="cmpc_width"
+							type="number"
+							min="0"
+							step="0.01"
+							inputmode="decimal"
+							placeholder="0.00"
+							required
+						/>
+						<span class="cmpc-unit-badge">m</span>
+					</div>
+					<div class="cmpc-field-hint" id="cmpc-width-hint"></div>
 				</div>
 
 				<div class="cmpc-field">
-					<label for="cmpc-height"><?php esc_html_e( 'Boy (metre)', 'custom-measurements-price-calculator' ); ?></label>
-					<input
-						id="cmpc-height"
-						name="cmpc_height"
-						type="number"
-						min="0"
-						step="0.01"
-						inputmode="decimal"
-						required
-					/>
+					<label for="cmpc-height"><?php esc_html_e( 'Boy', 'custom-measurements-price-calculator' ); ?></label>
+					<div class="cmpc-input-wrap">
+						<input
+							id="cmpc-height"
+							name="cmpc_height"
+							type="number"
+							min="0"
+							step="0.01"
+							inputmode="decimal"
+							placeholder="0.00"
+							required
+						/>
+						<span class="cmpc-unit-badge">m</span>
+					</div>
+					<div class="cmpc-field-hint" id="cmpc-height-hint"></div>
 				</div>
+			</div>
+
+			<div class="cmpc-area-visual" id="cmpc-area-visual" aria-live="polite">
+				<div class="cmpc-area-rect-wrap">
+					<svg class="cmpc-area-rect-svg" id="cmpc-area-svg" width="54" height="54" viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg">
+						<rect id="cmpc-area-rect" x="1" y="1" width="52" height="52" rx="3"
+							fill="rgba(37,99,235,0.08)" stroke="#2563eb" stroke-width="1.5"/>
+					</svg>
+				</div>
+				<div class="cmpc-area-info" id="cmpc-area-info-text"></div>
 			</div>
 
 			<div class="cmpc-summary">
 				<div class="cmpc-summary-row">
 					<span class="cmpc-label"><?php esc_html_e( 'Alan', 'custom-measurements-price-calculator' ); ?></span>
-					<span class="cmpc-value" id="cmpc-area-display">0.00 m²</span>
+					<span class="cmpc-value" id="cmpc-area-display">—</span>
 				</div>
 				<div class="cmpc-summary-row">
-					<span class="cmpc-label"><?php esc_html_e( 'm² Fiyatı', 'custom-measurements-price-calculator' ); ?></span>
+					<span class="cmpc-label"><?php esc_html_e( 'm² Birim Fiyatı', 'custom-measurements-price-calculator' ); ?></span>
 					<span class="cmpc-value" id="cmpc-base-price-display">
-						<?php echo esc_html( wc_price( $base_price ) ); ?>
+						<?php echo wc_price( $base_price ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 					</span>
 				</div>
 				<div class="cmpc-summary-row cmpc-summary-total">
 					<span class="cmpc-label"><?php esc_html_e( 'Toplam Fiyat', 'custom-measurements-price-calculator' ); ?></span>
-					<span class="cmpc-value" id="cmpc-total-display">0.00</span>
+					<div class="cmpc-calc-formula" id="cmpc-formula"></div>
+					<span class="cmpc-value" id="cmpc-total-display">—</span>
 				</div>
 			</div>
 
