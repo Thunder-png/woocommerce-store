@@ -9,6 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// Route wcs_custom_measure add-to-cart to simple product template so that
+// standard add-to-cart form and our calculator hooks run as expected.
+add_action( 'woocommerce_wcs_custom_measure_add_to_cart', 'woocommerce_simple_add_to_cart' );
+
 /**
  * Enqueue scripts and styles on single product pages when needed.
  */
