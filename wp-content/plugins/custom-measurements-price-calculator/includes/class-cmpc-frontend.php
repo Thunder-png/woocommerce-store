@@ -117,7 +117,7 @@ class CMPC_Frontend {
 				<div class="cmpc-summary-row">
 					<span class="cmpc-label"><?php esc_html_e( 'm² Fiyatı', 'custom-measurements-price-calculator' ); ?></span>
 					<span class="cmpc-value" id="cmpc-base-price-display">
-						<?php echo wp_kses_post( wc_price( $base_price ) ); ?>
+						<?php echo esc_html( wc_price( $base_price ) ); ?>
 					</span>
 				</div>
 				<div class="cmpc-summary-row cmpc-summary-total">
