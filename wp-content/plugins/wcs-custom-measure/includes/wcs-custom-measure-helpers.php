@@ -68,12 +68,19 @@ add_action( 'woocommerce_product_options_general_product_data', 'wcs_cm_product_
  * @param int $post_id Product ID.
  */
 function wcs_cm_save_product_meta( $post_id ) {
-	if ( ! isset( $_POST['_wcs_custom_measure_enabled'] ) ) {
+	$is_enabled = isset( $_POST['_wcs_custom_measure_enabled'] );
+
+	if ( ! $is_enabled ) {
 		delete_post_meta( $post_id, '_wcs_custom_measure_enabled' );
 		return;
 	}
 
 	update_post_meta( $post_id, '_wcs_custom_measure_enabled', 'yes' );
+
+	// Eğer admin arayüzünde ürün tipi özel ölçü olarak seçilmişse, meta ile senkron tut.
+	if ( isset( $_POST['product-type'] ) && 'wcs_custom_measure' === $_POST['product-type'] ) {
+		update_post_meta( $post_id, '_product_type', 'wcs_custom_measure' );
+	}
 }
 add_action( 'woocommerce_process_product_meta', 'wcs_cm_save_product_meta', 10, 1 );
 

@@ -1,12 +1,8 @@
 (function () {
   document.addEventListener("DOMContentLoaded", function () {
-    var card = document.querySelector(".single-product .wcs-product-card");
-    if (!card) {
-      return;
-    }
-
+    var card = document.querySelector(".single-product .wcs-product-card") || document;
     var toggle = card.querySelector(".wcs-calculator-toggle");
-    var calculator = card.querySelector(".wcs-calculator");
+    var calculator = document.querySelector(".wcs-calculator");
 
     if (!toggle || !calculator) {
       return;
