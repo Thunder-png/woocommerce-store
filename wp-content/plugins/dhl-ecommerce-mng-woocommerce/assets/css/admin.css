@@ -1,0 +1,67 @@
+.demw-admin .demw-card {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 16px;
+	margin: 16px 0;
+}
+
+.demw-settings-form .description {
+	max-width: 800px;
+}
+
+.demw-metabox .demw-action-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 8px;
+	margin-top: 12px;
+}
+
+.demw-badge {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 10px;
+	font-size: 12px;
+	line-height: 1.6;
+}
+
+.demw-badge-ok {
+	background: #edf7ed;
+	color: #1f7a1f;
+}
+
+.demw-badge-error {
+	background: #fdecec;
+	color: #b42318;
+}
+
+.demw-inline-notice {
+	padding: 8px;
+	border-radius: 3px;
+	margin-bottom: 8px;
+}
+
+.demw-inline-notice-success {
+	background: #ecf7ed;
+	border: 1px solid #46b450;
+}
+
+.demw-inline-notice-error {
+	background: #fff5f5;
+	border: 1px solid #d63638;
+}
+
+.demw-error-text {
+	color: #b42318;
+}
+
+.demw-response-preview {
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	padding: 8px;
+	max-height: 120px;
+	overflow: auto;
+	white-space: pre-wrap;
+	word-break: break-word;
+	font-size: 12px;
+}
