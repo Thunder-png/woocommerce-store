@@ -1,100 +1,372 @@
 /* ═══════════════════════════════════════════════════════════════
-   WCS CART, CHECKOUT, ACCOUNT LAYOUTS
+   WCS CART + CHECKOUT — Karaca File
    ═══════════════════════════════════════════════════════════════ */
 
-.wcs-cart-shell,
-.wcs-checkout-shell {
-  max-width: 1160px;
-  margin: 2.5rem auto 3rem;
-  padding: 0 1rem;
+/* ── Sepet sayfası (cart.php) ────────────────────────────────── */
+.wcs-cart-shell {
+  max-width: 1160px; margin: 2.5rem auto 3rem; padding: 0 1.25rem;
+}
+.wcs-cart-shell__header { margin-bottom: 1.75rem; }
+.wcs-cart-shell__title { font-family: var(--font-heading,'Inter',sans-serif); letter-spacing: -0.02em; margin: 0 0 0.35rem; }
+.wcs-cart-shell__subtitle { margin: 0; font-size: 0.95rem; color: rgba(43,46,55,0.75); }
+.wcs-cart-shell__inner, .wcs-cart-shell__grid {
+  background: #fff; border-radius: 16px; border: 1px solid rgba(15,19,30,0.08);
+  box-shadow: 0 18px 45px rgba(15,19,30,0.08); padding: 1.75rem 1.75rem 2rem;
+}
+.wcs-cart-shell__grid { display: grid; grid-template-columns: minmax(0,1.4fr) minmax(0,0.9fr); gap: 2rem; align-items: flex-start; }
+.wcs-cart-shell__col--summary { border-left: 1px solid rgba(15,19,30,0.06); padding-left: 1.5rem; }
+.wcs-cart-summary__title { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.16em; margin: 0 0 1rem; color: rgba(15,19,30,0.72); }
+.wcs-cart-empty { text-align: center; padding: 3rem 1rem; }
+.wcs-cart-empty p { margin-bottom: 1rem; }
+.wcs-cart-table { margin-bottom: 1.5rem; }
+.wcs-cart-table th { font-size: 0.78rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(15,19,30,0.58); }
+.wcs-cart-item-note { display: block; margin-top: 0.35rem; font-size: 0.78rem; color: rgba(193,46,55,0.9); }
+
+/* ══════════════════════════════════════════════════════════════
+   CHECKOUT — Ana kapsayıcı
+══════════════════════════════════════════════════════════════ */
+.wcs-co-wrap {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 1.25rem 4rem;
+  min-height: 100vh;
+  background: var(--color-structure-white, #f8f8f8);
 }
 
-.wcs-cart-shell__header,
-.wcs-checkout-shell__header {
-  margin-bottom: 1.75rem;
+/* ── Header ──────────────────────────────────────────────────── */
+.wcs-co-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+  padding: 1.25rem 0 1.5rem;
+  border-bottom: 1px solid rgba(15,19,30,0.08);
+  margin-bottom: 2rem;
 }
-
-.wcs-cart-shell__title,
-.wcs-checkout-shell__title {
-  font-family: var(--font-heading, 'Inter', sans-serif);
+.wcs-co-header__left { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
+.wcs-co-header__logo-link { text-decoration: none; }
+.wcs-co-header__logo-text {
+  font-family: var(--font-heading,'Inter',sans-serif);
+  font-size: 1.2rem; font-weight: 800;
+  color: var(--color-industrial-navy, #0f131e);
   letter-spacing: -0.02em;
-  margin: 0 0 0.35rem;
 }
 
-.wcs-cart-shell__subtitle,
-.wcs-checkout-shell__subtitle {
-  margin: 0;
-  font-size: 0.95rem;
-  color: rgba(43, 46, 55, 0.75);
+/* Adım breadcrumb */
+.wcs-co-breadcrumb { display: flex; align-items: center; gap: 0.5rem; }
+.wcs-co-breadcrumb__step {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.78rem; font-weight: 500;
+  color: rgba(43,46,55,0.45); text-decoration: none; transition: color .15s;
 }
+.wcs-co-breadcrumb__step--active { color: var(--color-safety-red,#c12e37); font-weight: 700; }
+.wcs-co-breadcrumb__step--pending { color: rgba(43,46,55,0.3); }
+.wcs-co-breadcrumb__sep { font-size: 0.6rem; color: rgba(43,46,55,0.25); }
 
-.wcs-cart-shell__inner,
-.wcs-checkout-shell__grid {
-  background: #ffffff;
-  border-radius: 16px;
-  border: 1px solid rgba(15, 19, 30, 0.08);
-  box-shadow: 0 18px 45px rgba(15, 19, 30, 0.08);
-  padding: 1.75rem 1.75rem 2rem;
+/* Güven rozetleri */
+.wcs-co-header__trust { display: flex; gap: 1.25rem; flex-wrap: wrap; }
+.wcs-co-trust-item {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font-size: 0.75rem; font-weight: 500; color: rgba(43,46,55,0.55);
 }
+.wcs-co-trust-item .bi { color: var(--color-safety-red,#c12e37); font-size: 0.85rem; }
 
-.wcs-cart-shell__grid,
-.wcs-checkout-shell__grid {
+/* ── Ana form grid ───────────────────────────────────────────── */
+.wcs-co-form {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr);
+  grid-template-columns: minmax(0,1.4fr) minmax(0,1fr);
   gap: 2rem;
   align-items: flex-start;
 }
 
-.wcs-cart-shell__col--summary,
-.wcs-checkout-shell__col--summary {
-  border-left: 1px solid rgba(15, 19, 30, 0.06);
-  padding-left: 1.5rem;
+/* ── SOL: Form alanları ──────────────────────────────────────── */
+.wcs-co-form__left { display: flex; flex-direction: column; gap: 1.5rem; }
+
+/* Giriş hatırlatıcı */
+.wcs-co-login-notice {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.85rem 1.1rem;
+  background: rgba(193,46,55,0.05);
+  border: 1px solid rgba(193,46,55,0.18);
+  border-radius: 10px;
+  font-size: 0.875rem; color: rgba(43,46,55,0.7);
+}
+.wcs-co-login-notice .bi { color: var(--color-safety-red,#c12e37); font-size: 1.1rem; }
+.wcs-co-login-notice a { color: var(--color-safety-red,#c12e37); font-weight: 600; }
+
+/* Bölüm kartları */
+.wcs-co-section {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid rgba(15,19,30,0.08);
+  box-shadow: 0 4px 16px rgba(15,19,30,0.05);
+  padding: 1.5rem 1.75rem;
 }
 
-.wcs-cart-summary__title,
-.wcs-checkout-summary__title {
-  font-size: 0.95rem;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  margin: 0 0 1rem;
-  color: rgba(15, 19, 30, 0.72);
+.wcs-co-section__title {
+  display: flex; align-items: center; gap: 0.6rem;
+  font-family: var(--font-heading,'Inter',sans-serif);
+  font-size: 1rem; font-weight: 700;
+  color: var(--color-industrial-navy,#0f131e);
+  margin: 0 0 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(15,19,30,0.07);
+}
+.wcs-co-section__title .bi { color: var(--color-safety-red,#c12e37); font-size: 1rem; }
+.wcs-co-section__num {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--color-safety-red,#c12e37); color: #fff;
+  font-size: 0.72rem; font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.wcs-co-section__optional {
+  font-size: 0.72rem; font-weight: 400;
+  color: rgba(43,46,55,0.45); margin-left: 0.3rem;
 }
 
-.wcs-cart-empty {
-  text-align: center;
-  padding: 3rem 1rem;
-}
+/* WooCommerce form field'larını override */
+.wcs-co-section .woocommerce-billing-fields,
+.wcs-co-section .woocommerce-shipping-fields,
+.wcs-co-section .woocommerce-additional-fields { margin: 0; }
 
-.wcs-cart-empty p {
-  margin-bottom: 1rem;
-}
-
-.wcs-cart-table {
-  margin-bottom: 1.5rem;
-}
-
-.wcs-cart-table th {
-  font-size: 0.78rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(15, 19, 30, 0.58);
-}
-
-.wcs-cart-item-note {
-  display: block;
-  margin-top: 0.35rem;
-  font-size: 0.78rem;
-  color: rgba(193, 46, 55, 0.9);
-}
-
-/* Checkout form sections */
-.wcs-checkout-section__inner {
+.wcs-co-section .woocommerce-billing-fields__field-wrapper,
+.wcs-co-section .woocommerce-shipping-fields__field-wrapper {
   display: grid;
-  gap: 1.5rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem 1rem;
 }
 
-.wcs-checkout-summary__body {
-  margin-top: 0.75rem;
+/* Tam genişlik alanlar */
+.wcs-co-section .form-row.form-row-wide,
+.wcs-co-section .woocommerce-input-wrapper,
+.wcs-co-section #billing_address_1_field,
+.wcs-co-section #billing_address_2_field,
+.wcs-co-section #shipping_address_1_field,
+.wcs-co-section #shipping_address_2_field,
+.wcs-co-section #billing_company_field,
+.wcs-co-section #order_comments_field { grid-column: 1 / -1; }
+
+/* Label */
+.wcs-co-section .woocommerce-input-wrapper label,
+.wcs-co-section label {
+  display: block; font-size: 0.78rem; font-weight: 600;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  color: rgba(43,46,55,0.65); margin-bottom: 0.35rem;
+}
+.wcs-co-section .required { color: var(--color-safety-red,#c12e37); }
+
+/* Input / Select / Textarea */
+.wcs-co-section input.input-text,
+.wcs-co-section select,
+.wcs-co-section textarea {
+  width: 100%; padding: 0.7rem 0.95rem;
+  border: 1.5px solid rgba(15,19,30,0.14);
+  border-radius: 9px; background: #fff;
+  font-size: 0.9rem; font-family: var(--font-body,'Inter',sans-serif);
+  color: var(--color-industrial-navy,#0f131e);
+  transition: border-color .2s, box-shadow .2s;
+  outline: none; appearance: none;
+  -webkit-appearance: none;
+}
+.wcs-co-section input.input-text:focus,
+.wcs-co-section select:focus,
+.wcs-co-section textarea:focus {
+  border-color: var(--color-safety-red,#c12e37);
+  box-shadow: 0 0 0 3px rgba(193,46,55,0.1);
+}
+.wcs-co-section input.input-text.woocommerce-invalid,
+.wcs-co-section select.woocommerce-invalid { border-color: #e53e3e; }
+
+.wcs-co-section textarea { resize: vertical; min-height: 90px; }
+
+/* Select ok oku */
+.wcs-co-section .select2-container { width: 100%!important; }
+.wcs-co-section .select2-selection--single {
+  height: 42px!important; border: 1.5px solid rgba(15,19,30,0.14)!important;
+  border-radius: 9px!important; padding: 0.6rem 0.95rem!important;
+}
+.wcs-co-section .select2-selection__rendered { line-height: 1.5!important; padding: 0!important; }
+.wcs-co-section .select2-selection__arrow { top: 10px!important; }
+
+/* Checkbox (kargo adresi farklı) */
+.wcs-co-section .woocommerce-form__input-checkbox {
+  width: 16px; height: 16px; cursor: pointer;
+  accent-color: var(--color-safety-red,#c12e37);
+}
+
+/* Hata mesajı */
+.wcs-co-section .woocommerce-error,
+.wcs-co-section .woocommerce-invalid-required-field label::after {
+  color: #e53e3e; font-size: 0.75rem; font-weight: 500;
+}
+
+/* ── SAĞ: Sipariş özeti ──────────────────────────────────────── */
+.wcs-co-form__right { position: sticky; top: 90px; }
+
+.wcs-co-summary {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid rgba(15,19,30,0.08);
+  box-shadow: 0 8px 32px rgba(15,19,30,0.09);
+  overflow: hidden;
+}
+
+.wcs-co-summary__title {
+  display: flex; align-items: center; gap: 0.6rem;
+  font-size: 0.95rem; font-weight: 700;
+  color: var(--color-industrial-navy,#0f131e);
+  margin: 0;
+  padding: 1.25rem 1.5rem;
+  background: var(--color-structure-white,#f8f8f8);
+  border-bottom: 1px solid rgba(15,19,30,0.07);
+}
+.wcs-co-summary__title .bi { color: var(--color-safety-red,#c12e37); }
+.wcs-co-summary__item-count {
+  margin-left: auto;
+  font-size: 0.72rem; font-weight: 500;
+  color: rgba(43,46,55,0.45);
+  background: rgba(15,19,30,0.06);
+  padding: 0.2rem 0.6rem; border-radius: 20px;
+}
+
+.wcs-co-summary__body { padding: 1.25rem 1.5rem; }
+
+/* WooCommerce sipariş tablosu */
+.wcs-co-summary .woocommerce-checkout-review-order-table {
+  width: 100%; border-collapse: collapse; font-size: 0.875rem;
+}
+.wcs-co-summary .woocommerce-checkout-review-order-table thead th {
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(43,46,55,0.5);
+  padding: 0 0 0.75rem; border-bottom: 1px solid rgba(15,19,30,0.08);
+}
+.wcs-co-summary .woocommerce-checkout-review-order-table tbody td {
+  padding: 0.75rem 0; border-bottom: 1px solid rgba(15,19,30,0.05);
+  vertical-align: middle;
+}
+.wcs-co-summary .product-name { color: var(--color-industrial-navy,#0f131e); font-weight: 500; }
+.wcs-co-summary .product-name .product-quantity { color: rgba(43,46,55,0.5); font-weight: 400; }
+.wcs-co-summary .product-total { text-align: right; font-weight: 600; color: var(--color-industrial-navy,#0f131e); }
+
+/* Kargo + toplam satırları */
+.wcs-co-summary .woocommerce-checkout-review-order-table tfoot tr td,
+.wcs-co-summary .woocommerce-checkout-review-order-table tfoot tr th {
+  padding: 0.6rem 0;
+  font-size: 0.875rem;
+}
+.wcs-co-summary .woocommerce-checkout-review-order-table tfoot tr.order-total td,
+.wcs-co-summary .woocommerce-checkout-review-order-table tfoot tr.order-total th {
+  padding-top: 0.85rem;
+  border-top: 2px solid rgba(15,19,30,0.1);
+  font-size: 1.1rem; font-weight: 800;
+  color: var(--color-industrial-navy,#0f131e);
+}
+.wcs-co-summary .woocommerce-checkout-review-order-table tfoot tr.order-total td { text-align: right; color: var(--color-safety-red,#c12e37); }
+
+/* Ödeme yöntemleri kutusu */
+.wcs-co-summary .woocommerce-checkout-payment {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid rgba(15,19,30,0.07);
+  background: var(--color-structure-white,#f8f8f8);
+}
+.wcs-co-summary #payment ul.payment_methods {
+  list-style: none; margin: 0 0 1rem; padding: 0;
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+.wcs-co-summary #payment ul.payment_methods li {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid rgba(15,19,30,0.1);
+  border-radius: 10px; background: #fff; cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.wcs-co-summary #payment ul.payment_methods li:has(input:checked) {
+  border-color: var(--color-safety-red,#c12e37);
+  background: rgba(193,46,55,0.03);
+}
+.wcs-co-summary #payment ul.payment_methods li label {
+  font-size: 0.875rem; font-weight: 500; cursor: pointer;
+  margin: 0; text-transform: none; letter-spacing: 0;
+  color: var(--color-industrial-navy,#0f131e);
+}
+.wcs-co-summary #payment ul.payment_methods input[type="radio"] {
+  accent-color: var(--color-safety-red,#c12e37);
+  width: 16px; height: 16px; flex-shrink: 0;
+}
+.wcs-co-summary .payment_box {
+  background: rgba(193,46,55,0.04);
+  border: 1px solid rgba(193,46,55,0.15);
+  border-radius: 8px; padding: 0.75rem 1rem;
+  margin: 0.5rem 0 0; font-size: 0.85rem;
+  color: rgba(43,46,55,0.75);
+}
+
+/* Sipariş ver butonu */
+.wcs-co-summary #payment .place-order { margin-top: 0; }
+.wcs-co-summary #payment #place_order,
+.wcs-co-summary .woocommerce-checkout #place_order {
+  width: 100%!important; display: flex!important;
+  align-items: center!important; justify-content: center!important;
+  gap: 0.6rem!important; padding: 1rem 1.5rem!important;
+  background: var(--color-safety-red,#c12e37)!important;
+  color: #fff!important; border: none!important;
+  border-radius: 12px!important; font-size: 1rem!important;
+  font-weight: 700!important; letter-spacing: 0.03em!important;
+  cursor: pointer!important; transition: background .2s, transform .2s!important;
+}
+.wcs-co-summary #payment #place_order:hover {
+  background: #a82530!important; transform: translateY(-2px)!important;
+}
+
+/* Güvenlik notu */
+.wcs-co-summary__security {
+  display: flex; align-items: flex-start; gap: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  border-top: 1px solid rgba(15,19,30,0.06);
+  font-size: 0.72rem; color: rgba(43,46,55,0.5);
+  line-height: 1.5;
+}
+.wcs-co-summary__security .bi { color: var(--color-industrial-navy,#0f131e); flex-shrink: 0; margin-top: 1px; }
+
+/* Ödeme pillleri */
+.wcs-co-summary__payment-icons {
+  display: flex; gap: 0.4rem; flex-wrap: wrap;
+  padding: 0.75rem 1.5rem 1.25rem;
+}
+.wcs-co-payment-pill {
+  padding: 0.22rem 0.6rem;
+  background: rgba(15,19,30,0.04);
+  border: 1px solid rgba(15,19,30,0.09);
+  border-radius: 4px; font-size: 0.65rem; font-weight: 600;
+  color: rgba(43,46,55,0.45); letter-spacing: 0.04em;
+}
+
+/* ── WooCommerce genel mesajlar ──────────────────────────────── */
+.wcs-co-wrap .woocommerce-info,
+.wcs-co-wrap .woocommerce-message,
+.wcs-co-wrap .woocommerce-error {
+  margin-bottom: 1.25rem; border-radius: 10px; padding: 1rem 1.25rem;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .wcs-co-form { grid-template-columns: 1fr; }
+  .wcs-co-form__right { position: static; }
+  .wcs-co-header { flex-direction: column; align-items: flex-start; }
+  .wcs-cart-shell__grid { grid-template-columns: 1fr; }
+  .wcs-cart-shell__col--summary { border-left: none; padding-left: 0; border-top: 1px solid rgba(15,19,30,0.06); margin-top: 1.5rem; padding-top: 1.5rem; }
+}
+
+@media (max-width: 640px) {
+  .wcs-co-wrap { padding: 0 0.75rem 3rem; }
+  .wcs-co-section { padding: 1.25rem 1.1rem; }
+  .wcs-co-section .woocommerce-billing-fields__field-wrapper,
+  .wcs-co-section .woocommerce-shipping-fields__field-wrapper { grid-template-columns: 1fr; }
+  .wcs-co-summary__body { padding: 1rem 1.1rem; }
+  .wcs-co-summary__title,
+  .wcs-co-summary .woocommerce-checkout-payment,
+  .wcs-co-summary__security,
+  .wcs-co-summary__payment-icons { padding-left: 1.1rem; padding-right: 1.1rem; }
+  .wcs-cart-shell__inner { padding: 1.25rem 1.1rem 1.6rem; }
 }
 
 /* Account: layout */

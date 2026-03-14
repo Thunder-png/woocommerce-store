@@ -131,6 +131,83 @@ if ( $is_home_shop ) :
 		</div>
 	</section>
 
+	<!-- OZEL OLCU URUN GRID -->
+	<?php
+	// home-category-grid.php'deki mantıkla özel ölçü tag'ına sahip ürünleri çek.
+	$ozel_products = array();
+	if ( function_exists( 'wc_get_products' ) ) {
+		foreach ( array( 'ozel-olcu', 'özel-ölçü', 'özel-olcu' ) as $tag_slug ) {
+			$ozel_products = wc_get_products( array(
+				'status'  => 'publish',
+				'limit'   => 6,
+				'orderby' => 'date',
+				'order'   => 'DESC',
+				'tag'     => array( $tag_slug ),
+			) );
+			if ( ! empty( $ozel_products ) ) break;
+		}
+	}
+	?>
+
+	<?php if ( ! empty( $ozel_products ) ) : ?>
+	<section class="wcs-home-categories wcs-home-custom-products" aria-label="<?php esc_attr_e( 'Özel ölçü ürünleri', 'woocommerce-store-child' ); ?>">
+		<div class="wcs-home-categories__inner">
+			<header class="wcs-home-categories__header">
+				<h2 class="wcs-home-categories__title"><?php esc_html_e( 'Özel Ölçüde Satın Al', 'woocommerce-store-child' ); ?></h2>
+				<p class="wcs-home-categories__subtitle"><?php esc_html_e( 'Ölçünü gir, fiyatı anında hesapla — istediğin boyutta sipariş ver.', 'woocommerce-store-child' ); ?></p>
+			</header>
+			<div class="wcs-home-categories__grid wcs-home-categories__grid--products" role="list">
+				<?php foreach ( $ozel_products as $ozel_product ) :
+					if ( ! $ozel_product instanceof WC_Product ) continue;
+					$op_permalink = $ozel_product->get_permalink();
+					$op_image_id  = $ozel_product->get_image_id();
+					$op_image_url = $op_image_id ? wp_get_attachment_image_url( $op_image_id, 'medium_large' ) : '';
+					$op_regular   = (float) $ozel_product->get_regular_price();
+					$op_sale      = (float) $ozel_product->get_sale_price();
+					$op_discount  = ( $op_sale && $op_regular > 0 ) ? round( ( ( $op_regular - $op_sale ) / $op_regular ) * 100 ) : 0;
+				?>
+					<article class="wcs-home-category-card wcs-home-product-card" role="listitem">
+						<a class="wcs-home-category-card__link" href="<?php echo esc_url( $op_permalink ); ?>">
+							<?php if ( $op_image_url ) : ?>
+								<img class="wcs-home-category-card__img"
+									 src="<?php echo esc_url( $op_image_url ); ?>"
+									 alt="<?php echo esc_attr( $ozel_product->get_name() ); ?>"
+									 loading="lazy">
+							<?php else : ?>
+								<div class="wcs-home-category-card__media-placeholder" aria-hidden="true">
+									<span class="wcs-home-category-card__media-icon"></span>
+								</div>
+							<?php endif; ?>
+
+							<?php if ( $op_discount > 0 ) : ?>
+								<span class="wcs-home-product-card__badge">-<?php echo absint( $op_discount ); ?>%</span>
+							<?php endif; ?>
+
+							<div class="wcs-home-category-card__overlay">
+								<span class="wcs-home-product-card__ozel-tag">
+									<i class="bi bi-rulers"></i>
+									<?php esc_html_e( 'Özel Ölçü', 'woocommerce-store-child' ); ?>
+								</span>
+								<h3 class="wcs-home-category-card__title"><?php echo esc_html( $ozel_product->get_name() ); ?></h3>
+								<p class="wcs-home-product-card__price"><?php echo wp_kses_post( $ozel_product->get_price_html() ); ?></p>
+								<p class="wcs-home-category-card__subtitle"><?php esc_html_e( 'Ölçü gir & sipariş ver →', 'woocommerce-store-child' ); ?></p>
+							</div>
+						</a>
+					</article>
+				<?php endforeach; ?>
+			</div>
+
+			<!-- Tüm özel ölçü ürünleri linki -->
+			<div class="wcs-home-ozel-footer">
+				<a href="<?php echo esc_url( add_query_arg( 'product_tag', 'ozel-olcu', wc_get_page_permalink( 'shop' ) ) ); ?>" class="wcs-home-ozel-footer__link">
+					<?php esc_html_e( 'Tüm Özel Ölçü Ürünlerini Gör', 'woocommerce-store-child' ); ?>
+					<i class="bi bi-arrow-right"></i>
+				</a>
+			</div>
+		</div>
+	</section>
+	<?php endif; ?>
+
 	<!-- FEATURED PRODUCTS -->
 	<section class="wcs-fp-products">
 		<div class="wcs-fp-products__inner">

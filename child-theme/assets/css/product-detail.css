@@ -1,591 +1,188 @@
 /* ═══════════════════════════════════════════════════════════════
-   WCS PRODUCT DETAIL LAYOUT
-   Tekil ürün sayfası için modern kart tasarımı
+   WCS PRODUCT DETAIL — Karaca File · Single Product Page
+   Safety Red #C12E37 · Navy #0F131E
    ═══════════════════════════════════════════════════════════════ */
 
-/* Base layout */
-.single-product .site-main {
-  background: transparent;
-}
+.single-product .site-main { background: var(--color-structure-white, #f8f8f8); }
+.single-product div.product { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+.single-product .woocommerce-tabs,
+.single-product .related.products,
+.single-product .upsells.products { max-width: 1200px; margin: 0 auto 3rem; padding: 0 1.5rem; }
 
-.single-product div.product {
-  max-width: 1160px;
-  margin: 2.5rem auto 3rem;
-  padding: 0 1.25rem;
-}
+/* ── Wrap ─────────────────────────────────────────────────── */
+.wcs-sp-wrap { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1.5rem 0; }
 
-/* ── Ürün kartı kabuğu ───────────────────────────────────────── */
-.single-product .wcs-product-card {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  gap: 2.5rem;
-  align-items: flex-start;
-  padding: 2rem 2.5rem;
-  background: var(--wcs-surface, #ffffff);
-  border-radius: 20px;
-  box-shadow: 0 20px 48px rgba(15, 19, 30, 0.16);
-  border: 1px solid rgba(15, 19, 30, 0.09);
-  position: relative;
-}
+/* ── Breadcrumb ───────────────────────────────────────────── */
+.wcs-sp-breadcrumb { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 1.5rem; font-size: 0.8rem; }
+.wcs-sp-breadcrumb__item { display: inline-flex; align-items: center; gap: 0.3rem; color: rgba(43,46,55,0.55); text-decoration: none; transition: color .15s; }
+a.wcs-sp-breadcrumb__item:hover { color: var(--color-safety-red,#c12e37); }
+.wcs-sp-breadcrumb__item--current { color: var(--color-industrial-navy,#0f131e); font-weight: 500; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wcs-sp-breadcrumb__sep { color: rgba(43,46,55,0.3); font-size: 0.65rem; }
 
-.single-product .wcs-product-card__body {
-  display: contents;
-}
+/* ── Ana Kart ─────────────────────────────────────────────── */
+.wcs-sp-card { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: flex-start; background: #fff; border-radius: 20px; box-shadow: 0 8px 40px rgba(15,19,30,.10); border: 1px solid rgba(15,19,30,.07); padding: 2.5rem; position: relative; margin-bottom: 2rem; }
 
-.single-product .wcs-product-card__top {
-  position: absolute;
-  top: 1.1rem;
-  left: 1.4rem;
-  right: 1.4rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  pointer-events: none;
-}
+/* ── Galeri ───────────────────────────────────────────────── */
+.wcs-sp-card__gallery { position: relative; }
+.wcs-sp-card__gallery-badges { position: absolute; top: 0; left: 0; z-index: 10; display: flex; flex-direction: column; gap: .4rem; }
+.wcs-sp-badge { display: inline-flex; align-items: center; gap: .3rem; padding: .3rem .75rem; border-radius: 6px; font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.wcs-sp-badge--sale { background: var(--color-safety-red,#c12e37); color: #fff; }
+.wcs-sp-badge--stock { background: rgba(7,148,80,.1); color: #079450; border: 1px solid rgba(7,148,80,.3); }
+.wcs-sp-badge--nostock { background: rgba(193,46,55,.1); color: #c12e37; border: 1px solid rgba(193,46,55,.3); }
+.wcs-sp-card__gallery-inner .woocommerce-product-gallery { margin-bottom: 0!important; }
+.wcs-sp-card__gallery-inner .woocommerce-product-gallery__wrapper { border-radius: 14px; overflow: hidden; background: #f4f4f6; }
+.wcs-sp-card__gallery-inner .woocommerce-product-gallery__trigger { display: none; }
+.wcs-sp-card__gallery-inner .flex-control-thumbs { display: flex; gap: .5rem; margin-top: .75rem; list-style: none; padding: 0; overflow-x: auto; }
+.wcs-sp-card__gallery-inner .flex-control-thumbs li { flex-shrink: 0; }
+.wcs-sp-card__gallery-inner .flex-control-thumbs img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 2px solid transparent; cursor: pointer; transition: border-color .15s; }
+.wcs-sp-card__gallery-inner .flex-control-thumbs img.flex-active { border-color: var(--color-safety-red,#c12e37); }
+.wcs-sp-card__color-row { display: flex; gap: .5rem; margin-top: .85rem; padding: .5rem .85rem; background: #fff; border-radius: 30px; border: 1px solid rgba(15,19,30,.07); align-self: flex-start; width: fit-content; box-shadow: 0 4px 12px rgba(15,19,30,.08); }
+.wcs-sp-card__color-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid rgba(15,19,30,.14); padding: 2px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: border-color .15s; }
+.wcs-sp-card__color-dot-inner { width: 100%; height: 100%; border-radius: 50%; background: #fff; }
+.wcs-sp-card__color-dot:hover { border-color: var(--color-safety-red,#c12e37); }
 
-.single-product .wcs-product-card__chip-row {
-  display: flex;
-  gap: 0.5rem;
-  pointer-events: auto;
-}
+/* ── Info kolonu ──────────────────────────────────────────── */
+.wcs-sp-card__info { display: flex; flex-direction: column; gap: 1rem; }
+.wcs-sp-card__meta-row { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+.wcs-sp-card__cat-badge { display: inline-flex; align-items: center; gap: .35rem; padding: .3rem .8rem; background: rgba(193,46,55,.07); border: 1px solid rgba(193,46,55,.2); border-radius: 20px; font-size: .73rem; font-weight: 600; color: var(--color-safety-red,#c12e37); text-decoration: none; transition: background .15s; }
+.wcs-sp-card__cat-badge:hover { background: rgba(193,46,55,.12); text-decoration: none; }
+.wcs-sp-card__fav { width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(15,19,30,.1); background: #fff; color: rgba(15,19,30,.55); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; box-shadow: 0 2px 8px rgba(15,19,30,.08); }
+.wcs-sp-card__fav:hover, .wcs-sp-card__fav[aria-pressed="true"] { color: #c12e37; border-color: #c12e37; background: rgba(193,46,55,.05); }
+.wcs-sp-card__title { font-family: var(--font-heading,'Inter',sans-serif); font-size: clamp(1.4rem,2.5vw,1.9rem); font-weight: 800; letter-spacing: -.025em; color: var(--color-industrial-navy,#0f131e); margin: 0; line-height: 1.2; }
+.wcs-sp-card__rating { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; font-size: .85rem; }
+.wcs-sp-card__rating .star-rating { color: #f5a623; font-size: .85rem; }
+.wcs-sp-card__rating-num { font-weight: 700; color: var(--color-industrial-navy,#0f131e); }
+.wcs-sp-card__rating-link { color: rgba(43,46,55,.6); text-decoration: underline; text-decoration-color: rgba(43,46,55,.25); transition: color .15s; }
+.wcs-sp-card__rating-link:hover { color: var(--color-safety-red,#c12e37); text-decoration: none; }
+.wcs-sp-card__sku { margin-left: .5rem; padding: .2rem .55rem; background: rgba(15,19,30,.05); border-radius: 4px; font-size: .72rem; font-family: var(--font-mono,monospace); color: rgba(43,46,55,.6); }
+.wcs-sp-card__excerpt { font-size: .92rem; line-height: 1.7; color: rgba(43,46,55,.8); border-left: 3px solid var(--color-safety-red,#c12e37); padding-left: .85rem; }
 
-.single-product .wcs-product-card__chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.25rem 0.7rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 1px solid transparent;
-}
+/* Teknik özellikler */
+.wcs-sp-card__specs { background: var(--color-structure-white,#f8f8f8); border-radius: 12px; border: 1px solid rgba(15,19,30,.07); overflow: hidden; }
+.wcs-sp-card__spec-row { display: flex; align-items: center; gap: .75rem; padding: .65rem 1rem; border-bottom: 1px solid rgba(15,19,30,.05); font-size: .85rem; }
+.wcs-sp-card__spec-row:last-child { border-bottom: none; }
+.wcs-sp-card__spec-icon { width: 28px; height: 28px; border-radius: 7px; background: rgba(193,46,55,.08); display: flex; align-items: center; justify-content: center; color: var(--color-safety-red,#c12e37); font-size: .8rem; flex-shrink: 0; }
+.wcs-sp-card__spec-label { flex: 1; color: rgba(43,46,55,.65); font-weight: 500; font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; }
+.wcs-sp-card__spec-value { font-family: var(--font-mono,'JetBrains Mono',monospace); font-size: .82rem; font-weight: 600; color: var(--color-industrial-navy,#0f131e); }
 
-.single-product .wcs-product-card__chip--muted {
-  background: rgba(15, 19, 30, 0.04);
-  color: rgba(15, 19, 30, 0.72);
-}
+/* Kullanım alanı pill'leri */
+.wcs-sp-card__usage-pills { display: flex; flex-wrap: wrap; gap: .4rem; }
+.wcs-sp-card__usage-pill { display: inline-flex; align-items: center; gap: .35rem; padding: .3rem .75rem; border-radius: 20px; background: rgba(15,19,30,.04); border: 1px solid rgba(15,19,30,.08); font-size: .78rem; color: rgba(43,46,55,.75); }
+.wcs-sp-card__usage-pill .bi { color: var(--color-safety-red,#c12e37); font-size: .78rem; }
 
-.single-product .wcs-product-card__chip--success {
-  background: rgba(7, 148, 80, 0.08);
-  color: #079450;
-  border-color: rgba(7, 148, 80, 0.32);
-}
+/* Attribute pill'leri */
+.wcs-sp-card__attr-pills { display: flex; flex-wrap: wrap; gap: .35rem; }
+.wcs-sp-card__attr-pill { padding: .25rem .65rem; border-radius: 20px; background: rgba(193,46,55,.06); border: 1px solid rgba(193,46,55,.18); font-size: .75rem; font-weight: 600; color: var(--color-safety-red,#c12e37); }
 
-.single-product .wcs-product-card__chip--danger {
-  background: rgba(193, 46, 55, 0.1);
-  color: #c12e37;
-  border-color: rgba(193, 46, 55, 0.4);
-}
-
-.single-product .wcs-product-card__fav {
-  pointer-events: auto;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 999px;
-  border: 1px solid rgba(15, 19, 30, 0.08);
-  box-shadow: 0 8px 24px rgba(15, 19, 30, 0.16);
-  width: 40px;
-  height: 40px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(15, 19, 30, 0.7);
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
-}
-
-.single-product .wcs-product-card__fav:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 30px rgba(15, 19, 30, 0.22);
-  color: #c12e37;
-}
-
-/* ── Medya kolonu ────────────────────────────────────────────── */
-.single-product .wcs-product-card__media {
-  display: flex;
-  flex-direction: column;
-  gap: 1.1rem;
-}
-
-.single-product .wcs-product-card__media-main .woocommerce-product-gallery {
-  margin-bottom: 0;
-}
-
-.single-product .wcs-product-card__media-main .woocommerce-product-gallery__wrapper {
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 16px 40px rgba(15, 19, 30, 0.2);
-  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.6), #e4e6ee);
-}
-
-.single-product .wcs-product-card__color-dots {
-  display: inline-flex;
-  gap: 0.5rem;
-  padding: 0.45rem 0.75rem;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 10px 28px rgba(15, 19, 30, 0.18);
-  align-self: flex-start;
-}
-
-.single-product .wcs-product-card__color-dot {
-  width: 20px;
-  height: 20px;
-  border-radius: 999px;
-  border: 2px solid rgba(15, 19, 30, 0.16);
-  padding: 2px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.single-product .wcs-product-card__color-dot-inner {
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  background: #ffffff;
-}
-
-/* ── İçerik kolonu ───────────────────────────────────────────── */
-.single-product .wcs-product-card__content {
-  padding-left: 0.75rem;
-}
-
-.single-product .wcs-product-card__title {
-  font-family: var(--font-heading, 'Inter', sans-serif);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  margin: 0 0 0.6rem;
-  font-size: 1.6rem;
-  color: var(--wcs-color-primary, #0f131e);
-}
-
-.single-product .wcs-product-card__rating {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  margin-bottom: 0.8rem;
-  font-size: 0.85rem;
-  color: rgba(43, 46, 55, 0.85);
-}
-
-.single-product .wcs-product-card__rating-score {
-  font-weight: 700;
-}
-
-.single-product .wcs-product-card__rating-count {
-  color: rgba(43, 46, 55, 0.7);
-}
-
-.single-product .wcs-product-card__excerpt {
-  margin-bottom: 1.5rem;
-  color: rgba(15, 19, 30, 0.9);
-  font-size: 0.95rem;
-}
+/* Fiyat blok */
+.wcs-sp-card__price-block { background: var(--color-structure-white,#f8f8f8); border-radius: 12px; padding: 1rem 1.25rem; border: 1px solid rgba(15,19,30,.07); }
+.wcs-sp-card__price-row { display: flex; align-items: baseline; gap: .65rem; flex-wrap: wrap; margin-bottom: .5rem; }
+.wcs-sp-card__price-current { font-family: var(--font-heading,'Inter',sans-serif); font-size: 2rem; font-weight: 800; color: var(--color-industrial-navy,#0f131e); letter-spacing: -.03em; line-height: 1; }
+.wcs-sp-card__price-old { font-size: 1rem; text-decoration: line-through; color: rgba(43,46,55,.45); }
+.wcs-sp-card__price-badge { padding: .2rem .55rem; background: var(--color-safety-red,#c12e37); color: #fff; border-radius: 6px; font-size: .73rem; font-weight: 700; letter-spacing: .05em; }
+.wcs-sp-card__price-total { display: flex; align-items: center; gap: .5rem; padding-top: .5rem; border-top: 1px dashed rgba(15,19,30,.1); font-size: .85rem; }
+.wcs-sp-card__price-total-label { color: rgba(43,46,55,.55); }
+.wcs-sp-card__price-total-value { font-weight: 700; color: var(--color-industrial-navy,#0f131e); }
 
 /* Varyasyon kartları */
-.single-product .wcs-product-card__section-title {
-  font-size: 0.86rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(15, 19, 30, 0.72);
-  margin-bottom: 0.7rem;
-}
+.wcs-sp-card__variations { }
+.wcs-sp-card__section-title { display: flex; align-items: center; gap: .4rem; font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: rgba(43,46,55,.6); margin: 0 0 .75rem; }
+.wcs-sp-card__section-title .bi { color: var(--color-safety-red,#c12e37); }
+.wcs-sp-card__var-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(150px,1fr)); gap: .6rem; }
+.wcs-sp-card__var-card { border: 1.5px solid rgba(15,19,30,.1); border-radius: 10px; padding: .7rem .85rem; background: #fff; cursor: pointer; transition: border-color .15s,box-shadow .15s,transform .15s; outline: none; }
+.wcs-sp-card__var-card:hover { border-color: rgba(193,46,55,.5); box-shadow: 0 4px 16px rgba(15,19,30,.1); transform: translateY(-1px); }
+.wcs-sp-card__var-card.is-active { border-color: var(--color-safety-red,#c12e37); box-shadow: 0 0 0 3px rgba(193,46,55,.12); }
+.wcs-sp-card__var-card:focus-visible { outline: 2px solid var(--color-safety-red,#c12e37); outline-offset: 2px; }
+.wcs-sp-card__var-header { display: flex; align-items: center; justify-content: space-between; gap: .3rem; margin-bottom: .3rem; }
+.wcs-sp-card__var-label { font-size: .82rem; font-weight: 600; color: var(--color-industrial-navy,#0f131e); line-height: 1.3; }
+.wcs-sp-card__var-badge { padding: .1rem .4rem; background: rgba(193,46,55,.1); color: var(--color-safety-red,#c12e37); border-radius: 4px; font-size: .67rem; font-weight: 700; white-space: nowrap; }
+.wcs-sp-card__var-price { font-size: .9rem; font-weight: 600; color: rgba(43,46,55,.75); }
 
-.single-product .wcs-product-card__variations {
-  margin-bottom: 1.6rem;
-}
+/* m² toggle */
+.wcs-sp-calc-toggle { display: inline-flex; align-items: center; gap: .5rem; padding: .65rem 1.1rem; background: rgba(193,46,55,.06); border: 1px solid rgba(193,46,55,.22); border-radius: 8px; color: var(--color-safety-red,#c12e37); font-size: .82rem; font-weight: 600; letter-spacing: .04em; cursor: pointer; transition: all .2s; width: 100%; }
+.wcs-sp-calc-toggle:hover { background: rgba(193,46,55,.1); }
+.wcs-sp-calc-toggle__chevron { margin-left: auto; transition: transform .25s; }
+.wcs-sp-calc-toggle.is-open .wcs-sp-calc-toggle__chevron { transform: rotate(180deg); }
 
-.single-product .wcs-product-card__variation-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 0.75rem;
-}
+/* WooCommerce add to cart */
+.wcs-sp-card__woo-form .single_add_to_cart_button,
+.wcs-sp-card__woo-form button.button.alt { width: 100%!important; padding: .9rem 1.5rem!important; background: var(--color-industrial-navy,#0f131e)!important; color: #fff!important; font-size: .9rem!important; font-weight: 700!important; letter-spacing: .05em!important; border-radius: 10px!important; border: none!important; cursor: pointer!important; transition: background .2s,transform .2s!important; display: flex!important; align-items: center!important; justify-content: center!important; }
+.wcs-sp-card__woo-form .single_add_to_cart_button:hover { background: #1a2d42!important; transform: translateY(-2px)!important; }
+.wcs-sp-card__woo-form .quantity input.qty { border-radius: 8px; border: 1px solid rgba(15,19,30,.15); padding: .55rem .75rem; font-size: 1rem; font-weight: 600; width: 72px; text-align: center; }
+.wcs-sp-card__woo-form form.cart { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; }
+.wcs-sp-card__woo-form form.variations_form .variations select.wcs-attr-select-original { display: none; }
+.wcs-sp-card__woo-form .wcs-attr-buttons { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .4rem; }
+.wcs-sp-card__woo-form .wcs-attr-button { border-radius: 8px; border: 1px solid rgba(15,19,30,.14); background: #fff; padding: .35rem .75rem; font-size: .82rem; font-weight: 500; cursor: pointer; transition: all .15s; }
+.wcs-sp-card__woo-form .wcs-attr-button:hover { border-color: rgba(193,46,55,.5); }
+.wcs-sp-card__woo-form .wcs-attr-button.is-selected { border-color: var(--color-safety-red,#c12e37); background: rgba(193,46,55,.06); color: var(--color-safety-red,#c12e37); }
 
-.single-product .wcs-product-card__variation {
-  border-radius: 12px;
-  border: 1px solid rgba(15, 19, 30, 0.08);
-  padding: 0.7rem 0.8rem;
-  background: #ffffff;
-  cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
-}
+/* WhatsApp */
+.wcs-sp-card__wa-btn { display: flex; align-items: center; justify-content: center; gap: .6rem; padding: .8rem 1.25rem; background: #25d366; color: #fff; border-radius: 10px; font-size: .88rem; font-weight: 600; text-decoration: none; transition: background .2s,transform .2s; }
+.wcs-sp-card__wa-btn:hover { background: #1ebe5d; color: #fff; transform: translateY(-2px); text-decoration: none; }
+.wcs-sp-card__wa-btn .bi { font-size: 1.1rem; }
 
-.single-product .wcs-product-card__variation:hover {
-  border-color: rgba(193, 46, 55, 0.6);
-  box-shadow: 0 10px 26px rgba(15, 19, 30, 0.16);
-  transform: translateY(-1px);
-}
+/* Güven bandı */
+.wcs-sp-card__trust { display: grid; grid-template-columns: repeat(4,1fr); border: 1px solid rgba(15,19,30,.08); border-radius: 10px; overflow: hidden; }
+.wcs-sp-card__trust-item { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .35rem; padding: .85rem .5rem; text-align: center; border-right: 1px solid rgba(15,19,30,.08); background: var(--color-structure-white,#f8f8f8); font-size: .7rem; color: rgba(43,46,55,.65); font-weight: 500; line-height: 1.3; }
+.wcs-sp-card__trust-item:last-child { border-right: none; }
+.wcs-sp-card__trust-item .bi { font-size: 1.1rem; color: var(--color-safety-red,#c12e37); }
 
-.single-product .wcs-product-card__variation.is-active {
-  border-color: rgba(193, 46, 55, 0.95);
-  box-shadow: 0 0 0 2px rgba(193, 46, 55, 0.2), 0 10px 26px rgba(15, 19, 30, 0.12);
-}
+/* Teslimat */
+.wcs-sp-card__delivery { display: flex; flex-direction: column; border: 1px solid rgba(15,19,30,.08); border-radius: 10px; overflow: hidden; }
+.wcs-sp-card__delivery-row { display: flex; align-items: center; gap: .85rem; padding: .75rem 1rem; border-bottom: 1px solid rgba(15,19,30,.06); font-size: .83rem; }
+.wcs-sp-card__delivery-row:last-child { border-bottom: none; }
+.wcs-sp-card__delivery-row .bi { color: var(--color-safety-red,#c12e37); font-size: 1.05rem; flex-shrink: 0; }
+.wcs-sp-card__delivery-row div { display: flex; flex-direction: column; gap: .1rem; }
+.wcs-sp-card__delivery-row strong { font-size: .8rem; color: var(--color-industrial-navy,#0f131e); }
+.wcs-sp-card__delivery-row span { color: rgba(43,46,55,.6); font-size: .78rem; }
 
-.single-product .wcs-product-card__variation:focus-visible {
-  outline: 2px solid rgba(193, 46, 55, 0.9);
-  outline-offset: 1px;
-}
+/* Sekmeler */
+.single-product .woocommerce-tabs { background: #fff; border-radius: 16px; border: 1px solid rgba(15,19,30,.07); box-shadow: 0 4px 20px rgba(15,19,30,.06); overflow: hidden; margin-bottom: 2rem; }
+.single-product .woocommerce-tabs ul.tabs { display: flex; padding: 0; list-style: none; border-bottom: 1px solid rgba(15,19,30,.08); background: var(--color-structure-white,#f8f8f8); margin: 0; }
+.single-product .woocommerce-tabs ul.tabs li { border: none; background: transparent; border-radius: 0; }
+.single-product .woocommerce-tabs ul.tabs li a { display: block; padding: .9rem 1.5rem; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: rgba(43,46,55,.55); text-decoration: none; border-bottom: 2px solid transparent; transition: color .15s,border-color .15s; }
+.single-product .woocommerce-tabs ul.tabs li.active a,
+.single-product .woocommerce-tabs ul.tabs li a:hover { color: var(--color-industrial-navy,#0f131e); border-bottom-color: var(--color-safety-red,#c12e37); }
+.single-product .woocommerce-tabs .panel { padding: 2rem; }
 
-.single-product .wcs-product-card__variation-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.25rem;
-}
+/* İlgili ürünler */
+.single-product .related.products h2,
+.single-product .upsells.products h2 { font-family: var(--font-heading,'Inter',sans-serif); font-size: 1.35rem; font-weight: 800; letter-spacing: -.02em; color: var(--color-industrial-navy,#0f131e); margin: 0 0 1.25rem; display: flex; align-items: center; gap: .5rem; }
+.single-product .related.products h2::before,
+.single-product .upsells.products h2::before { content: ''; display: inline-block; width: 4px; height: 1.35rem; background: var(--color-safety-red,#c12e37); border-radius: 2px; }
+.single-product .related .products,
+.single-product .upsells .products { display: grid!important; grid-template-columns: repeat(4,1fr)!important; gap: 1.25rem!important; }
 
-.single-product .wcs-product-card__variation-label {
-  font-weight: 600;
-  font-size: 0.9rem;
-  color: var(--wcs-color-primary, #0f131e);
-}
-
-.single-product .wcs-product-card__badge-discount {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.1rem 0.45rem;
-  border-radius: 999px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: rgba(193, 46, 55, 0.12);
-  color: #c12e37;
-}
-
-.single-product .wcs-product-card__variation-price {
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-/* Kullanım alanları */
-.single-product .wcs-product-card__usage {
-  margin-bottom: 1.5rem;
-}
-
-.single-product .wcs-product-card__usage-grid {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(0, 1fr);
-  gap: 0.75rem;
-  overflow-x: auto;
-  padding-bottom: 0.2rem;
-}
-
-.single-product .wcs-product-card__usage-item {
-  min-width: 120px;
-  border-radius: 999px;
-  background: rgba(15, 19, 30, 0.02);
-  border: 1px solid rgba(15, 19, 30, 0.06);
-  padding: 0.4rem 0.75rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.8rem;
-  white-space: nowrap;
-}
-
-.single-product .wcs-product-card__usage-icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 999px;
-  background: #ffffff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--wcs-color-primary, #0f131e);
-}
-
-/* Tag pill’ler */
-.single-product .wcs-product-card__tags {
-  margin-bottom: 1.6rem;
-}
-
-.single-product .wcs-product-card__tag-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-
-.single-product .wcs-product-card__tag-pill {
-  border-radius: 999px;
-  padding: 0.25rem 0.7rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-  background: rgba(193, 46, 55, 0.06);
-  color: #c12e37;
-}
-
-/* Fiyat & CTA bloğu */
-.single-product .wcs-product-card__footer {
-  margin-top: 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 1.5rem;
-}
-
-.single-product .wcs-product-card__price-block {
-  min-width: 0;
-}
-
-.single-product .wcs-product-card__price-main {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-}
-
-.single-product .wcs-product-card__price-current {
-  font-family: var(--font-heading, 'Inter', sans-serif);
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: var(--wcs-color-primary, #0f131e);
-}
-
-.single-product .wcs-product-card__price-old {
-  font-size: 0.95rem;
-  text-decoration: line-through;
-  color: rgba(43, 46, 55, 0.6);
-}
-
-.single-product .wcs-product-card__price-meta {
-  margin-top: 0.25rem;
-}
-
-.single-product .wcs-product-card__cta-block {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0.9rem;
-  min-width: 260px;
-}
-
-.single-product .wcs-calculator-toggle {
-  align-self: flex-start;
-  border-radius: 999px;
-  border: 1px solid rgba(15, 19, 30, 0.12);
-  background: rgba(15, 19, 30, 0.02);
-  padding: 0.45rem 0.9rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(15, 19, 30, 0.8);
-  cursor: pointer;
-}
-
-.single-product .wcs-calculator-toggle:hover {
-  background: rgba(193, 46, 55, 0.06);
-  border-color: rgba(193, 46, 55, 0.3);
-  color: #c12e37;
-}
-
-.single-product form.variations_form .single_variation_wrap {
-  margin-top: 0.75rem;
-}
-
-/* Attribute dropdown'larını buton görünümüne dönüştürme */
-.single-product .wcs-product-card form.variations_form .variations select.wcs-attr-select-original {
-  display: none;
-}
-
-.single-product .wcs-product-card form.variations_form .variations .wcs-attr-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-top: 0.35rem;
-}
-
-.single-product .wcs-product-card form.variations_form .variations .wcs-attr-button {
-  border-radius: 999px;
-  border: 1px solid rgba(15, 19, 30, 0.16);
-  background: #ffffff;
-  padding: 0.3rem 0.7rem;
-  font-size: 0.8rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.single-product .wcs-product-card form.variations_form .variations .wcs-attr-button:hover {
-  border-color: rgba(193, 46, 55, 0.5);
-  box-shadow: 0 4px 10px rgba(15, 19, 30, 0.15);
-}
-
-.single-product .wcs-product-card form.variations_form .variations .wcs-attr-button.is-selected {
-  border-color: rgba(193, 46, 55, 0.9);
-  background: rgba(193, 46, 55, 0.06);
-  color: #c12e37;
-  box-shadow: 0 0 0 1px rgba(193, 46, 55, 0.25);
-}
-
-/* m² hesaplayıcı kart stili */
-.single-product .wcs-calculator {
-  display: none;
-  margin-top: 0;
-  border-radius: 14px;
-  background: linear-gradient(135deg, rgba(193, 46, 55, 0.08), #ffffff);
-  border-color: rgba(193, 46, 55, 0.28);
-}
-
-.single-product .wcs-calculator.is-open {
-  display: block;
-}
-
-.single-product .wcs-calculator h3 {
-  font-family: var(--font-heading, 'Inter', sans-serif);
-  font-size: 0.95rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-top: 0;
-  margin-bottom: 0.75rem;
-}
-
-.single-product .wcs-calculator__grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem 1rem;
-}
-
-.single-product .wcs-calculator__grid label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: rgba(15, 19, 30, 0.74);
-}
-
-.single-product .wcs-calculator__grid input {
-  width: 100%;
-  border-radius: 8px;
-  border: 1px solid rgba(15, 19, 30, 0.14);
-}
-
-.single-product .wcs-calculator__results {
-  border-top: 1px dashed rgba(15, 19, 30, 0.14);
-  padding-top: 0.6rem;
-  margin-top: 0.4rem;
-  font-size: 0.9rem;
-}
-
-.single-product .wcs-calculator__results strong {
-  font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  color: var(--wcs-color-accent, #c12e37);
-}
-
-/* Teknik özellikler bloğu (alt tarafta kullanılabilir) */
-.single-product .wcs-spec-section {
-  margin-top: 2.5rem;
-  padding-top: 1.75rem;
-  border-top: 1px solid rgba(15, 19, 30, 0.08);
-}
-
-.single-product .wcs-spec-section__title {
-  font-size: 0.9rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: rgba(15, 19, 30, 0.72);
-  margin-bottom: 0.85rem;
-}
-
-.single-product .wcs-spec-table {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 0.75rem;
-}
-
-.single-product .wcs-spec-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 0.8rem 0.9rem;
-  border-radius: 10px;
-  background: #ffffff;
-  border: 1px solid rgba(15, 19, 30, 0.06);
-}
-
-.single-product .wcs-spec-label {
-  font-weight: 600;
-  color: var(--wcs-color-primary, #0f131e);
-  font-size: 0.86rem;
-}
-
-.single-product .wcs-spec-value {
-  font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  color: var(--wcs-color-accent, #c12e37);
-  font-size: 0.8rem;
-}
-
-/* Woo sekmeleri (açıklama / yorumlar vb.) */
-.single-product .woocommerce-tabs {
-  max-width: 1160px;
-  margin: 0 auto 3rem;
-}
-
-.single-product .woocommerce-tabs ul.tabs {
-  border-bottom: 1px solid rgba(15, 19, 30, 0.08);
-  padding-left: 0;
-}
-
-.single-product .woocommerce-tabs ul.tabs li {
-  border-radius: 0;
-  background: transparent;
-}
-
-.single-product .woocommerce-tabs ul.tabs li a {
-  font-size: 0.85rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.single-product .woocommerce-tabs .panel {
-  padding: 1.5rem 0 0;
-}
+/* m² hesaplayıcı */
+.single-product .wcs-calculator { display: none; margin-top: 0; border-radius: 12px; background: linear-gradient(135deg,rgba(193,46,55,.05),#fff); border: 1px solid rgba(193,46,55,.2); padding: 1.25rem; }
+.single-product .wcs-calculator.is-open { display: block; }
+.single-product .wcs-calculator h3 { font-size: .82rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--color-safety-red,#c12e37); margin: 0 0 1rem; }
+.single-product .wcs-calculator__grid { display: grid; grid-template-columns: repeat(2,1fr); gap: .75rem 1rem; }
+.single-product .wcs-calculator__grid label { font-size: .77rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: rgba(43,46,55,.65); display: block; margin-bottom: .3rem; }
+.single-product .wcs-calculator__grid input { width: 100%; border-radius: 8px; border: 1px solid rgba(15,19,30,.14); padding: .5rem .75rem; font-size: .95rem; }
+.single-product .wcs-calculator__results { border-top: 1px dashed rgba(15,19,30,.12); padding-top: .75rem; margin-top: .75rem; font-size: .9rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+.single-product .wcs-calculator__results strong { font-family: var(--font-mono,'JetBrains Mono',monospace); color: var(--color-safety-red,#c12e37); font-size: 1.1rem; }
 
 /* Responsive */
-@media (max-width: 960px) {
-  .single-product div.product {
-    margin: 1.75rem 0 2.5rem;
-    padding: 0 1rem;
-  }
-
-  .single-product .wcs-product-card {
-    grid-template-columns: minmax(0, 1fr);
-    padding: 1.5rem 1.6rem 1.9rem;
-  }
-
-  .single-product .wcs-product-card__content {
-    padding-left: 0;
-    margin-top: 1.5rem;
-  }
-
-  .single-product .wcs-product-card__footer {
-    flex-direction: column;
-    align-items: stretch;
-  }
+@media (max-width:960px) {
+  .wcs-sp-wrap { padding: 1rem 1rem 0; }
+  .wcs-sp-card { grid-template-columns: 1fr; gap: 1.75rem; padding: 1.5rem; }
+  .wcs-sp-card__gallery-badges { position: static; flex-direction: row; margin-bottom: .75rem; }
+  .single-product .related .products,
+  .single-product .upsells .products { grid-template-columns: repeat(2,1fr)!important; }
 }
 
-@media (max-width: 640px) {
-  .single-product div.product {
-    margin: 1.4rem 0 2.3rem;
-    padding: 0 0.75rem;
-  }
-
-  .single-product .wcs-product-card {
-    padding: 1.25rem 1.15rem 1.7rem;
-    border-radius: 16px;
-  }
-
-  .single-product .wcs-product-card__title {
-    font-size: 1.35rem;
-  }
-
-  .single-product .wcs-product-card__cta-block {
-    min-width: 0;
-  }
-
-  .single-product .wcs-calculator__grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
+@media (max-width:640px) {
+  .wcs-sp-card { padding: 1.25rem; border-radius: 14px; }
+  .wcs-sp-card__title { font-size: 1.35rem; }
+  .wcs-sp-card__price-current { font-size: 1.6rem; }
+  .wcs-sp-card__trust { grid-template-columns: repeat(2,1fr); }
+  .wcs-sp-card__trust-item:nth-child(2) { border-right: none; }
+  .wcs-sp-card__trust-item:nth-child(3),
+  .wcs-sp-card__trust-item:nth-child(4) { border-top: 1px solid rgba(15,19,30,.08); }
+  .wcs-sp-card__trust-item:nth-child(4) { border-right: none; }
+  .single-product .related .products,
+  .single-product .upsells .products { grid-template-columns: 1fr!important; }
+  .wcs-sp-card__var-grid { grid-template-columns: 1fr 1fr; }
+  .single-product div.product, .wcs-sp-wrap { padding-left: .75rem; padding-right: .75rem; }
 }

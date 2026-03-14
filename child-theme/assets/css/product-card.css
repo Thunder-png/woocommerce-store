@@ -409,3 +409,21 @@ ul.products {
   .wcs-shop__filters { padding: 0 1.2rem 1.5rem; }
   .wcs-card__price { font-size: 1.1rem; }
 }
+/* ── WooCommerce varsayılan result-count ve ordering'i gizle ───
+   Filter bar içindeki sürümler kullanılıyor.                   */
+.woocommerce-result-count,
+.woocommerce-ordering:not(.wcs-filter-bar__right .woocommerce-ordering) {
+  display: none !important;
+}
+
+/* ── Shop sayfası arka plan ──────────────────────────────────── */
+.woocommerce-page .site-main,
+.woocommerce-archive .site-main {
+  background: var(--color-structure-white, #f8f8f8);
+}
+
+/* ── Filter bar + grid arasındaki boşluk ─────────────────────── */
+.wcs-shop__grid,
+ul.products {
+  padding-top: 0;
+}

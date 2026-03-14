@@ -208,3 +208,78 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Özel Ölçü Ürün Grid Ekleri ─────────────────────────────── */
+
+/* İndirim rozeti */
+.wcs-home-product-card__badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  background: var(--color-safety-red, #c12e37);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+}
+
+/* "Özel Ölçü" tag rozeti — overlay içinde başlığın üstünde */
+.wcs-home-product-card__ozel-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.65rem;
+  background: rgba(193, 46, 55, 0.85);
+  backdrop-filter: blur(4px);
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  align-self: flex-start;
+}
+
+.wcs-home-product-card__ozel-tag .bi {
+  font-size: 0.75rem;
+}
+
+/* Overlay flex direction ayarla */
+.wcs-home-product-card .wcs-home-category-card__overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* "Tüm Özel Ölçü Ürünleri" footer linki */
+.wcs-home-ozel-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.75rem;
+}
+
+.wcs-home-ozel-footer__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 2rem;
+  border: 1.5px solid var(--color-industrial-navy, #0f131e);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-industrial-navy, #0f131e);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.wcs-home-ozel-footer__link:hover {
+  background: var(--color-industrial-navy, #0f131e);
+  color: #fff;
+  transform: translateY(-2px);
+  text-decoration: none;
+}

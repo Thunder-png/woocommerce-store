@@ -1,0 +1,554 @@
+/* ═══════════════════════════════════════════════════════════════
+   WCS FOOTER — Karaca File · Industrial Dark Theme
+   Safety Red #C12E37 · Navy #0F131E
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --wcs-f-bg:       #090d16;
+  --wcs-f-surface:  #0f131e;
+  --wcs-f-border:   rgba(255, 255, 255, 0.07);
+  --wcs-f-red:      var(--color-safety-red, #c12e37);
+  --wcs-f-white:    var(--color-structure-white, #f8f8f8);
+  --wcs-f-muted:    rgba(248, 248, 248, 0.50);
+  --wcs-f-subtle:   rgba(248, 248, 248, 0.25);
+}
+
+/* Astra native footer gizle */
+#colophon,
+.ast-footer-overlay,
+.site-footer {
+  display: none !important;
+}
+
+/* ── Eski wcs-brand-footer'ı gizle ─────────────────────────── */
+.wcs-brand-footer { display: none !important; }
+
+/* ── Base ──────────────────────────────────────────────────── */
+.wcs-footer {
+  background: var(--wcs-f-bg);
+  color: var(--wcs-f-muted);
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  position: relative;
+}
+
+/* Net pattern overlay */
+.wcs-footer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(193, 46, 55, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(193, 46, 55, 0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+  z-index: 0;
+}
+
+.wcs-footer > * { position: relative; z-index: 1; }
+
+/* ══════════════════════════════════════════════════════════════
+   CTA STRIP
+══════════════════════════════════════════════════════════════ */
+.wcs-footer__cta-strip {
+  background: var(--wcs-f-red);
+  padding: 2.75rem 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Diagonal highlight */
+.wcs-footer__cta-strip::after {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+}
+
+.wcs-footer__cta-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.wcs-footer__cta-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.5rem;
+}
+
+.wcs-footer__cta-title {
+  font-family: var(--font-heading, 'Inter', sans-serif);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.wcs-footer__cta-desc {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  max-width: 460px;
+  line-height: 1.55;
+}
+
+.wcs-footer__cta-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.wcs-footer__cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.4rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  transition: all 0.22s;
+  white-space: nowrap;
+}
+
+.wcs-footer__cta-btn--primary {
+  background: #fff;
+  color: var(--wcs-f-red);
+}
+
+.wcs-footer__cta-btn--primary:hover {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--wcs-f-red);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.wcs-footer__cta-btn--ghost {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.wcs-footer__cta-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MAIN GRID
+══════════════════════════════════════════════════════════════ */
+.wcs-footer__main {
+  padding: 4rem 1.5rem 3rem;
+  border-bottom: 1px solid var(--wcs-f-border);
+}
+
+.wcs-footer__grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
+  gap: 3rem;
+}
+
+/* ── Kolon ortak ─────────────────────────────────────────────── */
+.wcs-footer__col-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-heading, 'Inter', sans-serif);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--wcs-f-white);
+  margin: 0 0 1.25rem;
+}
+
+.wcs-footer__col-title .bi {
+  color: var(--wcs-f-red);
+  font-size: 0.85rem;
+}
+
+/* ── Marka kolonu ──────────────────────────────────────────────── */
+.wcs-footer__col--brand {}
+
+.wcs-footer__logo-link {
+  display: inline-block;
+  margin-bottom: 1.1rem;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.wcs-footer__lottie {
+  display: block;
+  width: 130px;
+  height: 48px;
+  overflow: visible;
+  /* Çerçeve yok, beyaz arka plan yok */
+}
+
+.wcs-footer__lottie svg {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Lottie koyu arka planda görünmesi için filtre */
+.wcs-footer__lottie svg path[fill="#1d1d1b"],
+.wcs-footer__lottie svg path[fill="#1D1D1B"],
+.wcs-footer__lottie svg path[fill="rgb(29,29,27)"] {
+  fill: rgba(248, 248, 248, 0.9) !important;
+}
+
+.wcs-footer__brand-desc {
+  font-size: 0.855rem;
+  color: var(--wcs-f-muted);
+  line-height: 1.7;
+  margin: 0 0 1.35rem;
+  max-width: 280px;
+}
+
+/* Sertifika rozetleri */
+.wcs-footer__badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.wcs-footer__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.65rem;
+  background: rgba(193, 46, 55, 0.1);
+  border: 1px solid rgba(193, 46, 55, 0.25);
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--wcs-f-red);
+  letter-spacing: 0.04em;
+}
+
+.wcs-footer__badge .bi { font-size: 0.75rem; }
+
+/* Sosyal medya */
+.wcs-footer__social {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.wcs-footer__social-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--wcs-f-border);
+  color: var(--wcs-f-muted);
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.wcs-footer__social-btn:hover {
+  background: rgba(193, 46, 55, 0.15);
+  border-color: rgba(193, 46, 55, 0.4);
+  color: var(--wcs-f-red);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.wcs-footer__social-btn--wa:hover {
+  background: rgba(37, 211, 102, 0.15);
+  border-color: rgba(37, 211, 102, 0.35);
+  color: #25d366;
+}
+
+/* ── Link listeleri ─────────────────────────────────────────── */
+.wcs-footer__links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.wcs-footer__link {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  color: var(--wcs-f-muted);
+  text-decoration: none;
+  font-size: 0.855rem;
+  transition: background 0.15s, color 0.15s, padding-left 0.15s;
+}
+
+.wcs-footer__link .bi {
+  font-size: 0.8rem;
+  color: var(--wcs-f-red);
+  flex-shrink: 0;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+
+.wcs-footer__link:hover {
+  color: var(--wcs-f-white);
+  background: rgba(255, 255, 255, 0.04);
+  padding-left: 0.9rem;
+  text-decoration: none;
+}
+
+.wcs-footer__link:hover .bi { opacity: 1; }
+
+/* ── İletişim ───────────────────────────────────────────────── */
+.wcs-footer__contact-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.wcs-footer__contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.wcs-footer__contact-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(193, 46, 55, 0.12);
+  border: 1px solid rgba(193, 46, 55, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--wcs-f-red);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+
+.wcs-footer__contact-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--wcs-f-subtle);
+  margin-bottom: 0.1rem;
+}
+
+.wcs-footer__contact-val {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--wcs-f-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+a.wcs-footer__contact-val:hover {
+  color: var(--wcs-f-red);
+  text-decoration: none;
+}
+
+/* Çalışma saatleri */
+.wcs-footer__hours {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--wcs-f-border);
+  border-radius: 8px;
+}
+
+.wcs-footer__hours-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--wcs-f-subtle);
+}
+
+.wcs-footer__hours-title .bi { color: var(--wcs-f-red); }
+
+.wcs-footer__hours-val {
+  font-size: 0.855rem;
+  color: var(--wcs-f-muted);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ALT ÇİZGİ
+══════════════════════════════════════════════════════════════ */
+.wcs-footer__bottom {
+  padding: 1.25rem 1.5rem;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.wcs-footer__bottom-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+/* Politika linkleri */
+.wcs-footer__policy-links {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.wcs-footer__policy-link {
+  font-size: 0.72rem;
+  color: var(--wcs-f-subtle);
+  text-decoration: none;
+  transition: color 0.15s;
+  white-space: nowrap;
+}
+
+.wcs-footer__policy-link:hover {
+  color: var(--wcs-f-red);
+  text-decoration: none;
+}
+
+.wcs-footer__policy-sep {
+  color: var(--wcs-f-subtle);
+  font-size: 0.65rem;
+  opacity: 0.5;
+}
+
+/* Telif */
+.wcs-footer__copy {
+  font-size: 0.72rem;
+  color: var(--wcs-f-subtle);
+  margin: 0;
+  order: 3;
+}
+
+.wcs-footer__copy-brand {
+  color: var(--wcs-f-muted);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.15s;
+}
+
+.wcs-footer__copy-brand:hover {
+  color: var(--wcs-f-red);
+  text-decoration: none;
+}
+
+/* Ödeme yöntemleri */
+.wcs-footer__payments {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.wcs-footer__payment-pill {
+  padding: 0.25rem 0.6rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 4px;
+  font-size: 0.67rem;
+  font-weight: 500;
+  color: var(--wcs-f-subtle);
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════════════════ */
+@media (max-width: 1100px) {
+  .wcs-footer__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+  }
+
+  .wcs-footer__col--brand {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem 2rem;
+    align-items: start;
+  }
+
+  .wcs-footer__lottie { grid-column: 1 / -1; }
+}
+
+@media (max-width: 768px) {
+  .wcs-footer__cta-inner {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+
+  .wcs-footer__cta-desc { max-width: none; }
+
+  .wcs-footer__cta-actions { justify-content: center; }
+
+  .wcs-footer__grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .wcs-footer__col--brand {
+    grid-template-columns: 1fr;
+  }
+
+  .wcs-footer__bottom-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .wcs-footer__copy { order: 0; }
+
+  .wcs-footer__policy-links { gap: 0.3rem; }
+}
+
+@media (max-width: 480px) {
+  .wcs-footer__main { padding: 2.5rem 1rem 2rem; }
+  .wcs-footer__cta-strip { padding: 2rem 1rem; }
+  .wcs-footer__cta-actions { flex-direction: column; width: 100%; }
+  .wcs-footer__cta-btn { justify-content: center; width: 100%; }
+  .wcs-footer__bottom { padding: 1rem; }
+}

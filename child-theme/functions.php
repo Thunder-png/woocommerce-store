@@ -126,6 +126,23 @@ function wcs_child_enqueue_assets() {
         wcs_asset_version( 'template-parts/header/shop-header.css', $child_theme->get( 'Version' ) )
     );
 
+    // Footer stili — her sayfada.
+    wp_enqueue_style(
+        'wcs-site-footer',
+        get_stylesheet_directory_uri() . '/template-parts/footer/site-footer.css',
+        array( 'wcs-custom-style', 'wcs-bootstrap-icons' ),
+        wcs_asset_version( 'template-parts/footer/site-footer.css', $child_theme->get( 'Version' ) )
+    );
+
+    // Sepet sidebar JS — header sepet ikonundan her sayfada açılabilmesi için global.
+    wp_enqueue_script(
+        'wcs-cart-sidebar',
+        get_stylesheet_directory_uri() . '/assets/js/wcs-cart-sidebar.js',
+        array( 'jquery', 'wc-cart-fragments' ),
+        wcs_asset_version( 'assets/js/wcs-cart-sidebar.js', $child_theme->get( 'Version' ) ),
+        true
+    );
+
     if ( is_front_page() ) {
         wp_enqueue_style(
             'wcs-home-category-grid',
@@ -233,14 +250,6 @@ function wcs_child_enqueue_assets() {
             get_stylesheet_directory_uri() . '/assets/css/product-detail.css',
             array( 'wcs-custom-style' ),
             wcs_asset_version( 'assets/css/product-detail.css', $child_theme->get( 'Version' ) )
-        );
-
-        wp_enqueue_script(
-            'wcs-cart-sidebar',
-            get_stylesheet_directory_uri() . '/assets/js/wcs-cart-sidebar.js',
-            array( 'jquery', 'wc-cart-fragments' ),
-            wcs_asset_version( 'assets/js/wcs-cart-sidebar.js', $child_theme->get( 'Version' ) ),
-            true
         );
 
         wp_enqueue_script(
@@ -358,6 +367,38 @@ function wcs_force_shop_fullwidth_css() {
 add_action( 'wp_head', 'wcs_force_shop_fullwidth_css', 100 );
 
 /**
+ * Ana sayfa = Shop olduğunda Astra'nın woocommerce_before/after_main_content
+ * hook'larına bağladığı ast-woocommerce-container wrapper'ını kaldır.
+ * Bu wrapper ana sayfa özel tasarımının dışına çıkıp gereksiz sarmalıyor.
+ */
+function wcs_remove_astra_woo_wrapper_on_front() {
+    if ( ! ( function_exists( 'is_front_page' ) && function_exists( 'is_shop' ) && is_front_page() && is_shop() ) ) {
+        return;
+    }
+    // Astra bu hook'lara yüklediği fonksiyonları farklı sınıf/öncelik ile bağlıyor.
+    // remove_action ile tüm olası bağlantıları temizle.
+    remove_action( 'woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10 );
+    remove_action( 'woocommerce_after_main_content',  'woocommerce_output_content_wrapper_end', 10 );
+
+    // Astra kendi wrapper sınıfını genellikle bu isimdeki fonksiyonla ekler:
+    if ( class_exists( 'Astra_Woocommerce' ) ) {
+        remove_action( 'woocommerce_before_main_content', array( 'Astra_Woocommerce', 'woocommerce_breadcrumb' ), 10 );
+        remove_action( 'woocommerce_before_main_content', array( 'Astra_Woocommerce', 'content_wrapper_start' ), 10 );
+        remove_action( 'woocommerce_after_main_content',  array( 'Astra_Woocommerce', 'content_wrapper_end' ), 10 );
+    }
+
+    // Astra'nın global helper sınıfı
+    if ( class_exists( 'Astra_Woo_Template_Loader' ) ) {
+        remove_action( 'woocommerce_before_main_content', array( 'Astra_Woo_Template_Loader', 'content_wrapper_start' ), 10 );
+        remove_action( 'woocommerce_after_main_content',  array( 'Astra_Woo_Template_Loader', 'content_wrapper_end' ), 10 );
+    }
+
+    // WooCommerce breadcrumb'ı da ana sayfada gizle (hero zaten var).
+    remove_action( 'woocommerce_before_main_content', 'woocommerce_breadcrumb', 20 );
+}
+add_action( 'wp', 'wcs_remove_astra_woo_wrapper_on_front', 5 );
+
+/**
  * Force full-width no-sidebar layout on WooCommerce archives.
  *
  * @param string $layout Astra layout slug.
@@ -376,90 +417,64 @@ add_filter( 'astra_page_layout', 'wcs_shop_no_sidebar_layout', 99 );
 add_filter( 'astra_woo_shop_sidebar_init', '__return_false' );
 
 /**
- * Render brand footer with policy links.
+ * Render site footer — new template-part.
  */
 function wcs_render_brand_footer() {
     if ( is_admin() ) {
         return;
     }
-
-    $policy_links = array(
-        array(
-            'label' => __( 'Gizlilik Politikası', 'woocommerce-store-child' ),
-            'url'   => home_url( '/gizlilik-politikasi/' ),
-        ),
-        array(
-            'label' => __( 'İade ve İptal Politikası', 'woocommerce-store-child' ),
-            'url'   => home_url( '/iade-ve-iptal-politikasi/' ),
-        ),
-        array(
-            'label' => __( 'KVKK Aydınlatma Metni', 'woocommerce-store-child' ),
-            'url'   => home_url( '/kvkk-aydinlatma-metni/' ),
-        ),
-        array(
-            'label' => __( 'Ödeme ve Teslimat', 'woocommerce-store-child' ),
-            'url'   => home_url( '/odeme-ve-teslimat/' ),
-        ),
-        array(
-            'label' => __( 'Çerez Politikası', 'woocommerce-store-child' ),
-            'url'   => home_url( '/cerez-politikasi/' ),
-        ),
-        array(
-            'label' => __( 'Mesafeli Satış Sözleşmesi', 'woocommerce-store-child' ),
-            'url'   => home_url( '/mesafeli-satis-sozlesmesi/' ),
-        ),
-    );
-    ?>
-    <footer class="wcs-brand-footer" aria-label="Site footer">
-        <div class="wcs-brand-footer__inner">
-            <div class="wcs-brand-footer__brand">
-                <h3><?php esc_html_e( 'By Karaca', 'woocommerce-store-child' ); ?></h3>
-                <p><?php esc_html_e( 'Güvenli alışveriş, güçlü koruma ürünleri.', 'woocommerce-store-child' ); ?></p>
-            </div>
-
-            <nav class="wcs-brand-footer__policies" aria-label="Policy links">
-                <h4><?php esc_html_e( 'Politikalar', 'woocommerce-store-child' ); ?></h4>
-                <ul>
-                    <?php foreach ( $policy_links as $policy_link ) : ?>
-                        <li>
-                            <a href="<?php echo esc_url( $policy_link['url'] ); ?>"><?php echo esc_html( $policy_link['label'] ); ?></a>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </nav>
-
-            <div class="wcs-brand-footer__contact">
-                <h4><?php esc_html_e( 'İletişim', 'woocommerce-store-child' ); ?></h4>
-                <p><a href="mailto:info@bykaracafile.com.tr">info@bykaracafile.com.tr</a></p>
-                <p>0850 380 20 06</p>
-            </div>
-        </div>
-    </footer>
-    <?php
+    get_template_part( 'template-parts/footer/site-footer' );
 }
 add_action( 'wp_footer', 'wcs_render_brand_footer', 20 );
 
 /**
- * Render slide-in cart sidebar container on single product pages.
+ * Render slide-in cart sidebar — her sayfada.
  */
 function wcs_render_cart_sidebar() {
-	if ( ! function_exists( 'is_product' ) || ! is_product() ) {
-		return;
-	}
-	?>
-	<div class="wcs-cart-sidebar-overlay" aria-hidden="true"></div>
-	<aside class="wcs-cart-sidebar" aria-label="<?php esc_attr_e( 'Sepet özeti', 'woocommerce-store-child' ); ?>">
-		<header class="wcs-cart-sidebar__header">
-			<h2 class="wcs-cart-sidebar__title">
-				<?php esc_html_e( 'Sepetiniz', 'woocommerce-store-child' ); ?>
-			</h2>
-			<button type="button" class="wcs-cart-sidebar__close" aria-label="<?php esc_attr_e( 'Sepeti kapat', 'woocommerce-store-child' ); ?>">&times;</button>
-		</header>
-		<div class="wcs-cart-sidebar__content">
-			<?php woocommerce_mini_cart(); ?>
-		</div>
-	</aside>
-	<?php
+    if ( is_admin() ) { return; }
+    $count = function_exists( 'WC' ) && WC()->cart ? WC()->cart->get_cart_contents_count() : 0;
+    ?>
+    <div class="wcs-cart-sidebar-overlay" aria-hidden="true"></div>
+    <aside class="wcs-cart-sidebar" aria-label="<?php esc_attr_e( 'Sepetiniz', 'woocommerce-store-child' ); ?>" aria-hidden="true" role="dialog">
+        <header class="wcs-cart-sidebar__header">
+            <div class="wcs-cart-sidebar__header-left">
+                <span class="wcs-cart-sidebar__header-icon"><i class="bi bi-cart3"></i></span>
+                <h2 class="wcs-cart-sidebar__title"><?php esc_html_e( 'Sepetiniz', 'woocommerce-store-child' ); ?></h2>
+                <span class="wcs-cart-sidebar__count" data-wcs-cart-count><?php echo absint( $count ); ?></span>
+            </div>
+            <button type="button" class="wcs-cart-sidebar__close" aria-label="<?php esc_attr_e( 'Kapat', 'woocommerce-store-child' ); ?>">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </header>
+        <div class="wcs-cart-sidebar__trust">
+            <span><i class="bi bi-shield-fill-check"></i> <?php esc_html_e( 'Güvenli Ödeme', 'woocommerce-store-child' ); ?></span>
+            <span><i class="bi bi-truck"></i> <?php esc_html_e( 'Ücretsiz Kargo', 'woocommerce-store-child' ); ?></span>
+            <span><i class="bi bi-arrow-return-left"></i> <?php esc_html_e( '30 Gün İade', 'woocommerce-store-child' ); ?></span>
+        </div>
+        <div class="wcs-cart-sidebar__body">
+            <?php woocommerce_mini_cart(); ?>
+        </div>
+        <footer class="wcs-cart-sidebar__footer">
+            <div class="wcs-cart-sidebar__subtotal">
+                <span class="wcs-cart-sidebar__subtotal-label"><?php esc_html_e( 'Ara Toplam', 'woocommerce-store-child' ); ?></span>
+                <span class="wcs-cart-sidebar__subtotal-value"><?php if ( function_exists( 'WC' ) && WC()->cart ) echo wp_kses_post( WC()->cart->get_cart_subtotal() ); ?></span>
+            </div>
+            <div class="wcs-cart-sidebar__actions">
+                <a href="<?php echo esc_url( wc_get_cart_url() ); ?>" class="wcs-cart-sidebar__btn wcs-cart-sidebar__btn--secondary">
+                    <i class="bi bi-cart3"></i> <?php esc_html_e( 'Sepete Git', 'woocommerce-store-child' ); ?>
+                </a>
+                <a href="<?php echo esc_url( wc_get_checkout_url() ); ?>" class="wcs-cart-sidebar__btn wcs-cart-sidebar__btn--primary">
+                    <i class="bi bi-lock-fill"></i> <?php esc_html_e( 'Ödemeye Geç', 'woocommerce-store-child' ); ?>
+                </a>
+            </div>
+            <div class="wcs-cart-sidebar__payment-icons">
+                <?php foreach ( array( 'Visa', 'Mastercard', 'Havale', 'Kapıda' ) as $m ) : ?>
+                    <span class="wcs-cart-sidebar__payment-pill"><?php echo esc_html( $m ); ?></span>
+                <?php endforeach; ?>
+            </div>
+        </footer>
+    </aside>
+    <?php
 }
 add_action( 'wp_footer', 'wcs_render_cart_sidebar', 25 );
 
@@ -570,7 +585,8 @@ function wcs_register_filterable_attributes() {
 add_action( 'init', 'wcs_register_filterable_attributes', 20 );
 
 /**
- * Render shop filter controls for configured attributes.
+ * Render shop filter bar — pill/chip bazlı modern filtre.
+ * Her attribute için aktif seçim sticky bar'da rozet olarak gösterilir.
  */
 function wcs_render_shop_attribute_filters() {
     if ( ! function_exists( 'is_shop' ) || ( ! is_shop() && ! is_product_taxonomy() ) ) {
@@ -578,59 +594,175 @@ function wcs_render_shop_attribute_filters() {
     }
 
     $definitions = wcs_get_filterable_attribute_definitions();
+
+    // Aktif filtre sayısını hesapla
+    $active_count = 0;
+    foreach ( $definitions as $slug => $config ) {
+        $key = 'filter_pa_' . $slug;
+        if ( ! empty( $_GET[ $key ] ) ) $active_count++;
+    }
+
+    $shop_url = function_exists( 'is_product_taxonomy' ) && is_product_taxonomy()
+        ? get_term_link( get_queried_object() )
+        : wc_get_page_permalink( 'shop' );
+    if ( is_wp_error( $shop_url ) ) $shop_url = wc_get_page_permalink( 'shop' );
     ?>
-    <form class="wcs-product-filters" method="get" action="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>">
-        <div class="wcs-product-filters__grid">
-            <?php foreach ( $definitions as $slug => $config ) : ?>
-                <?php
-                $taxonomy  = 'pa_' . $slug;
-                $query_key = 'filter_' . $taxonomy;
+    <div class="wcs-filter-bar" id="wcs-filter-bar">
+        <div class="wcs-filter-bar__inner">
 
-                if ( ! taxonomy_exists( $taxonomy ) ) {
-                    continue;
-                }
+            <!-- Sol: Filtre etiketi + aktif sayacı -->
+            <div class="wcs-filter-bar__left">
+                <button type="button" class="wcs-filter-bar__toggle" id="wcs-filter-toggle" aria-expanded="false" aria-controls="wcs-filter-panel">
+                    <i class="bi bi-sliders2" aria-hidden="true"></i>
+                    <?php esc_html_e( 'Filtrele', 'woocommerce-store-child' ); ?>
+                    <?php if ( $active_count > 0 ) : ?>
+                        <span class="wcs-filter-bar__active-count"><?php echo absint( $active_count ); ?></span>
+                    <?php endif; ?>
+                    <i class="bi bi-chevron-down wcs-filter-bar__chevron" aria-hidden="true"></i>
+                </button>
 
-                $terms = get_terms(
-                    array(
-                        'taxonomy'   => $taxonomy,
-                        'hide_empty' => false,
-                    )
-                );
-
-                if ( is_wp_error( $terms ) || empty( $terms ) ) {
-                    continue;
-                }
-
-                $selected = isset( $_GET[ $query_key ] ) ? sanitize_title( wp_unslash( $_GET[ $query_key ] ) ) : '';
+                <!-- Aktif filtre rozet'leri -->
+                <?php foreach ( $definitions as $slug => $config ) :
+                    $key = 'filter_pa_' . $slug;
+                    if ( empty( $_GET[ $key ] ) ) continue;
+                    $val = sanitize_title( wp_unslash( $_GET[ $key ] ) );
+                    $term = get_term_by( 'slug', $val, 'pa_' . $slug );
+                    $label = $term ? $term->name : $val;
+                    // URL temizle
+                    $remove_url = remove_query_arg( $key, add_query_arg( array() ) );
                 ?>
-                <label>
-                    <span><?php echo esc_html( $config['label'] ); ?></span>
-                    <select name="<?php echo esc_attr( $query_key ); ?>">
-                        <option value=""><?php esc_html_e( 'Tümü', 'woocommerce-store-child' ); ?></option>
-                        <?php foreach ( $terms as $term ) : ?>
-                            <option value="<?php echo esc_attr( $term->slug ); ?>" <?php selected( $selected, $term->slug ); ?>>
-                                <?php echo esc_html( $term->name ); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </label>
-            <?php endforeach; ?>
-        </div>
+                    <span class="wcs-filter-bar__active-pill">
+                        <span class="wcs-filter-bar__active-pill-label"><?php echo esc_html( $config['label'] ); ?>:</span>
+                        <strong><?php echo esc_html( $label ); ?></strong>
+                        <a href="<?php echo esc_url( $remove_url ); ?>" class="wcs-filter-bar__active-pill-remove" aria-label="<?php esc_attr_e( 'Filtreyi kaldır', 'woocommerce-store-child' ); ?>">
+                            <i class="bi bi-x" aria-hidden="true"></i>
+                        </a>
+                    </span>
+                <?php endforeach; ?>
 
-        <?php foreach ( $_GET as $key => $value ) : ?>
-            <?php
-            if ( ! is_string( $key ) || 0 === strpos( $key, 'filter_pa_' ) || 0 === strpos( $key, 'query_type_pa_' ) || 'paged' === $key ) {
-                continue;
+                <?php if ( $active_count > 0 ) : ?>
+                    <a href="<?php echo esc_url( $shop_url ); ?>" class="wcs-filter-bar__clear-all">
+                        <i class="bi bi-x-circle"></i>
+                        <?php esc_html_e( 'Temizle', 'woocommerce-store-child' ); ?>
+                    </a>
+                <?php endif; ?>
+            </div>
+
+            <!-- Sağ: Ürün sayısı + sıralama -->
+            <div class="wcs-filter-bar__right">
+                <span class="wcs-filter-bar__count" id="wcs-result-count">
+                    <?php
+                    global $wp_query;
+                    $total = $wp_query ? $wp_query->found_posts : 0;
+                    printf( esc_html__( '%d ürün', 'woocommerce-store-child' ), absint( $total ) );
+                    ?>
+                </span>
+                <?php woocommerce_catalog_ordering(); ?>
+            </div>
+
+        </div><!-- /.wcs-filter-bar__inner -->
+
+        <!-- Açılır filtre paneli -->
+        <div class="wcs-filter-panel" id="wcs-filter-panel" hidden>
+            <form class="wcs-filter-panel__form" method="get" action="<?php echo esc_url( $shop_url ); ?>">
+
+                <?php foreach ( $definitions as $slug => $config ) :
+                    $taxonomy  = 'pa_' . $slug;
+                    $query_key = 'filter_' . $taxonomy;
+                    if ( ! taxonomy_exists( $taxonomy ) ) continue;
+                    $terms = get_terms( array( 'taxonomy' => $taxonomy, 'hide_empty' => true ) );
+                    if ( is_wp_error( $terms ) || empty( $terms ) ) continue;
+                    $selected = isset( $_GET[ $query_key ] ) ? sanitize_title( wp_unslash( $_GET[ $query_key ] ) ) : '';
+                ?>
+                    <div class="wcs-filter-panel__group">
+                        <h3 class="wcs-filter-panel__group-title"><?php echo esc_html( $config['label'] ); ?></h3>
+                        <div class="wcs-filter-panel__options">
+                            <label class="wcs-filter-option<?php echo '' === $selected ? ' wcs-filter-option--active' : ''; ?>">
+                                <input type="radio" name="<?php echo esc_attr( $query_key ); ?>" value=""
+                                    <?php checked( $selected, '' ); ?> hidden>
+                                <?php esc_html_e( 'Tümü', 'woocommerce-store-child' ); ?>
+                            </label>
+                            <?php foreach ( $terms as $term ) : ?>
+                                <label class="wcs-filter-option<?php echo $selected === $term->slug ? ' wcs-filter-option--active' : ''; ?>">
+                                    <input type="radio" name="<?php echo esc_attr( $query_key ); ?>"
+                                        value="<?php echo esc_attr( $term->slug ); ?>"
+                                        <?php checked( $selected, $term->slug ); ?> hidden>
+                                    <?php echo esc_html( $term->name ); ?>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+
+                <!-- Gizli hidden alanlar — mevcut query params koru -->
+                <?php foreach ( $_GET as $key => $value ) :
+                    if ( ! is_string( $key ) ) continue;
+                    if ( 0 === strpos( $key, 'filter_pa_' ) || 0 === strpos( $key, 'query_type_pa_' ) || 'paged' === $key ) continue;
+                ?>
+                    <input type="hidden" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( wp_unslash( $value ) ); ?>">
+                <?php endforeach; ?>
+
+                <div class="wcs-filter-panel__footer">
+                    <button type="submit" class="wcs-filter-panel__apply">
+                        <i class="bi bi-check2" aria-hidden="true"></i>
+                        <?php esc_html_e( 'Filtrele', 'woocommerce-store-child' ); ?>
+                    </button>
+                    <a href="<?php echo esc_url( $shop_url ); ?>" class="wcs-filter-panel__reset">
+                        <?php esc_html_e( 'Sıfırla', 'woocommerce-store-child' ); ?>
+                    </a>
+                </div>
+
+            </form>
+        </div><!-- /.wcs-filter-panel -->
+
+    </div><!-- /.wcs-filter-bar -->
+
+    <script>
+    (function(){
+        var toggle = document.getElementById('wcs-filter-toggle');
+        var panel  = document.getElementById('wcs-filter-panel');
+        var bar    = document.getElementById('wcs-filter-bar');
+        if (!toggle || !panel) return;
+
+        toggle.addEventListener('click', function(){
+            var open = panel.hidden === false;
+            panel.hidden = open;
+            toggle.setAttribute('aria-expanded', !open);
+            bar.classList.toggle('wcs-filter-bar--open', !open);
+        });
+
+        // Radio pill seçimi → submit
+        panel.querySelectorAll('input[type="radio"]').forEach(function(radio){
+            radio.addEventListener('change', function(){
+                // Aktif class güncelle
+                var group = radio.closest('.wcs-filter-panel__options');
+                if (group) {
+                    group.querySelectorAll('.wcs-filter-option').forEach(function(lbl){ lbl.classList.remove('wcs-filter-option--active'); });
+                    radio.closest('.wcs-filter-option').classList.add('wcs-filter-option--active');
+                }
+            });
+        });
+
+        // ESC ile kapat
+        document.addEventListener('keydown', function(e){
+            if (e.key === 'Escape' && !panel.hidden) {
+                panel.hidden = true;
+                toggle.setAttribute('aria-expanded', false);
+                bar.classList.remove('wcs-filter-bar--open');
+                toggle.focus();
             }
-            ?>
-            <input type="hidden" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( wp_unslash( $value ) ); ?>" />
-        <?php endforeach; ?>
+        });
 
-        <div class="wcs-product-filters__actions">
-            <button type="submit"><?php esc_html_e( 'Filtrele', 'woocommerce-store-child' ); ?></button>
-            <a class="button" href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>"><?php esc_html_e( 'Temizle', 'woocommerce-store-child' ); ?></a>
-        </div>
-    </form>
+        // Dışarı tıkla kapat
+        document.addEventListener('click', function(e){
+            if (!bar.contains(e.target) && !panel.hidden) {
+                panel.hidden = true;
+                toggle.setAttribute('aria-expanded', false);
+                bar.classList.remove('wcs-filter-bar--open');
+            }
+        });
+    })();
+    </script>
     <?php
 }
 add_action( 'woocommerce_before_shop_loop', 'wcs_render_shop_attribute_filters', 15 );
