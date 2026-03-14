@@ -17,12 +17,13 @@
 .wcs-shop__grid,
 ul.products {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
   max-width: 1360px;
   margin: 0 auto;
-  padding: 0 3.5rem 6rem;
+  padding: 1.25rem 3.5rem 6rem;
   list-style: none;
+  align-items: stretch;
 }
 
 /* ── Card base ── */
@@ -37,6 +38,8 @@ ul.products {
   opacity: 0;
   animation: wcsCardIn 0.5s ease-out forwards;
   transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  border-radius: 4px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
 }
 
 /* Corner cut (top-right) */
@@ -397,14 +400,27 @@ ul.products {
 /* ── Responsive ── */
 @media (max-width: 1100px) {
   .wcs-shop__grid,
-  ul.products { grid-template-columns: repeat(2, 1fr); padding: 0 2rem 4rem; }
+  ul.products {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 1rem 2rem 4rem;
+    gap: 1.35rem;
+  }
   .wcs-shop__header,
   .wcs-shop__filters { padding-left: 2rem; padding-right: 2rem; }
 }
 
+@media (min-width: 1400px) {
+  .wcs-shop__grid,
+  ul.products { grid-template-columns: repeat(4, 1fr); }
+}
+
 @media (max-width: 640px) {
   .wcs-shop__grid,
-  ul.products { grid-template-columns: 1fr; padding: 0 1.2rem 3rem; gap: 1rem; }
+  ul.products {
+    grid-template-columns: 1fr;
+    padding: 1rem 1.2rem 3rem;
+    gap: 1rem;
+  }
   .wcs-shop__header { padding: 3rem 1.2rem 1.5rem; flex-direction: column; align-items: flex-start; }
   .wcs-shop__filters { padding: 0 1.2rem 1.5rem; }
   .wcs-card__price { font-size: 1.1rem; }
@@ -422,8 +438,4 @@ ul.products {
   background: var(--color-structure-white, #f8f8f8);
 }
 
-/* ── Filter bar + grid arasındaki boşluk ─────────────────────── */
-.wcs-shop__grid,
-ul.products {
-  padding-top: 0;
-}
+/* ── Filter bar + grid arasındaki boşluk (üst padding grid'te tanımlı) ── */

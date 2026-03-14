@@ -586,178 +586,335 @@ body.wcs-cart-sidebar-open { overflow: hidden; }
   position: relative;
   z-index: 50;
   background: #fff;
-  border: 1px solid rgba(15,19,30,0.1);
-  border-radius: 14px;
-  margin: 0 0 1.5rem;
-  box-shadow: 0 2px 12px rgba(15,19,30,0.06);
+  border: 1px solid rgba(15,19,30,0.08);
+  border-radius: 16px;
+  margin: 0 0 2rem;
+  box-shadow: 0 4px 20px rgba(15,19,30,0.08), 0 1px 3px rgba(15,19,30,0.04);
   overflow: hidden;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.25s ease, border-color 0.2s ease;
 }
 
-.wcs-filter-bar--open { box-shadow: 0 8px 32px rgba(15,19,30,0.12); }
+.wcs-filter-bar--open {
+  box-shadow: 0 12px 40px rgba(15,19,30,0.12), 0 2px 8px rgba(15,19,30,0.06);
+  border-color: rgba(15,19,30,0.12);
+}
 
 /* ── İç satır ────────────────────────────────────────────────── */
 .wcs-filter-bar__inner {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 0.75rem; padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  padding: 0.9rem 1.5rem;
   flex-wrap: wrap;
 }
 
 /* ── Sol taraf ───────────────────────────────────────────────── */
 .wcs-filter-bar__left {
-  display: flex; align-items: center;
-  gap: 0.5rem; flex-wrap: wrap; flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  flex: 1;
 }
 
 /* ── Toggle butonu ───────────────────────────────────────────── */
 .wcs-filter-bar__toggle {
-  display: inline-flex; align-items: center; gap: 0.4rem;
-  padding: 0.5rem 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.6rem 1.15rem;
   background: var(--color-industrial-navy, #0f131e);
-  color: #fff; border: none; border-radius: 8px;
-  font-size: 0.82rem; font-weight: 600; letter-spacing: 0.03em;
-  cursor: pointer; white-space: nowrap;
-  transition: background 0.2s;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
 }
-.wcs-filter-bar__toggle:hover { background: #1a2d42; }
-.wcs-filter-bar__toggle .bi-sliders2 { font-size: 0.9rem; }
-.wcs-filter-bar__chevron { font-size: 0.65rem; transition: transform 0.25s; }
+
+.wcs-filter-bar__toggle:hover {
+  background: #1a2d42;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15,19,30,0.2);
+}
+
+.wcs-filter-bar__toggle:focus-visible {
+  outline: 2px solid var(--color-safety-red, #c12e37);
+  outline-offset: 2px;
+}
+
+.wcs-filter-bar__toggle .bi-sliders2 { font-size: 0.95rem; }
+
+.wcs-filter-bar__chevron {
+  font-size: 0.7rem;
+  transition: transform 0.25s ease;
+}
+
 .wcs-filter-bar--open .wcs-filter-bar__chevron { transform: rotate(180deg); }
 
 .wcs-filter-bar__active-count {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 18px; height: 18px; border-radius: 50%;
-  background: var(--color-safety-red, #c12e37); color: #fff;
-  font-size: 0.68rem; font-weight: 700; margin-left: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 50%;
+  background: var(--color-safety-red, #c12e37);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-left: 3px;
+  line-height: 1;
 }
 
 /* ── Aktif filtre rozet'leri ─────────────────────────────────── */
 .wcs-filter-bar__active-pill {
-  display: inline-flex; align-items: center; gap: 0.3rem;
-  padding: 0.35rem 0.4rem 0.35rem 0.75rem;
-  background: rgba(193,46,55,0.06);
-  border: 1px solid rgba(193,46,55,0.25);
-  border-radius: 20px;
-  font-size: 0.75rem; color: var(--color-industrial-navy,#0f131e);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.5rem 0.4rem 0.85rem;
+  background: rgba(193,46,55,0.08);
+  border: 1px solid rgba(193,46,55,0.28);
+  border-radius: 22px;
+  font-size: 0.78rem;
+  color: var(--color-industrial-navy,#0f131e);
 }
-.wcs-filter-bar__active-pill-label { color: rgba(43,46,55,0.5); font-weight: 400; }
+
+.wcs-filter-bar__left .wcs-filter-bar__active-pill + .wcs-filter-bar__active-pill {
+  margin-left: 0.1rem;
+}
+
+.wcs-filter-bar__active-pill-label { color: rgba(43,46,55,0.55); font-weight: 400; }
+
 .wcs-filter-bar__active-pill strong { font-weight: 600; }
+
 .wcs-filter-bar__active-pill-remove {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 18px; height: 18px; border-radius: 50%;
-  background: rgba(193,46,55,0.12); color: var(--color-safety-red,#c12e37);
-  text-decoration: none; font-size: 0.75rem; transition: background 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(193,46,55,0.14);
+  color: var(--color-safety-red,#c12e37);
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: background 0.15s, color 0.15s;
 }
-.wcs-filter-bar__active-pill-remove:hover { background: var(--color-safety-red,#c12e37); color: #fff; }
+
+.wcs-filter-bar__active-pill-remove:hover {
+  background: var(--color-safety-red,#c12e37);
+  color: #fff;
+}
 
 .wcs-filter-bar__clear-all {
-  display: inline-flex; align-items: center; gap: 0.3rem;
-  font-size: 0.75rem; font-weight: 500;
-  color: rgba(43,46,55,0.45); text-decoration: none;
-  transition: color 0.15s; padding: 0.35rem 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: rgba(43,46,55,0.5);
+  text-decoration: none;
+  transition: color 0.15s;
+  padding: 0.4rem 0.6rem;
+  margin-left: 0.25rem;
+  border-left: 1px solid rgba(15,19,30,0.12);
 }
-.wcs-filter-bar__clear-all:hover { color: var(--color-safety-red,#c12e37); text-decoration: none; }
+
+.wcs-filter-bar__clear-all:hover {
+  color: var(--color-safety-red,#c12e37);
+  text-decoration: none;
+}
 
 /* ── Sağ taraf: sayaç + sıralama ─────────────────────────────── */
 .wcs-filter-bar__right {
-  display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-shrink: 0;
 }
+
 .wcs-filter-bar__count {
-  font-size: 0.78rem; color: rgba(43,46,55,0.45); white-space: nowrap;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: rgba(43,46,55,0.6);
+  white-space: nowrap;
 }
 
 /* WooCommerce sıralama select override */
 .wcs-filter-bar__right .woocommerce-ordering { margin: 0; }
+
 .wcs-filter-bar__right .woocommerce-ordering select {
-  padding: 0.45rem 2rem 0.45rem 0.75rem;
+  padding: 0.5rem 2.25rem 0.5rem 0.85rem;
   border: 1px solid rgba(15,19,30,0.12);
-  border-radius: 8px; font-size: 0.8rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 500;
   background: var(--color-structure-white,#f8f8f8);
   color: var(--color-industrial-navy,#0f131e);
-  appearance: none; -webkit-appearance: none;
+  appearance: none;
+  -webkit-appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%230f131e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 0.65rem center;
+  background-position: right 0.7rem center;
   cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.wcs-filter-bar__right .woocommerce-ordering select:hover,
+.wcs-filter-bar__right .woocommerce-ordering select:focus {
+  border-color: rgba(15,19,30,0.2);
+  background-color: #fff;
 }
 
 /* ── Açılır panel ────────────────────────────────────────────── */
 .wcs-filter-panel {
-  border-top: 1px solid rgba(15,19,30,0.07);
-  background: var(--color-structure-white,#f8f8f8);
-  padding: 1.25rem 1.25rem 0;
+  border-top: 1px solid rgba(15,19,30,0.08);
+  background: var(--color-structure-white,#f5f6f8);
+  padding: 1.35rem 1.5rem 0;
+  transition: opacity 0.2s ease;
 }
 
 .wcs-filter-panel__form { display: flex; flex-direction: column; gap: 0; }
 
 /* Attribute grupları */
 .wcs-filter-panel__group {
-  padding: 1rem 0;
-  border-bottom: 1px solid rgba(15,19,30,0.07);
-  display: flex; align-items: flex-start; gap: 1.5rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid rgba(15,19,30,0.08);
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
 }
+
 .wcs-filter-panel__group:last-of-type { border-bottom: none; }
 
 .wcs-filter-panel__group-title {
-  font-size: 0.72rem; font-weight: 700;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  color: rgba(43,46,55,0.5);
-  margin: 0; min-width: 120px; flex-shrink: 0;
-  padding-top: 0.2rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(43,46,55,0.6);
+  margin: 0;
+  min-width: 120px;
+  flex-shrink: 0;
+  padding-top: 0.25rem;
+  line-height: 1.3;
 }
 
 .wcs-filter-panel__options {
-  display: flex; flex-wrap: wrap; gap: 0.4rem; flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  flex: 1;
 }
 
 /* Pill seçenekleri */
 .wcs-filter-option {
-  display: inline-flex; align-items: center;
-  padding: 0.35rem 0.85rem;
-  border: 1.5px solid rgba(15,19,30,0.1);
-  border-radius: 20px; background: #fff;
-  font-size: 0.8rem; font-weight: 500;
-  color: rgba(43,46,55,0.7);
-  cursor: pointer; user-select: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.95rem;
+  border: 1.5px solid rgba(15,19,30,0.12);
+  border-radius: 22px;
+  background: #fff;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: rgba(43,46,55,0.75);
+  cursor: pointer;
+  user-select: none;
   transition: border-color 0.15s, background 0.15s, color 0.15s, box-shadow 0.15s;
 }
+
 .wcs-filter-option:hover {
-  border-color: rgba(193,46,55,0.4);
+  border-color: rgba(193,46,55,0.45);
   color: var(--color-industrial-navy,#0f131e);
+  background: rgba(255,255,255,0.9);
 }
+
 .wcs-filter-option--active {
   border-color: var(--color-safety-red,#c12e37);
-  background: rgba(193,46,55,0.06);
+  background: rgba(193,46,55,0.08);
   color: var(--color-safety-red,#c12e37);
   font-weight: 600;
-  box-shadow: 0 0 0 2px rgba(193,46,55,0.12);
+  box-shadow: 0 0 0 2px rgba(193,46,55,0.15);
+}
+
+.wcs-filter-option--active:hover {
+  background: rgba(193,46,55,0.12);
 }
 
 /* Panel footer */
 .wcs-filter-panel__footer {
-  display: flex; align-items: center; gap: 0.75rem;
-  padding: 1rem 0 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1.1rem 0 1.35rem;
 }
+
 .wcs-filter-panel__apply {
-  display: inline-flex; align-items: center; gap: 0.4rem;
-  padding: 0.65rem 1.5rem;
-  background: var(--color-safety-red,#c12e37); color: #fff;
-  border: none; border-radius: 8px;
-  font-size: 0.85rem; font-weight: 600; cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.7rem 1.6rem;
+  background: var(--color-safety-red,#c12e37);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
 }
-.wcs-filter-panel__apply:hover { background: #a82530; transform: translateY(-1px); }
+
+.wcs-filter-panel__apply:hover {
+  background: #a82530;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(193,46,55,0.35);
+}
+
 .wcs-filter-panel__reset {
-  font-size: 0.8rem; color: rgba(43,46,55,0.45);
-  text-decoration: none; transition: color 0.15s;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: rgba(43,46,55,0.5);
+  text-decoration: none;
+  transition: color 0.15s;
 }
-.wcs-filter-panel__reset:hover { color: var(--color-safety-red,#c12e37); text-decoration: none; }
+
+.wcs-filter-panel__reset:hover {
+  color: var(--color-safety-red,#c12e37);
+  text-decoration: none;
+}
 
 /* Responsive */
 @media (max-width: 768px) {
-  .wcs-filter-bar__inner { padding: 0.65rem 1rem; gap: 0.5rem; }
-  .wcs-filter-panel__group { flex-direction: column; gap: 0.6rem; }
+  .wcs-filter-bar { margin-bottom: 1.5rem; border-radius: 14px; }
+
+  .wcs-filter-bar__inner {
+    padding: 0.75rem 1rem;
+    gap: 0.6rem;
+  }
+
+  .wcs-filter-bar__toggle { min-height: 42px; padding: 0.55rem 1rem; }
+
+  .wcs-filter-bar__clear-all { border-left: none; margin-left: 0; }
+
+  .wcs-filter-panel {
+    padding: 1rem 1rem 0;
+  }
+
+  .wcs-filter-panel__group {
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 0.9rem 0;
+  }
+
   .wcs-filter-panel__group-title { min-width: auto; }
+
   .wcs-filter-bar__right .woocommerce-ordering { display: none; }
 }
 

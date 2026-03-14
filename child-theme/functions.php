@@ -368,8 +368,6 @@ add_action( 'wp_head', 'wcs_force_shop_fullwidth_css', 100 );
 
 /**
  * Ana sayfa = Shop olduğunda Astra'nın woocommerce_before/after_main_content
- * hook'larına bağladığı ast-woocommerce-container wrapper'ını kaldır.
- * Bu wrapper ana sayfa özel tasarımının dışına çıkıp gereksiz sarmalıyor.
  */
 function wcs_remove_astra_woo_wrapper_on_front() {
     if ( ! ( function_exists( 'is_front_page' ) && function_exists( 'is_shop' ) && is_front_page() && is_shop() ) ) {

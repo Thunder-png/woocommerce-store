@@ -127,6 +127,29 @@
 }
 
 /* ══════════════════════════════════════════
+   FEATURED PRODUCTS (Öne Çıkan Ürünler)
+   Ana sayfa shop: filtre + ürün grid
+══════════════════════════════════════════ */
+.wcs-fp-products {
+  padding: 4rem 1.5rem;
+  background: #fff;
+}
+
+.wcs-fp-products__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.wcs-fp-products .wcs-fp-section-head {
+  margin-bottom: 2.5rem;
+}
+
+.wcs-fp-products ul.products {
+  padding-top: 0.5rem;
+}
+
+/* ══════════════════════════════════════════
    CATEGORY GRID
 ══════════════════════════════════════════ */
 .wcs-fp-categories {
@@ -721,9 +744,20 @@
 
   .wcs-fp-categories,
   .wcs-fp-why,
-  .wcs-fp-cta {
+  .wcs-fp-cta,
+  .wcs-fp-products {
     padding-left: 1rem;
     padding-right: 1rem;
+  }
+
+  .wcs-fp-products {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+
+  .wcs-fp-products__inner {
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .wcs-fp-custom__inner {
