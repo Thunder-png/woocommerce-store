@@ -646,11 +646,11 @@ function wcs_get_tag_filter_groups() {
         'teknik_ozellik' => array(
             'label' => __( 'Teknik Özellik', 'woocommerce-store-child' ),
             'tags'  => array(
-                '4mm-5x5-aparat-dahil', // 4mm · 5×5 (Aparat Dahil) — Çocuk, Havuz, Balkon
-                '3mm-4x4-siyah',        // 3mm · 4×4 Siyah           — Kedi, Siyah File
-                '3mm-4x4',              // 3mm · 4×4                  — Merdiven
-                '15mm-2x2',             // 1.5mm · 2×2                — Kuş
-                '4mm-5x5-renkli',       // 4mm · 5×5 Renkli           — Turuncu/Mavi/Sarı/Yeşil
+                '4mm-·-5x5-aparat-dahil', // 4mm · 5×5 (Aparat Dahil) — Çocuk, Havuz, Balkon
+                '3mm-·-4x4-siyah',        // 3mm · 4×4 Siyah           — Kedi, Siyah File
+                '3mm-·-4x4',              // 3mm · 4×4                  — Merdiven
+                '15mm-·-2x2',             // 1.5mm · 2×2                — Kuş
+                '4mm-·-5x5-renkli',       // 4mm · 5×5 Renkli           — Turuncu/Mavi/Sarı/Yeşil
             ),
         ),
 
