@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karaca File – Ürün Kartı</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --gray-top: #5a5d62;
+    --gray-mid: #6e7176;
+    --white-bg: #f5f4f0;
+    --red: #d42b2b;
+    --black: #1a1a1a;
+    --rope: #e8e0d0;
+    --accent-line: #c0392b;
+    --card-w: 380px;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #2b2b2b;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ─── CARD ─────────────────────────────────────── */
+  .card {
+    width: var(--card-w);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,.55);
+    transform: translateY(0);
+    transition: transform .35s cubic-bezier(.22,.68,0,1.3),
+                box-shadow .35s ease;
+    cursor: default;
+    position: relative;
+  }
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 50px 100px rgba(0,0,0,.7);
+  }
+
+  /* ─── TOP PANEL ─────────────────────────────────── */
+  .panel-top {
+    position: relative;
+    background: linear-gradient(175deg, var(--gray-top) 0%, #4a4d52 100%);
+    height: 340px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* subtle noise texture */
+  .panel-top::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
+    opacity: .25;
+    pointer-events: none;
+  }
+
+  /* ─── NET CANVAS ─────────────────────────────────── */
+  canvas#net {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ─── LOGO (top) ─────────────────────────────────── */
+  .logo-top {
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    z-index: 10;
+    opacity: .95;
+  }
+  .logo-top svg { width: 90px; }
+  .logo-top .tagline {
+    font-size: 7.5px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    color: #fff;
+    text-align: center;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  /* ─── MEASUREMENT OVERLAY ────────────────────────── */
+  .measure-wrap {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    z-index: 5;
+  }
+
+  /* rope diamond */
+  .diamond {
+    position: absolute;
+    inset: 18px;
+    border: 7px solid var(--rope);
+    border-radius: 4px;
+    transform: rotate(45deg);
+    box-shadow:
+      0 0 0 2px rgba(255,255,255,.15),
+      inset 0 0 12px rgba(0,0,0,.15);
+    /* braided look via repeating gradient */
+    background: repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,.18) 0px, rgba(255,255,255,.18) 2px,
+      transparent 2px, transparent 8px
+    );
+  }
+
+  /* KARACA FILE text on each rope side */
+  .rope-text {
+    position: absolute;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: .22em;
+    color: rgba(60,55,50,.7);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .rope-text.tl { top: 39px;  left: -10px;  transform: rotate(-45deg); }
+  .rope-text.tr { top: 39px;  right: -10px; transform: rotate(45deg);  }
+  .rope-text.bl { bottom: 39px; left: -10px; transform: rotate(45deg); }
+  .rope-text.br { bottom: 39px; right: -10px;transform: rotate(-45deg);}
+
+  /* 6MM badges */
+  .badge-6mm {
+    position: absolute;
+    background: rgba(255,255,255,.18);
+    backdrop-filter: blur(4px);
+    border: 1.5px solid rgba(255,255,255,.35);
+    border-radius: 6px;
+    padding: 3px 7px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: .05em;
+    z-index: 6;
+  }
+  .badge-6mm.left  { left: 22px;  top: 50%; transform: translateY(-50%) rotate(-45deg); }
+  .badge-6mm.right { right: 22px; top: 50%; transform: translateY(-50%) rotate(45deg);  }
+
+  /* 5CM center */
+  .center-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 7;
+  }
+  .center-label span {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    color: #fff;
+    letter-spacing: .03em;
+    text-shadow: 0 4px 20px rgba(0,0,0,.5);
+  }
+
+  /* arrows (CSS only) */
+  .arrows {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+  }
+  .arrows svg { width: 100%; height: 100%; }
+
+  /* ─── COLOR DOT (top-right corner) ───────────────── */
+  .color-dot-wrap {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .color-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #f5f0e8;
+    border: 2px solid rgba(255,255,255,.5);
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  }
+  .color-dot-wrap span {
+    font-size: 8.5px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    color: #fff;
+    text-transform: uppercase;
+  }
+
+  /* ─── BOTTOM PANEL ───────────────────────────────── */
+  .panel-bottom {
+    background: var(--white-bg);
+    padding: 22px 24px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  /* logo bottom */
+  .logo-bottom { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+  .logo-bottom svg { width: 100px; }
+  .logo-bottom .tagline {
+    font-size: 7px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    color: #555;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+
+  /* specs */
+  .specs {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: right;
+  }
+  .spec-line {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 19px;
+    color: var(--black);
+    letter-spacing: .04em;
+    line-height: 1.1;
+  }
+
+  /* ─── FOOTER BAR ─────────────────────────────────── */
+  .footer-bar {
+    background: #4a4d52;
+    padding: 9px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .footer-bar span {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: .18em;
+    color: #fff;
+  }
+  .footer-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--accent-line);
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- ══ TOP PANEL ══ -->
+  <div class="panel-top">
+    <canvas id="net"></canvas>
+
+    <!-- Logo top -->
+    <div class="logo-top">
+      <!-- By Karaca SVG logo (inline) -->
+      <svg viewBox="0 0 140 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- "By" -->
+        <text x="4" y="22" font-family="'DM Sans',sans-serif" font-weight="600" font-size="16" fill="white" font-style="italic">By</text>
+        <!-- K swoosh (red arc) -->
+        <path d="M36 28 Q60 4 82 18" stroke="#d42b2b" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <!-- KARACA text -->
+        <text x="36" y="42" font-family="'Bebas Neue',sans-serif" font-size="30" fill="white" letter-spacing="2">KARACA</text>
+      </svg>
+      <div class="tagline">İŞ GÜVENLİĞİ<br>AĞ SİSTEMLERİ</div>
+    </div>
+
+    <!-- Color dot (Beyaz) -->
+    <div class="color-dot-wrap">
+      <div class="color-dot"></div>
+      <span>Beyaz</span>
+    </div>
+
+    <!-- Net measurement widget -->
+    <div class="measure-wrap">
+      <div class="diamond">
+        <span class="rope-text tl">KARACAFILE</span>
+        <span class="rope-text tr">KARACAFILE</span>
+        <span class="rope-text bl">KARACAFILE</span>
+        <span class="rope-text br">KARACAFILE</span>
+      </div>
+
+      <!-- arrows svg -->
+      <div class="arrows">
+        <svg viewBox="0 0 200 200">
+          <defs>
+            <marker id="ah" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="white"/>
+            </marker>
+            <marker id="ah2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto-start-reverse">
+              <path d="M0,0 L6,3 L0,6 Z" fill="white"/>
+            </marker>
+          </defs>
+          <!-- diagonal arrows ↗ ↙ -->
+          <line x1="70" y1="130" x2="130" y2="70"
+                stroke="white" stroke-width="1.8"
+                marker-start="url(#ah2)" marker-end="url(#ah)"/>
+          <!-- diagonal arrows ↖ ↘ -->
+          <line x1="70" y1="70" x2="130" y2="130"
+                stroke="white" stroke-width="1.8"
+                marker-start="url(#ah2)" marker-end="url(#ah)"/>
+        </svg>
+      </div>
+
+      <!-- 5CM center -->
+      <div class="center-label"><span>5CM</span></div>
+
+      <!-- 6MM badges -->
+      <div class="badge-6mm left">6MM</div>
+      <div class="badge-6mm right">6MM</div>
+    </div>
+  </div>
+
+  <!-- ══ BOTTOM PANEL ══ -->
+  <div class="panel-bottom">
+    <div class="logo-bottom">
+      <svg viewBox="0 0 140 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <text x="4" y="22" font-family="'DM Sans',sans-serif" font-weight="600" font-size="16" fill="#1a1a1a" font-style="italic">By</text>
+        <path d="M36 28 Q60 4 82 18" stroke="#d42b2b" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <text x="36" y="42" font-family="'Bebas Neue',sans-serif" font-size="30" fill="#1a1a1a" letter-spacing="2">KARACA</text>
+      </svg>
+      <div class="tagline">İŞ GÜVENLİĞİ<br>AĞ SİSTEMLERİ</div>
+    </div>
+
+    <div class="specs">
+      <div class="spec-line">5CM GÖZ ARALIĞI</div>
+      <div class="spec-line">6MM İPLIK KALINLIĞI</div>
+    </div>
+  </div>
+
+  <!-- ══ FOOTER BAR ══ -->
+  <div class="footer-bar">
+    <div class="footer-dot"></div>
+    <span>GÜVENLİK FİLESİ ÇEŞİTLERİ</span>
+    <div class="footer-dot"></div>
+  </div>
+</div>
+
+<script>
+// ─── Animated net background ──────────────────────
+const canvas = document.getElementById('net');
+const ctx    = canvas.getContext('2d');
+
+let W, H, cols, rows, pts;
+const GAP = 38;
+
+function resize() {
+  const rect = canvas.parentElement.getBoundingClientRect();
+  W = canvas.width  = rect.width;
+  H = canvas.height = rect.height;
+  build();
+}
+
+function build() {
+  cols = Math.ceil(W / GAP) + 2;
+  rows = Math.ceil(H / GAP) + 2;
+  pts  = [];
+  for (let r = 0; r < rows; r++)
+    for (let c = 0; c < cols; c++)
+      pts.push({ bx: (c-1)*GAP, by: (r-1)*GAP, ox:0, oy:0, vx:0, vy:0 });
+}
+
+let mouse = { x: -999, y: -999 };
+canvas.addEventListener('mousemove', e => {
+  const r = canvas.getBoundingClientRect();
+  mouse.x = e.clientX - r.left;
+  mouse.y = e.clientY - r.top;
+});
+canvas.addEventListener('mouseleave', () => { mouse.x = mouse.y = -999; });
+
+function tick() {
+  ctx.clearRect(0,0,W,H);
+
+  // update offsets
+  pts.forEach(p => {
+    const dx = p.bx + p.ox - mouse.x;
+    const dy = p.by + p.oy - mouse.y;
+    const d  = Math.sqrt(dx*dx+dy*dy);
+    const R  = 70, strength = 18;
+    if (d < R) {
+      const f = (1 - d/R) * strength;
+      p.vx += dx/d*f;
+      p.vy += dy/d*f;
+    }
+    p.vx *= .82; p.vy *= .82;
+    p.ox += p.vx; p.oy += p.vy;
+    p.ox *= .88;  p.oy *= .88;
+  });
+
+  // draw grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.13)';
+  ctx.lineWidth   = 1.4;
+  ctx.lineCap     = 'round';
+
+  // horizontals
+  for (let r = 0; r < rows; r++) {
+    ctx.beginPath();
+    for (let c = 0; c < cols; c++) {
+      const p = pts[r*cols+c];
+      const x = p.bx+p.ox, y = p.by+p.oy;
+      c===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  // verticals
+  for (let c = 0; c < cols; c++) {
+    ctx.beginPath();
+    for (let r = 0; r < rows; r++) {
+      const p = pts[r*cols+c];
+      const x = p.bx+p.ox, y = p.by+p.oy;
+      r===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+
+  // dots at intersections
+  ctx.fillStyle = 'rgba(255,255,255,0.22)';
+  pts.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.bx+p.ox, p.by+p.oy, 2, 0, Math.PI*2);
+    ctx.fill();
+  });
+
+  requestAnimationFrame(tick);
+}
+
+resize();
+window.addEventListener('resize', resize);
+tick();
+</script>
+</body>
+</html>

@@ -94,6 +94,24 @@ if ( $is_variable ) {
         $variation_cards[] = array( 'id' => $child_id, 'label' => $label ?: "#$child_id", 'price_html' => $v->get_price_html(), 'discount' => $vd, 'attributes' => $na );
     }
 }
+
+// Spec card: göz aralığı, ip kalınlığı, regi (renk) — ürün/varyasyon verisine göre
+$spec_card_goz  = '';
+$spec_card_ip   = '';
+$spec_card_renk = $primary_color;
+if ( $is_simple ) {
+    $goz_terms = wcs_get_product_terms_labels( $product_id, 'pa_goz-araligi' );
+    $ip_terms  = wcs_get_product_terms_labels( $product_id, 'pa_ip-kalinligi' );
+    $spec_card_goz = ! empty( $goz_terms ) ? $goz_terms[0]['name'] : '';
+    $spec_card_ip  = ! empty( $ip_terms ) ? $ip_terms[0]['name'] : '';
+} elseif ( $is_variable && ! empty( $variation_cards ) ) {
+    $first_var = wc_get_product( $variation_cards[0]['id'] );
+    if ( $first_var instanceof WC_Product_Variation ) {
+        $spec_card_goz  = $first_var->get_attribute( 'pa_goz-araligi' ) ?: '';
+        $spec_card_ip   = $first_var->get_attribute( 'pa_ip-kalinligi' ) ?: '';
+        $spec_card_renk = $first_var->get_attribute( 'pa_renk' ) ?: $spec_card_renk;
+    }
+}
 ?>
 
 <div class="wcs-sp-wrap">
@@ -131,6 +149,14 @@ if ( $is_variable ) {
             <div class="wcs-sp-card__gallery-inner">
                 <?php do_action( 'woocommerce_before_single_product_summary' ); ?>
             </div>
+            <?php
+            get_template_part( 'template-parts/product/product-spec-card', null, array(
+                'spec_goz'  => $spec_card_goz,
+                'spec_ip'   => $spec_card_ip,
+                'spec_renk' => $spec_card_renk,
+                'is_var'    => $is_variable,
+            ) );
+            ?>
             <?php if ( ! empty( $color_terms ) ) : ?>
                 <div class="wcs-sp-card__color-row">
                     <?php foreach ( $color_terms as $ct ) : ?><span class="wcs-sp-card__color-dot" title="<?php echo esc_attr( $ct['name'] ); ?>"><span class="wcs-sp-card__color-dot-inner"></span></span><?php endforeach; ?>

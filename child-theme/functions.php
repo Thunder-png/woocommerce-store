@@ -261,6 +261,14 @@ function wcs_child_enqueue_assets() {
         );
 
         wp_enqueue_script(
+            'wcs-spec-card',
+            get_stylesheet_directory_uri() . '/assets/js/wcs-spec-card.js',
+            array( 'jquery' ),
+            wcs_asset_version( 'assets/js/wcs-spec-card.js', $child_theme->get( 'Version' ) ),
+            true
+        );
+
+        wp_enqueue_script(
             'wcs-ajax-add-to-cart',
             get_stylesheet_directory_uri() . '/assets/js/wcs-ajax-add-to-cart.js',
             array( 'jquery', 'wc-add-to-cart', 'wc-cart-fragments' ),
@@ -423,6 +431,25 @@ function wcs_shop_no_sidebar_layout( $layout ) {
 }
 add_filter( 'astra_page_layout', 'wcs_shop_no_sidebar_layout', 99 );
 add_filter( 'astra_woo_shop_sidebar_init', '__return_false' );
+
+/**
+ * Spec kartı için varyasyon verisine göz aralığı, ip kalınlığı ve regi (renk) ekle.
+ *
+ * @param array                  $data     Variation data sent to JS.
+ * @param WC_Product_Variable    $product  Variable product.
+ * @param WC_Product_Variation   $variation Variation product.
+ * @return array
+ */
+function wcs_add_spec_card_to_variation_data( $data, $product, $variation ) {
+    if ( ! $variation instanceof WC_Product_Variation ) {
+        return $data;
+    }
+    $data['wcs_spec_goz']  = $variation->get_attribute( 'pa_goz-araligi' ) ?: '';
+    $data['wcs_spec_ip']   = $variation->get_attribute( 'pa_ip-kalinligi' ) ?: '';
+    $data['wcs_spec_renk'] = $variation->get_attribute( 'pa_renk' ) ?: '';
+    return $data;
+}
+add_filter( 'woocommerce_available_variation', 'wcs_add_spec_card_to_variation_data', 10, 3 );
 
 /**
  * Render site footer — new template-part.

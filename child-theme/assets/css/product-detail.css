@@ -41,6 +41,219 @@ a.wcs-sp-breadcrumb__item:hover { color: var(--color-safety-red,#c12e37); }
 .wcs-sp-card__color-dot-inner { width: 100%; height: 100%; border-radius: 50%; background: #fff; }
 .wcs-sp-card__color-dot:hover { border-color: var(--color-safety-red,#c12e37); }
 
+/* ── Karaca Spec Kartı (göz aralığı, ip kalınlığı, regi) ───── */
+.wcs-spec-card.kfc-card {
+  --kfc-gray-top: #5a5d62;
+  --kfc-white-bg: #f5f4f0;
+  --kfc-black: #1a1a1a;
+  --kfc-rope: #e8e0d0;
+  --kfc-accent: #c0392b;
+  width: 100%;
+  max-width: 380px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0,0,0,.2);
+  margin-top: 1.25rem;
+  position: relative;
+}
+.wcs-spec-card.kfc-card:hover {
+  box-shadow: 0 20px 50px rgba(0,0,0,.25);
+}
+
+.kfc-panel-top {
+  position: relative;
+  background: linear-gradient(175deg, var(--kfc-gray-top) 0%, #4a4d52 100%);
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.kfc-panel-top::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
+  opacity: .25;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.kfc-net {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.kfc-logo-top {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  z-index: 10;
+  opacity: .95;
+}
+.kfc-logo-top svg { width: 80px; height: auto; }
+.kfc-tagline {
+  font-size: 6.5px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  color: #fff;
+  text-align: center;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.kfc-color-dot-wrap {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.kfc-color-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.5);
+  box-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+.kfc-color-label {
+  font-size: 7.5px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.kfc-measure-wrap {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  z-index: 5;
+}
+
+.kfc-diamond {
+  position: absolute;
+  inset: 14px;
+  border: 6px solid var(--kfc-rope);
+  border-radius: 4px;
+  transform: rotate(45deg);
+  box-shadow: 0 0 0 2px rgba(255,255,255,.15), inset 0 0 12px rgba(0,0,0,.15);
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,.18) 0px, rgba(255,255,255,.18) 2px, transparent 2px, transparent 8px);
+}
+.kfc-rope-text {
+  position: absolute;
+  font-size: 6.5px;
+  font-weight: 700;
+  letter-spacing: .22em;
+  color: rgba(60,55,50,.7);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.kfc-rope-text.tl { top: 32px; left: -8px; transform: rotate(-45deg); }
+.kfc-rope-text.tr { top: 32px; right: -8px; transform: rotate(45deg); }
+.kfc-rope-text.bl { bottom: 32px; left: -8px; transform: rotate(45deg); }
+.kfc-rope-text.br { bottom: 32px; right: -8px; transform: rotate(-45deg); }
+
+.kfc-arrows { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
+.kfc-arrows svg { width: 100%; height: 100%; }
+
+.kfc-center-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 7;
+}
+.kfc-center-label .kfc-center-value {
+  font-family: 'Bebas Neue', var(--font-heading, sans-serif);
+  font-size: 42px;
+  color: #fff;
+  letter-spacing: .03em;
+  text-shadow: 0 4px 20px rgba(0,0,0,.5);
+}
+
+.kfc-badge-ip {
+  position: absolute;
+  background: rgba(255,255,255,.18);
+  backdrop-filter: blur(4px);
+  border: 1.5px solid rgba(255,255,255,.35);
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: .05em;
+  z-index: 6;
+}
+.kfc-badge-ip--left { left: 18px; top: 50%; transform: translateY(-50%) rotate(-45deg); }
+.kfc-badge-ip--right { right: 18px; top: 50%; transform: translateY(-50%) rotate(45deg); }
+
+.kfc-panel-bottom {
+  background: var(--kfc-white-bg);
+  padding: 16px 18px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.kfc-logo-bottom { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+.kfc-logo-bottom svg { width: 85px; height: auto; }
+.kfc-tagline--dark {
+  font-size: 6px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  color: #555;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+.kfc-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: right;
+}
+.kfc-spec-line {
+  font-family: 'Bebas Neue', var(--font-heading, sans-serif);
+  font-size: 16px;
+  color: var(--kfc-black);
+  letter-spacing: .04em;
+  line-height: 1.1;
+}
+
+.kfc-footer-bar {
+  background: #4a4d52;
+  padding: 7px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.kfc-footer-bar span {
+  font-family: 'Bebas Neue', var(--font-heading, sans-serif);
+  font-size: 11px;
+  letter-spacing: .18em;
+  color: #fff;
+}
+.kfc-footer-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--kfc-accent);
+}
+
 /* ── Info kolonu ──────────────────────────────────────────── */
 .wcs-sp-card__info { display: flex; flex-direction: column; gap: 1rem; }
 .wcs-sp-card__meta-row { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
@@ -168,6 +381,7 @@ a.wcs-sp-breadcrumb__item:hover { color: var(--color-safety-red,#c12e37); }
   .wcs-sp-wrap { padding: 1rem 1rem 0; }
   .wcs-sp-card { grid-template-columns: 1fr; gap: 1.75rem; padding: 1.5rem; }
   .wcs-sp-card__gallery-badges { position: static; flex-direction: row; margin-bottom: .75rem; }
+  .wcs-spec-card.kfc-card { max-width: 100%; margin-top: 1rem; }
   .single-product .related .products,
   .single-product .upsells .products { grid-template-columns: repeat(2,1fr)!important; }
 }
