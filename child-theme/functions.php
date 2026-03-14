@@ -664,7 +664,20 @@ function wcs_render_shop_attribute_filters() {
 
         <!-- Açılır filtre paneli -->
         <div class="wcs-filter-panel" id="wcs-filter-panel" hidden>
-            <form class="wcs-filter-panel__form" method="get" action="<?php echo esc_url( $shop_url ); ?>">
+            <form class="wcs-filter-panel__form" method="get" action="<?php echo esc_url( $shop_url ); ?>"
+                data-ajax-url="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>"
+                data-filter-action="wcs_filter_products"
+                data-shop-url="<?php echo esc_url( $shop_url ); ?>">
+
+                <?php
+                if ( function_exists( 'is_product_taxonomy' ) && is_product_taxonomy() ) {
+                    $term_obj = get_queried_object();
+                    if ( $term_obj && isset( $term_obj->taxonomy, $term_obj->slug ) ) {
+                        echo '<input type="hidden" name="wcs_archive_tax" value="' . esc_attr( $term_obj->taxonomy ) . '">';
+                        echo '<input type="hidden" name="wcs_archive_term" value="' . esc_attr( $term_obj->slug ) . '">';
+                    }
+                }
+                ?>
 
                 <?php foreach ( $definitions as $slug => $config ) :
                     $taxonomy  = 'pa_' . $slug;
@@ -773,11 +786,171 @@ function wcs_render_shop_attribute_filters() {
 
         // Panel kendi içindeki tıklamaları engelleme
         panel.addEventListener('click', function(e){ e.stopPropagation(); });
+
+        // AJAX filtreleme: form submit'te sayfa yenilenmeden ürünleri güncelle
+        var form = document.querySelector('.wcs-filter-panel__form');
+        var wrap = document.getElementById('wcs-shop-ajax-wrap');
+        var countEl = document.getElementById('wcs-result-count');
+        var ajaxUrl = form && form.getAttribute('data-ajax-url');
+        var action = form && form.getAttribute('data-filter-action');
+        var shopUrl = form && form.getAttribute('data-shop-url');
+
+        if (form && wrap && ajaxUrl && action) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                var params = new URLSearchParams();
+                var fd = new FormData(form);
+                for (var p of fd.entries()) { params.append(p[0], p[1]); }
+
+                var orderSelect = document.querySelector('.wcs-filter-bar__right .woocommerce-ordering select');
+                if (orderSelect && orderSelect.name) { params.append(orderSelect.name, orderSelect.value); }
+
+                var applyBtn = form.querySelector('.wcs-filter-panel__apply');
+                var prevHtml = applyBtn && applyBtn.innerHTML;
+                if (applyBtn) { applyBtn.disabled = true; applyBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Yükleniyor…'; }
+
+                var url = ajaxUrl + '?action=' + encodeURIComponent(action);
+                fetch(url, { method: 'POST', body: params, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                        if (data.success && data.data && data.data.html !== undefined) {
+                            wrap.innerHTML = data.data.html;
+                            if (countEl && data.data.found_posts !== undefined) {
+                                countEl.textContent = data.data.found_posts + ' ürün';
+                            }
+                            var newQuery = [];
+                            fd = new FormData(form);
+                            fd.forEach(function(v, k) {
+                                if (k.indexOf('filter_') === 0 && v) newQuery.push(k + '=' + encodeURIComponent(v));
+                            });
+                            var newUrl = shopUrl + (newQuery.length ? ('?' + newQuery.join('&')) : '');
+                            if (window.history && window.history.pushState) {
+                                window.history.pushState({ wcsFilter: true }, '', newUrl);
+                            }
+                            closePanel();
+                        }
+                    })
+                    .catch(function() { })
+                    .finally(function() {
+                        if (applyBtn) { applyBtn.disabled = false; if (prevHtml) applyBtn.innerHTML = prevHtml; }
+                    });
+            });
+        }
     })();
     </script>
     <?php
 }
 add_action( 'woocommerce_before_shop_loop', 'wcs_render_shop_attribute_filters', 15 );
+
+/**
+ * AJAX: Filtrelenmiş ürün listesini sayfa yenilenmeden döndür.
+ */
+function wcs_ajax_filter_products() {
+	$definitions = wcs_get_filterable_attribute_definitions();
+	$tax_query   = array();
+
+	// Mevcut arşiv (kategori vb.) bağlamı
+	if ( ! empty( $_REQUEST['wcs_archive_tax'] ) && ! empty( $_REQUEST['wcs_archive_term'] ) ) {
+		$tax_query[] = array(
+			'taxonomy' => sanitize_text_field( wp_unslash( $_REQUEST['wcs_archive_tax'] ) ),
+			'field'    => 'slug',
+			'terms'    => sanitize_text_field( wp_unslash( $_REQUEST['wcs_archive_term'] ) ),
+		);
+	}
+
+	// Filtre attribute'ları (filter_pa_xxx)
+	foreach ( $definitions as $slug => $config ) {
+		$key = 'filter_pa_' . $slug;
+		if ( empty( $_REQUEST[ $key ] ) ) {
+			continue;
+		}
+		$terms = sanitize_text_field( wp_unslash( $_REQUEST[ $key ] ) );
+		if ( $terms === '' ) {
+			continue;
+		}
+		$tax_query[] = array(
+			'taxonomy' => 'pa_' . $slug,
+			'field'    => 'slug',
+			'terms'    => array_map( 'sanitize_title', explode( ',', $terms ) ),
+		);
+	}
+
+	if ( ! empty( $tax_query ) ) {
+		$tax_query['relation'] = 'AND';
+	}
+
+	// WooCommerce: katalogda gizli ürünleri hariç tut
+	if ( function_exists( 'wc_get_product_visibility_term_ids' ) ) {
+		$vis = wc_get_product_visibility_term_ids();
+		if ( isset( $vis['exclude-from-catalog'] ) ) {
+			$tax_query[] = array(
+				'taxonomy' => 'product_visibility',
+				'field'    => 'term_taxonomy_id',
+				'terms'    => array( $vis['exclude-from-catalog'] ),
+				'operator' => 'NOT IN',
+			);
+		}
+	}
+
+	$paged   = isset( $_REQUEST['paged'] ) ? max( 1, (int) $_REQUEST['paged'] ) : 1;
+	$orderby = isset( $_REQUEST['orderby'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['orderby'] ) ) : '';
+	$order   = ( isset( $_REQUEST['order'] ) && strtoupper( $_REQUEST['order'] ) === 'ASC' ) ? 'ASC' : 'DESC';
+
+	$per_page = 12;
+	if ( function_exists( 'wc_get_loop_prop' ) && wc_get_loop_prop( 'per_page' ) ) {
+		$per_page = (int) wc_get_loop_prop( 'per_page' );
+	} elseif ( get_option( 'posts_per_page' ) ) {
+		$per_page = (int) get_option( 'posts_per_page' );
+	}
+
+	$args = array(
+		'post_type'      => 'product',
+		'post_status'    => 'publish',
+		'posts_per_page' => $per_page,
+		'paged'          => $paged,
+		'tax_query'      => $tax_query,
+	);
+
+	if ( $orderby ) {
+		$args['orderby'] = $orderby;
+		$args['order']   = $order;
+	}
+
+	$filter_query = new WP_Query( $args );
+
+	$found_posts = $filter_query->found_posts;
+
+	// Geçici olarak ana sorguyu filtre sorgusu yapıp loop HTML üret
+	$prev_query = $GLOBALS['wp_query'];
+	$GLOBALS['wp_query'] = $filter_query;
+
+	ob_start();
+	if ( $filter_query->have_posts() ) {
+		woocommerce_product_loop_start();
+		while ( $filter_query->have_posts() ) {
+			$filter_query->the_post();
+			do_action( 'woocommerce_shop_loop' );
+			wc_get_template_part( 'content', 'product' );
+		}
+		woocommerce_product_loop_end();
+		do_action( 'woocommerce_after_shop_loop' );
+	} else {
+		do_action( 'woocommerce_no_products_found' );
+	}
+	$html = ob_get_clean();
+
+	$GLOBALS['wp_query'] = $prev_query;
+	wp_reset_postdata();
+
+	wp_send_json_success( array(
+		'html'         => $html,
+		'found_posts'  => $found_posts,
+	) );
+}
+
+add_action( 'wp_ajax_wcs_filter_products', 'wcs_ajax_filter_products' );
+add_action( 'wp_ajax_nopriv_wcs_filter_products', 'wcs_ajax_filter_products' );
 
 /**
  * Render home category grid below hero on the front page.
