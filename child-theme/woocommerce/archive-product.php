@@ -218,7 +218,6 @@ if ( $is_home_shop ) :
 			<?php
 			if ( woocommerce_product_loop() ) {
 				do_action( 'woocommerce_before_shop_loop' );
-				echo '<div id="wcs-shop-ajax-wrap">';
 				woocommerce_product_loop_start();
 				if ( wc_get_loop_prop( 'total' ) ) {
 					while ( have_posts() ) {
@@ -229,11 +228,8 @@ if ( $is_home_shop ) :
 				}
 				woocommerce_product_loop_end();
 				do_action( 'woocommerce_after_shop_loop' );
-				echo '</div>';
 			} else {
-				echo '<div id="wcs-shop-ajax-wrap">';
 				do_action( 'woocommerce_no_products_found' );
-				echo '</div>';
 			}
 			?>
 		</div>
@@ -304,7 +300,9 @@ if ( $is_home_shop ) :
 
 	if ( woocommerce_product_loop() ) {
 		do_action( 'woocommerce_before_shop_loop' );
-		echo '<div id="wcs-shop-ajax-wrap">';
+		?>
+		<div id="wcs-products-wrap">
+		<?php
 		woocommerce_product_loop_start();
 		if ( wc_get_loop_prop( 'total' ) ) {
 			while ( have_posts() ) {
@@ -315,11 +313,15 @@ if ( $is_home_shop ) :
 		}
 		woocommerce_product_loop_end();
 		do_action( 'woocommerce_after_shop_loop' );
-		echo '</div>';
+		?>
+		</div><!-- /#wcs-products-wrap -->
+		<?php
 	} else {
-		echo '<div id="wcs-shop-ajax-wrap">';
-		do_action( 'woocommerce_no_products_found' );
-		echo '</div>';
+		?>
+		<div id="wcs-products-wrap">
+		<?php do_action( 'woocommerce_no_products_found' ); ?>
+		</div><!-- /#wcs-products-wrap -->
+		<?php
 	}
 
 endif;
