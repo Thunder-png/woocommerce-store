@@ -368,6 +368,8 @@ add_action( 'wp_head', 'wcs_force_shop_fullwidth_css', 100 );
 
 /**
  * Ana sayfa = Shop olduğunda Astra'nın woocommerce_before/after_main_content
+ * hook'larına bağladığı ast-woocommerce-container wrapper'ını kaldır.
+ * Bu wrapper ana sayfa özel tasarımının dışına çıkıp gereksiz sarmalıyor.
  */
 function wcs_remove_astra_woo_wrapper_on_front() {
     if ( ! ( function_exists( 'is_front_page' ) && function_exists( 'is_shop' ) && is_front_page() && is_shop() ) ) {
@@ -668,7 +670,10 @@ function wcs_render_shop_attribute_filters() {
                     $taxonomy  = 'pa_' . $slug;
                     $query_key = 'filter_' . $taxonomy;
                     if ( ! taxonomy_exists( $taxonomy ) ) continue;
-                    $terms = get_terms( array( 'taxonomy' => $taxonomy, 'hide_empty' => true ) );
+                    $terms = get_terms( array(
+                        'taxonomy'   => $taxonomy,
+                        'hide_empty' => false,
+                    ) );
                     if ( is_wp_error( $terms ) || empty( $terms ) ) continue;
                     $selected = isset( $_GET[ $query_key ] ) ? sanitize_title( wp_unslash( $_GET[ $query_key ] ) ) : '';
                 ?>
@@ -722,17 +727,32 @@ function wcs_render_shop_attribute_filters() {
         var bar    = document.getElementById('wcs-filter-bar');
         if (!toggle || !panel) return;
 
-        toggle.addEventListener('click', function(){
-            var open = panel.hidden === false;
-            panel.hidden = open;
-            toggle.setAttribute('aria-expanded', !open);
-            bar.classList.toggle('wcs-filter-bar--open', !open);
+        function openPanel() {
+            panel.removeAttribute('hidden');
+            panel.style.display = 'block';
+            toggle.setAttribute('aria-expanded', 'true');
+            bar.classList.add('wcs-filter-bar--open');
+        }
+
+        function closePanel() {
+            panel.setAttribute('hidden', '');
+            panel.style.display = '';
+            toggle.setAttribute('aria-expanded', 'false');
+            bar.classList.remove('wcs-filter-bar--open');
+        }
+
+        function isOpen() {
+            return bar.classList.contains('wcs-filter-bar--open');
+        }
+
+        toggle.addEventListener('click', function(e){
+            e.stopPropagation();
+            isOpen() ? closePanel() : openPanel();
         });
 
-        // Radio pill seçimi → submit
+        // Radio pill seçimi → aktif class güncelle
         panel.querySelectorAll('input[type="radio"]').forEach(function(radio){
             radio.addEventListener('change', function(){
-                // Aktif class güncelle
                 var group = radio.closest('.wcs-filter-panel__options');
                 if (group) {
                     group.querySelectorAll('.wcs-filter-option').forEach(function(lbl){ lbl.classList.remove('wcs-filter-option--active'); });
@@ -743,22 +763,16 @@ function wcs_render_shop_attribute_filters() {
 
         // ESC ile kapat
         document.addEventListener('keydown', function(e){
-            if (e.key === 'Escape' && !panel.hidden) {
-                panel.hidden = true;
-                toggle.setAttribute('aria-expanded', false);
-                bar.classList.remove('wcs-filter-bar--open');
-                toggle.focus();
-            }
+            if (e.key === 'Escape' && isOpen()) { closePanel(); toggle.focus(); }
         });
 
-        // Dışarı tıkla kapat
+        // Panel dışına tıkla kapat
         document.addEventListener('click', function(e){
-            if (!bar.contains(e.target) && !panel.hidden) {
-                panel.hidden = true;
-                toggle.setAttribute('aria-expanded', false);
-                bar.classList.remove('wcs-filter-bar--open');
-            }
+            if (isOpen() && !bar.contains(e.target)) { closePanel(); }
         });
+
+        // Panel kendi içindeki tıklamaları engelleme
+        panel.addEventListener('click', function(e){ e.stopPropagation(); });
     })();
     </script>
     <?php
