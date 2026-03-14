@@ -86,6 +86,10 @@
 ══════════════════════════════════════════ */
 .wcs-fp-section-head {
   margin-bottom: 2.75rem;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .wcs-fp-section-head--center {
