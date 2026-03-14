@@ -8,12 +8,22 @@
 
   function init() {
     var bar  = document.getElementById('wcs-filter-bar');
-    var wrap = document.getElementById('wcs-products-wrap');
-    if (!bar || !wrap) return;
+    if (!bar) return;
 
     var form   = bar.querySelector('.wcs-filter-panel__form');
     var toggle = document.getElementById('wcs-filter-toggle');
     if (!form) return;
+
+    /* #wcs-products-wrap yoksa ul.products'ı dinamik olarak sar */
+    var wrap = document.getElementById('wcs-products-wrap');
+    if (!wrap) {
+      var ul = document.querySelector('ul.products');
+      if (!ul) return;
+      wrap = document.createElement('div');
+      wrap.id = 'wcs-products-wrap';
+      ul.parentNode.insertBefore(wrap, ul);
+      wrap.appendChild(ul);
+    }
 
     var debounceTimer = null;
     var abortCtrl     = null;

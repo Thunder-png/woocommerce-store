@@ -215,25 +215,35 @@ if ( $is_home_shop ) :
 				<span class="wcs-fp-eyebrow"><i class="bi bi-star-fill"></i> Öne Çıkan Ürünler</span>
 				<h2 class="wcs-fp-section-title">Popüler Güvenlik Fileleri</h2>
 			</div>
-			<?php
-			if ( woocommerce_product_loop() ) {
-				do_action( 'woocommerce_before_shop_loop' );
-				woocommerce_product_loop_start();
-				if ( wc_get_loop_prop( 'total' ) ) {
-					while ( have_posts() ) {
-						the_post();
-						do_action( 'woocommerce_shop_loop' );
-						wc_get_template_part( 'content', 'product' );
-					}
-				}
-				woocommerce_product_loop_end();
-				do_action( 'woocommerce_after_shop_loop' );
-			} else {
-				do_action( 'woocommerce_no_products_found' );
-			}
+		<?php
+		if ( woocommerce_product_loop() ) {
+			do_action( 'woocommerce_before_shop_loop' );
 			?>
-		</div>
-	</section>
+			<div id="wcs-products-wrap">
+			<?php
+			woocommerce_product_loop_start();
+			if ( wc_get_loop_prop( 'total' ) ) {
+				while ( have_posts() ) {
+					the_post();
+					do_action( 'woocommerce_shop_loop' );
+					wc_get_template_part( 'content', 'product' );
+				}
+			}
+			woocommerce_product_loop_end();
+			do_action( 'woocommerce_after_shop_loop' );
+			?>
+			</div><!-- /#wcs-products-wrap -->
+			<?php
+		} else {
+			?>
+			<div id="wcs-products-wrap">
+			<?php do_action( 'woocommerce_no_products_found' ); ?>
+			</div><!-- /#wcs-products-wrap -->
+			<?php
+		}
+		?>
+	</div>
+</section>
 
 	<!-- WHY KARACA FILE -->
 	<section class="wcs-fp-why">
