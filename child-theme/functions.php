@@ -29,6 +29,15 @@ function wcs_child_enqueue_assets() {
     $parent_theme = wp_get_theme( get_template() );
     $child_theme  = wp_get_theme();
 
+    // Lottie her sayfada yüklenmeli — header logosu için gerekli.
+    wp_enqueue_script(
+        'lottie-web',
+        'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js',
+        array(),
+        '5.12.2',
+        false // <head>'de yükle, logo hemen görünsün.
+    );
+
 	wp_enqueue_script(
 		'wcs-crypto-polyfill',
 		get_stylesheet_directory_uri() . '/assets/js/wcs-crypto-polyfill.js',
@@ -123,6 +132,38 @@ function wcs_child_enqueue_assets() {
             get_stylesheet_directory_uri() . '/assets/css/home-category-grid.css',
             array( 'wcs-custom-style' ),
             wcs_asset_version( 'assets/css/home-category-grid.css', $child_theme->get( 'Version' ) )
+        );
+
+        // Front page hero + section styles.
+        wp_enqueue_style(
+            'wcs-front-page',
+            get_stylesheet_directory_uri() . '/assets/css/front-page.css',
+            array( 'wcs-custom-style', 'wcs-bootstrap-icons' ),
+            wcs_asset_version( 'assets/css/front-page.css', $child_theme->get( 'Version' ) )
+        );
+
+        // Hero script + styles for front page.
+        wp_enqueue_style(
+            'wcs-hero-style',
+            get_stylesheet_directory_uri() . '/template-parts/components/hero/hero.css',
+            array( 'wcs-custom-style' ),
+            wcs_asset_version( 'template-parts/components/hero/hero.css', $child_theme->get( 'Version' ) )
+        );
+
+        wp_enqueue_script(
+            'lottie-web',
+            'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js',
+            array(),
+            '5.12.2',
+            true
+        );
+
+        wp_enqueue_script(
+            'wcs-hero-script',
+            get_stylesheet_directory_uri() . '/template-parts/components/hero/hero.js',
+            array( 'lottie-web' ),
+            wcs_asset_version( 'template-parts/components/hero/hero.js', $child_theme->get( 'Version' ) ),
+            true
         );
     }
 
