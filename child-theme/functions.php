@@ -593,22 +593,54 @@ function wcs_register_filterable_attributes() {
 add_action( 'init', 'wcs_register_filterable_attributes', 20 );
 
 /**
- * Render shop filter bar — pill/chip bazlı modern filtre.
- * Her attribute için aktif seçim sticky bar'da rozet olarak gösterilir.
+ * Shop/arşiv sayfalarında ?product_tag=slug parametresini
+ * ana sorguya enjekte eder (WooCommerce native olarak işlemez).
+ */
+function wcs_filter_by_product_tag( WP_Query $query ) {
+    if ( is_admin() || ! $query->is_main_query() ) {
+        return;
+    }
+    if ( ! ( function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() ) ) ) {
+        return;
+    }
+    if ( empty( $_GET['product_tag'] ) ) {
+        return;
+    }
+
+    $tag_slug  = sanitize_title( wp_unslash( $_GET['product_tag'] ) );
+    $tax_query = (array) $query->get( 'tax_query' );
+    $tax_query[] = array(
+        'taxonomy' => 'product_tag',
+        'field'    => 'slug',
+        'terms'    => $tag_slug,
+        'operator' => 'IN',
+    );
+    $query->set( 'tax_query', $tax_query );
+}
+add_action( 'pre_get_posts', 'wcs_filter_by_product_tag', 20 );
+
+/**
+ * Render shop filter bar — product_tag bazlı filtre.
  */
 function wcs_render_shop_attribute_filters() {
     if ( ! function_exists( 'is_shop' ) || ( ! is_shop() && ! is_product_taxonomy() ) ) {
         return;
     }
 
-    $definitions = wcs_get_filterable_attribute_definitions();
+    // Tüm product_tag'leri al (ürün atanmış olanlar)
+    $tags = get_terms( array(
+        'taxonomy'   => 'product_tag',
+        'hide_empty' => true,
+        'orderby'    => 'name',
+        'order'      => 'ASC',
+    ) );
 
-    // Aktif filtre sayısını hesapla
-    $active_count = 0;
-    foreach ( $definitions as $slug => $config ) {
-        $key = 'filter_pa_' . $slug;
-        if ( ! empty( $_GET[ $key ] ) ) $active_count++;
+    if ( is_wp_error( $tags ) || empty( $tags ) ) {
+        return;
     }
+
+    $selected     = isset( $_GET['product_tag'] ) ? sanitize_title( wp_unslash( $_GET['product_tag'] ) ) : '';
+    $active_count = ! empty( $selected ) ? 1 : 0;
 
     $shop_url = function_exists( 'is_product_taxonomy' ) && is_product_taxonomy()
         ? get_term_link( get_queried_object() )
@@ -618,7 +650,7 @@ function wcs_render_shop_attribute_filters() {
     <div class="wcs-filter-bar" id="wcs-filter-bar">
         <div class="wcs-filter-bar__inner">
 
-            <!-- Sol: Filtre etiketi + aktif sayacı -->
+            <!-- Sol: Filtrele butonu + aktif pill -->
             <div class="wcs-filter-bar__left">
                 <button type="button" class="wcs-filter-bar__toggle" id="wcs-filter-toggle" aria-expanded="false" aria-controls="wcs-filter-panel">
                     <i class="bi bi-sliders2" aria-hidden="true"></i>
@@ -629,26 +661,18 @@ function wcs_render_shop_attribute_filters() {
                     <i class="bi bi-chevron-down wcs-filter-bar__chevron" aria-hidden="true"></i>
                 </button>
 
-                <!-- Aktif filtre rozet'leri -->
-                <?php foreach ( $definitions as $slug => $config ) :
-                    $key = 'filter_pa_' . $slug;
-                    if ( empty( $_GET[ $key ] ) ) continue;
-                    $val = sanitize_title( wp_unslash( $_GET[ $key ] ) );
-                    $term = get_term_by( 'slug', $val, 'pa_' . $slug );
-                    $label = $term ? $term->name : $val;
-                    // URL temizle
-                    $remove_url = remove_query_arg( $key, add_query_arg( array() ) );
+                <?php if ( ! empty( $selected ) ) :
+                    $active_term  = get_term_by( 'slug', $selected, 'product_tag' );
+                    $active_label = $active_term ? $active_term->name : $selected;
+                    $remove_url   = remove_query_arg( 'product_tag', add_query_arg( array() ) );
                 ?>
                     <span class="wcs-filter-bar__active-pill">
-                        <span class="wcs-filter-bar__active-pill-label"><?php echo esc_html( $config['label'] ); ?>:</span>
-                        <strong><?php echo esc_html( $label ); ?></strong>
+                        <span class="wcs-filter-bar__active-pill-label"><?php esc_html_e( 'Etiket', 'woocommerce-store-child' ); ?>:</span>
+                        <strong><?php echo esc_html( $active_label ); ?></strong>
                         <a href="<?php echo esc_url( $remove_url ); ?>" class="wcs-filter-bar__active-pill-remove" aria-label="<?php esc_attr_e( 'Filtreyi kaldır', 'woocommerce-store-child' ); ?>">
                             <i class="bi bi-x" aria-hidden="true"></i>
                         </a>
                     </span>
-                <?php endforeach; ?>
-
-                <?php if ( $active_count > 0 ) : ?>
                     <a href="<?php echo esc_url( $shop_url ); ?>" class="wcs-filter-bar__clear-all">
                         <i class="bi bi-x-circle"></i>
                         <?php esc_html_e( 'Temizle', 'woocommerce-store-child' ); ?>
@@ -674,41 +698,32 @@ function wcs_render_shop_attribute_filters() {
         <div class="wcs-filter-panel" id="wcs-filter-panel" hidden>
             <form class="wcs-filter-panel__form" method="get" action="<?php echo esc_url( $shop_url ); ?>">
 
-                <?php foreach ( $definitions as $slug => $config ) :
-                    $taxonomy  = 'pa_' . $slug;
-                    $query_key = 'filter_' . $taxonomy;
-                    if ( ! taxonomy_exists( $taxonomy ) ) continue;
-                    $terms = get_terms( array(
-                        'taxonomy'   => $taxonomy,
-                        'hide_empty' => false,
-                    ) );
-                    if ( is_wp_error( $terms ) || empty( $terms ) ) continue;
-                    $selected = isset( $_GET[ $query_key ] ) ? sanitize_title( wp_unslash( $_GET[ $query_key ] ) ) : '';
-                ?>
-                    <div class="wcs-filter-panel__group">
-                        <h3 class="wcs-filter-panel__group-title"><?php echo esc_html( $config['label'] ); ?></h3>
-                        <div class="wcs-filter-panel__options">
-                            <label class="wcs-filter-option<?php echo '' === $selected ? ' wcs-filter-option--active' : ''; ?>">
-                                <input type="radio" name="<?php echo esc_attr( $query_key ); ?>" value=""
-                                    <?php checked( $selected, '' ); ?> hidden>
-                                <?php esc_html_e( 'Tümü', 'woocommerce-store-child' ); ?>
-                            </label>
-                            <?php foreach ( $terms as $term ) : ?>
-                                <label class="wcs-filter-option<?php echo $selected === $term->slug ? ' wcs-filter-option--active' : ''; ?>">
-                                    <input type="radio" name="<?php echo esc_attr( $query_key ); ?>"
-                                        value="<?php echo esc_attr( $term->slug ); ?>"
-                                        <?php checked( $selected, $term->slug ); ?> hidden>
-                                    <?php echo esc_html( $term->name ); ?>
-                                </label>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
+                <div class="wcs-filter-panel__group">
+                    <h3 class="wcs-filter-panel__group-title"><?php esc_html_e( 'Etiket', 'woocommerce-store-child' ); ?></h3>
+                    <div class="wcs-filter-panel__options">
 
-                <!-- Gizli hidden alanlar — mevcut query params koru -->
+                        <!-- Tümü seçeneği -->
+                        <label class="wcs-filter-option<?php echo '' === $selected ? ' wcs-filter-option--active' : ''; ?>">
+                            <input type="radio" name="product_tag" value="" <?php checked( $selected, '' ); ?> hidden>
+                            <?php esc_html_e( 'Tümü', 'woocommerce-store-child' ); ?>
+                        </label>
+
+                        <?php foreach ( $tags as $tag ) : ?>
+                            <label class="wcs-filter-option<?php echo $selected === $tag->slug ? ' wcs-filter-option--active' : ''; ?>">
+                                <input type="radio" name="product_tag"
+                                    value="<?php echo esc_attr( $tag->slug ); ?>"
+                                    <?php checked( $selected, $tag->slug ); ?> hidden>
+                                <?php echo esc_html( $tag->name ); ?>
+                            </label>
+                        <?php endforeach; ?>
+
+                    </div>
+                </div>
+
+                <!-- Mevcut query params'ı koru (product_tag ve paged hariç) -->
                 <?php foreach ( $_GET as $key => $value ) :
                     if ( ! is_string( $key ) ) continue;
-                    if ( 0 === strpos( $key, 'filter_pa_' ) || 0 === strpos( $key, 'query_type_pa_' ) || 'paged' === $key ) continue;
+                    if ( in_array( $key, array( 'product_tag', 'paged' ), true ) ) continue;
                 ?>
                     <input type="hidden" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( wp_unslash( $value ) ); ?>">
                 <?php endforeach; ?>
