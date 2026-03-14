@@ -1,0 +1,514 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0",
+        "title": "CBS Info API",
+        "description": "\u015eehirler,il\u00e7eler mahalleler gibi co\u011frafik bilgileri getirir ve servis d\u0131\u015f\u0131 ve mobil olan alanlar\u0131 listeler.|Gets geographic informations like citites, districts, neighborhoods and lists out of service areas and mobile areas.",
+        "termsOfService": "http://swagger.io/terms/"
+    },
+    "basePath": "/mngapi/api/cbsinfoapi",
+    "paths": {
+        "/getcities": {
+            "get": {
+                "tags": [
+                    "CBSInfo"
+                ],
+                "summary": "Get Cities",
+                "description": "T\u00fcrkiye'deki \u015fehirlerin ismini ve kodlar\u0131n\u0131 getirir. | Gets city names and city codes of Turkey.",
+                "operationId": "GetcitiesGet",
+                "consumes": [],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "x-api-version",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "uniqueItems": false,
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/GetCitiesResponse"
+                            }
+                        },
+                        "examples": {
+                            "application/json": [
+                                {
+                                    "code": "01",
+                                    "name": "Adana"
+                                },
+                                {
+                                    "code": "02",
+                                    "name": "Ad\u0131yaman"
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Cities not found",
+                        "schema": {
+                            "$ref": "#/definitions/ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/getdistricts/{cityCode}": {
+            "get": {
+                "tags": [
+                    "CBSInfo"
+                ],
+                "summary": "Get Districts By City Code",
+                "description": "\u0130lgili \u015fehir koduna ait il\u00e7e isimlerini ve kodlar\u0131n\u0131 getirir. | Gets district names and district codes of the relevant city code.",
+                "operationId": "GetdistrictsByCityCodeGet",
+                "consumes": [],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "cityCode",
+                        "in": "path",
+                        "description": "gets districts according to given cityCode",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "x-api-version",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "uniqueItems": false,
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/GetDistrictsResponse"
+                            }
+                        },
+                        "examples": {
+                            "application/json": [
+                                {
+                                    "cityCode": "01",
+                                    "cityName": "Adana",
+                                    "code": "85",
+                                    "name": "\u00c7ukurova"
+                                },
+                                {
+                                    "cityCode": "01",
+                                    "cityName": "Adana",
+                                    "code": "86",
+                                    "name": "Sar\u0131\u00e7am"
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "District not found",
+                        "schema": {
+                            "$ref": "#/definitions/ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/getneighborhoods/{cityCode}/{districtCode}": {
+            "get": {
+                "tags": [
+                    "CBSInfo"
+                ],
+                "summary": "Get Neighborhoods By City Code and District Code",
+                "description": "\u0130lgili \u015fehir ve il\u00e7e koduna ait mahallelerin bilgisini getirir. | Gets neighborhoods informations of the relevant city code and district code.",
+                "operationId": "GetneighborhoodsByCityCodeByDistrictCodeGet",
+                "consumes": [],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "cityCode",
+                        "in": "path",
+                        "description": "gets out of service area according to given cityCode",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "districtCode",
+                        "in": "path",
+                        "description": "gets out of service area according to given districtCode",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "x-api-version",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "uniqueItems": false,
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/GetNeighborhoodResponse"
+                            }
+                        },
+                        "examples": {
+                            "application/json": [
+                                {
+                                    "cityId": "34",
+                                    "disctrictId": "56",
+                                    "distirict": "Gaziosmanp\u015fa",
+                                    "neighborhood": "\u00c7eliktepe Mahallesi"
+                                },
+                                {
+                                    "cityId": "34",
+                                    "disctrictId": "56",
+                                    "distirict": "Gaziosmanp\u015fa",
+                                    "neighborhood": "P\u0131nar Mahallesi"
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Neighborhood not found",
+                        "schema": {
+                            "$ref": "#/definitions/ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/getoutofserviceareas/{cityCode}/{districtCode}": {
+            "get": {
+                "tags": [
+                    "CBSInfo"
+                ],
+                "summary": "Get Get Out Of Service Areas By City Code and District Code",
+                "description": "\u0130lgili \u015fehir ve il\u00e7e koduna ait servis d\u0131\u015f\u0131 olan mahallelerin bilgisini getirir. | Gets out of service area informations of the relevant city code and district code.",
+                "operationId": "GetoutofserviceareasByCityCodeByDistrictCodeGet",
+                "consumes": [],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "cityCode",
+                        "in": "path",
+                        "description": "gets out of service area according to given cityCode",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "districtCode",
+                        "in": "path",
+                        "description": "gets out of service area according to given districtCode",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "x-api-version",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "uniqueItems": false,
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/GetOutOfServiceAreaResponse"
+                            }
+                        },
+                        "examples": {
+                            "application/json": [
+                                {
+                                    "cityId": "34",
+                                    "disctrictId": "56",
+                                    "distirict": "Gaziosmanp\u015fa",
+                                    "neighborhood": "P\u0131nar Mahallesi"
+                                },
+                                {
+                                    "cityId": "34",
+                                    "disctrictId": "56",
+                                    "distirict": "Gaziosmanp\u015fa",
+                                    "neighborhood": "P\u0131nar Mahallesi"
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Out of service area not found",
+                        "schema": {
+                            "$ref": "#/definitions/ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/getmobileareas/{cityCode}/{districtCode}": {
+            "get": {
+                "tags": [
+                    "CBSInfo"
+                ],
+                "summary": "Get Mobile Areas By City Code and District Code",
+                "description": "\u0130lgili \u015fehir ve il\u00e7e koduna ait mobil mahalle bilgisini getirir. | Gets mobil area informations of the relevant city code and district code.",
+                "operationId": "GetmobileareasByCityCodeByDistrictCodeGet",
+                "consumes": [],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "cityCode",
+                        "in": "path",
+                        "description": "gets mobile area according to given cityCode",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "districtCode",
+                        "in": "path",
+                        "description": "gets mobile area according to given districtCode",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "x-api-version",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "uniqueItems": false,
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/GetMobileAreaResponse"
+                            }
+                        },
+                        "examples": {
+                            "application/json": [
+                                {
+                                    "cityId": "34",
+                                    "disctrictId": "56",
+                                    "distirict": "Gaziosmanp\u015fa",
+                                    "neighborhood": "\u00c7eliktepe Mahallesi"
+                                },
+                                {
+                                    "cityId": "34",
+                                    "disctrictId": "56",
+                                    "distirict": "Gaziosmanp\u015fa",
+                                    "neighborhood": "P\u0131nar Mahallesi"
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Mobile area not found",
+                        "schema": {
+                            "$ref": "#/definitions/ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "GetCitiesResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "ProblemDetails": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "status": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "detail": {
+                    "type": "string"
+                },
+                "instance": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": {
+                "type": "object"
+            }
+        },
+        "GetDistrictsResponse": {
+            "type": "object",
+            "properties": {
+                "cityCode": {
+                    "type": "string"
+                },
+                "cityName": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "GetNeighborhoodResponse": {
+            "type": "object",
+            "properties": {
+                "cityId": {
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "disctrictId": {
+                    "type": "string"
+                },
+                "distirict": {
+                    "type": "string"
+                },
+                "neighborhood": {
+                    "type": "string"
+                }
+            }
+        },
+        "GetOutOfServiceAreaResponse": {
+            "type": "object",
+            "properties": {
+                "cityId": {
+                    "type": "string"
+                },
+                "disctrictId": {
+                    "type": "string"
+                },
+                "distirict": {
+                    "type": "string"
+                },
+                "neighborhood": {
+                    "type": "string"
+                }
+            }
+        },
+        "GetMobileAreaResponse": {
+            "type": "object",
+            "properties": {
+                "cityId": {
+                    "type": "string"
+                },
+                "disctrictId": {
+                    "type": "string"
+                },
+                "distirict": {
+                    "type": "string"
+                },
+                "neighborhood": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "api-key-1": {
+            "description": "",
+            "in": "header",
+            "name": "X-IBM-Client-Id",
+            "type": "apiKey"
+        },
+        "api-key-2": {
+            "description": "",
+            "in": "header",
+            "name": "X-IBM-Client-Secret",
+            "type": "apiKey"
+        }
+    },
+    "security": [
+        {
+            "api-key-2": [],
+            "api-key-1": []
+        }
+    ],
+    "schemes": [
+        "https"
+    ],
+    "host": "testapi.mngkargo.com.tr"
+}

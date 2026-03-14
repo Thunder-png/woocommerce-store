@@ -1,0 +1,58 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "v1",
+        "title": "Mobil Kurye API"
+    },
+    "basePath": "/mngapi/api",
+    "securityDefinitions": [],
+    "schemes": [
+        "https"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/api/SoftPos/GetInvoiceReceipt": {
+            "get": {
+                "description": "",
+                "summary": "ApiSoftPosGetInvoiceReceipt_GET",
+                "tags": [
+                    "SoftPos"
+                ],
+                "operationId": "ApiSoftPosGetInvoiceReceipt_GET",
+                "deprecated": false,
+                "produces": [
+                    "text/plain",
+                    "application/json",
+                    "text/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "Invoice",
+                        "in": "query",
+                        "required": false,
+                        "type": "string",
+                        "description": ""
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "default": ""
+                        },
+                        "headers": []
+                    }
+                }
+            }
+        }
+    },
+    "definitions": [],
+    "tags": [],
+    "security": [],
+    "host": "testapi.mngkargo.com.tr"
+}

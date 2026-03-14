@@ -1,0 +1,1016 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0",
+        "title": "Finance Query API",
+        "description": "Finansal bir API'dir, g\u00f6nderiye ait fatura ve fatura detay listesini listeler ya da g\u00f6nderiye ait komisyon fatura ve komisyon fatura detay listesini listeler.|This a financial API that lists invoice and invoice detail list of shipment or lists commission invoice and commission invoice detail list of shipment.",
+        "termsOfService": "http://swagger.io/terms/"
+    },
+    "basePath": "/mngapi/api/financequeryapi",
+    "paths": {
+        "/getinvoicelist": {
+            "post": {
+                "tags": [
+                    "FinanceQuery"
+                ],
+                "summary": "Get Invoice List",
+                "description": "Belirtilen tarih aral\u0131\u011f\u0131na ait g\u00f6nderi fatura listesini getirir. | Returns the shipment invoice list for the specified date range.",
+                "operationId": "GetinvoicelistPost",
+                "consumes": [
+                    "application/json-patch+json",
+                    "application/json",
+                    "text/json",
+                    "application/*+json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "getInvoiceListRequest",
+                        "in": "body",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/definitions/GetInvoiceListRequest"
+                        }
+                    },
+                    {
+                        "name": "x-api-version",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "uniqueItems": false,
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/GetInvoiceListResponse"
+                            }
+                        },
+                        "examples": {
+                            "application/json": [
+                                {
+                                    "billofLandingId": "56758568568",
+                                    "invoiceSerialNumber": "F",
+                                    "invoiceNumber": "4534534",
+                                    "invoiceDateTime": "2020-10-23 05:34",
+                                    "eInvoiceId": "1234",
+                                    "atfCount": "1",
+                                    "recipientBranchCode": "34545",
+                                    "shipperBranchCode": "56755",
+                                    "packagingType": "2",
+                                    "description": "desc",
+                                    "numberOfPieces": "1",
+                                    "kgDesi": "2",
+                                    "paymentType": "1",
+                                    "finalTotal": "4,5",
+                                    "shipperCustomerId": 5587786978,
+                                    "recipientCustomerId": 343543654675,
+                                    "shipperCustomerFullName": "Ay\u015fe Y\u0131lmaz",
+                                    "recipientCustomerFullName": "S Ayakkab\u0131",
+                                    "shipperBranch": "Levent",
+                                    "recipientBranch": "Sar\u0131yer"
+                                },
+                                {
+                                    "billofLandingId": "32453635",
+                                    "invoiceSerialNumber": "F",
+                                    "invoiceNumber": "4534534",
+                                    "invoiceDateTime": "2020-10-23 05:34",
+                                    "eInvoiceId": "1234",
+                                    "atfCount": "1",
+                                    "recipientBranchCode": "34545",
+                                    "shipperBranchCode": "56755",
+                                    "packagingType": "2",
+                                    "description": "desc",
+                                    "numberOfPieces": "1",
+                                    "kgDesi": "2",
+                                    "paymentType": "1",
+                                    "finalTotal": "4,5",
+                                    "shipperCustomerId": 5587786978,
+                                    "recipientCustomerId": 343543654675,
+                                    "shipperCustomerFullName": "Merve \u00d6zsoy",
+                                    "recipientCustomerFullName": "N Ayakkab\u0131",
+                                    "shipperBranch": "Levent",
+                                    "recipientBranch": "Sar\u0131yer"
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Invoice list not found",
+                        "schema": {
+                            "$ref": "#/definitions/ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/getinvoicedetaillist": {
+            "post": {
+                "tags": [
+                    "FinanceQuery"
+                ],
+                "summary": "Get Invoice Detail List",
+                "description": "Belirtilen kriterlere ait g\u00f6nderi fatura detay listesini getirir. \u0130stekte ya EInvoice numaras\u0131 ya da InvoiceSerialNumber, InvoiceNumber, InvoiceType g\u00f6nderilmelidir. | Returns the shipment invoice detail list for the specified criteria. Either EInvoice Id or InvoiceSerialNumber, InvoiceNumber, InvoiceType must be send in the request.",
+                "operationId": "GetinvoicedetaillistPost",
+                "consumes": [
+                    "application/json-patch+json",
+                    "application/json",
+                    "text/json",
+                    "application/*+json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "getInvoiceDetailListRequest",
+                        "in": "body",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/definitions/GetInvoiceDetailListRequest"
+                        }
+                    },
+                    {
+                        "name": "x-api-version",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "uniqueItems": false,
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/GetInvoiceDetailListResponse"
+                            }
+                        },
+                        "examples": {
+                            "application/json": [
+                                {
+                                    "sequenceNumber": "1",
+                                    "invoiceDateTime": "06.08.2009",
+                                    "shipperBranch": "KERESTEC\u0130LER",
+                                    "invoiceSerialNumber": "9L",
+                                    "invoiceNumber": "674661",
+                                    "subTotal": "29,46",
+                                    "kdv": "3,48",
+                                    "numberOfPieces": "9",
+                                    "kgDesi": "2",
+                                    "paymentType": "P",
+                                    "finalTotal": "22,79",
+                                    "isCOD": 0,
+                                    "smsPreference1": 0,
+                                    "smsPreference2": 0,
+                                    "smsPreference3": 0,
+                                    "isDelivered": 0,
+                                    "shipperCity": "\u0130STANBUL",
+                                    "recipientBranch": "KERESTEC\u0130LER",
+                                    "recipientCity": "\u0130STANBUL",
+                                    "wayBillId": "J9LUS2FB",
+                                    "recipientCustomerId": 429547,
+                                    "recipientHomePhoneNumber": "2125233030",
+                                    "recipientBussinessPhoneNumber": "2125233030",
+                                    "recipientMobilePhoneNumber": "1111111111",
+                                    "lastStatusNumber": "5"
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Invoice detail list not found",
+                        "schema": {
+                            "$ref": "#/definitions/ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/getCommissionInvoicelist": {
+            "post": {
+                "tags": [
+                    "FinanceQuery"
+                ],
+                "summary": "Get COD Commission Invoice List",
+                "description": "Belirtilen kriterlere ait g\u00f6nderi komisyon fatura listesini getirir. \u0130stekte ya StartDate, EndDate ya da InvoiceSerialNumber, InvoiceNumber, isSubCompanyIncluded, InvoicePaymentDate g\u00f6nderilmelidir. Kap\u0131da \u00f6demeli g\u00f6nderiler ile ilgili bir faturad\u0131r. | Returns the shipment comission invoice list for the specified criteria. Either StartDate, EndDate or InvoiceSerialNumber, InvoiceNumber, isSubCompanyIncluded, InvoicePaymentDate must be send in the request. It is an invoice related to COD shipments.",
+                "operationId": "GetCommissionInvoicelistPost",
+                "consumes": [
+                    "application/json-patch+json",
+                    "application/json",
+                    "text/json",
+                    "application/*+json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "CommissionInvoiceList",
+                        "in": "body",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/definitions/GetCommissionInvoiceListRequest"
+                        }
+                    },
+                    {
+                        "name": "x-api-version",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "uniqueItems": false,
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/GetCommissionInvoiceListResponse"
+                            }
+                        },
+                        "examples": {
+                            "application/json": [
+                                {
+                                    "shippperId": "35615719",
+                                    "shipper": "TEST M\u00dc\u015eTER\u0130S\u0130",
+                                    "invoiceSerialNumber": "F",
+                                    "invoiceNumber": "8436",
+                                    "shipmentDate": "18/10/2018 ",
+                                    "codAmountCommission": "65,28",
+                                    "codAmount": "757,1",
+                                    "creditCardAmount": "0",
+                                    "codAmountSubTotal": "65,28",
+                                    "codAmountKDV": "11,75",
+                                    "codAmountFinalTotal": "77,03 ",
+                                    "paymentTotal": "680,07 ",
+                                    "paymentDate": "01.03.2020",
+                                    "paymentConfirm": "",
+                                    "paymentStatus": "0",
+                                    "paymentDescription": "\u00d6deme Yap\u0131lmad\u0131",
+                                    "paymentAmount": "",
+                                    "invoiceStatus": "\u00d6dendi",
+                                    "arrearsAmount": "680,07"
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Commission Invoice list not found",
+                        "schema": {
+                            "$ref": "#/definitions/ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/getCommissionInvoicedetaillist": {
+            "post": {
+                "tags": [
+                    "FinanceQuery"
+                ],
+                "summary": "Get COD Commission Invoice Detail List",
+                "description": "Belirtilen kriterlere ait g\u00f6nderi komisyon detay listesini getirir. \u0130stekte ya StartDate, EndDate ya da InvoiceSerialNumber, InvoiceNumber, isSubCompanyIncluded g\u00f6nderilmelidir. Kap\u0131da \u00f6demeli g\u00f6nderiler ile ilgili bir faturad\u0131r.| Returns the shipment commision invoice detail list for the specified criteria. Either StartDate, EndDate or  InvoiceSerialNumber, InvoiceNumber, isSubCompanyIncluded must be send in the request. It is an invoice related to COD shipments.",
+                "operationId": "GetCommissionInvoicedetaillistPost",
+                "consumes": [
+                    "application/json-patch+json",
+                    "application/json",
+                    "text/json",
+                    "application/*+json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "CommissionInvoiceDetailList",
+                        "in": "body",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/definitions/GetCommissionInvoiceDetailListRequest"
+                        }
+                    },
+                    {
+                        "name": "x-api-version",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "uniqueItems": false,
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/GetCommissionInvoiceDetailListResponse"
+                            }
+                        },
+                        "examples": {
+                            "application/json": [
+                                {
+                                    "shipmentDate": "18/09/2018",
+                                    "shipper": "TEST M\u00dc\u015eTER\u0130S\u0130",
+                                    "recipient": "TU\u011e\u00c7E Y\u00dc ",
+                                    "recipientAddress": "MNG BLUE BOUT\u0130QUE  -  HALKALI MERKEZ MH.",
+                                    "referenceId": "1809180818001",
+                                    "billOfLandingId": "999201813775363",
+                                    "invoiceSerialNumber": "300583",
+                                    "invoiceNumber": "FM",
+                                    "numberOfPieces": "1",
+                                    "kgDesi": "4",
+                                    "finalTotal": " 24,82 ",
+                                    "description": "TEST",
+                                    "codAmount": "40,8",
+                                    "shipmentDeliveryDate": "19/09/2018 ",
+                                    "deliveryTo": "TEST ALICI",
+                                    "commissionInvoiceDate": "18/10/2018 ",
+                                    "commissionInvoiceSerialNumber": "8436",
+                                    "commissionInvoiceNumber": "F",
+                                    "codAmountWithoutKDV": "7,09",
+                                    "paymentDate": "18/10/2018",
+                                    "codPaymentType": "Nakit",
+                                    "postagePrice": "10,2"
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Commission Invoice detail list not found",
+                        "schema": {
+                            "$ref": "#/definitions/ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "GetInvoiceListRequest": {
+            "required": [
+                "startDate",
+                "endDate"
+            ],
+            "type": "object",
+            "properties": {
+                "startDate": {
+                    "type": "string"
+                },
+                "endDate": {
+                    "type": "string"
+                }
+            },
+            "example": {
+                "startDate": "01.03.2015",
+                "endDate": "01.03.2017"
+            }
+        },
+        "GetInvoiceListResponse": {
+            "type": "object",
+            "properties": {
+                "billofLandingId": {
+                    "description": "Bill Of LandingId\r\n\u0130rsaliye Numaras\u0131",
+                    "type": "string"
+                },
+                "invoiceSerialNumber": {
+                    "description": "Invoice Serial Number \r\nFatura Seri Numaras\u0131",
+                    "type": "string"
+                },
+                "invoiceNumber": {
+                    "description": "Invoice Number\r\nFatura Numaras\u0131",
+                    "type": "string"
+                },
+                "invoiceDateTime": {
+                    "description": "Invoice Date\r\nFatura Kesim Tarihi",
+                    "type": "string"
+                },
+                "eInvoiceId": {
+                    "description": "E-Invoice Number\r\nE-Fatura Numaras\u0131",
+                    "type": "string"
+                },
+                "atfCount": {
+                    "description": "Shipment ATF Count\r\nG\u00f6nderi ATF Adeti",
+                    "type": "string"
+                },
+                "recipientBranchCode": {
+                    "description": "Recipient Branch Code\r\nAl\u0131c\u0131 \u015eube Kodu",
+                    "type": "string"
+                },
+                "shipperBranchCode": {
+                    "description": "Shipper BranchCode\r\nG\u00f6nderici \u015eube Kodu",
+                    "type": "string"
+                },
+                "packagingType": {
+                    "description": "Package Type of Order:  1:DOSYA, 2:M\u0130, 3:PAKET, 4:KOL\u0130\r\nKargo Cinsi",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "numberOfPieces": {
+                    "description": "Shipment Total Piece Number\r\nG\u00f6nderi Toplam Par\u00e7a Say\u0131s\u0131",
+                    "type": "string"
+                },
+                "kgDesi": {
+                    "type": "string"
+                },
+                "paymentType": {
+                    "description": "Payment Type of Order: 1:GONDERICI_ODER, 2:ALICI_ODER,3:PLATFORM_ODER\r\n\u00d6deme \u015eekli",
+                    "type": "string"
+                },
+                "finalTotal": {
+                    "description": "Final Total\r\nGenel Toplam",
+                    "type": "string"
+                },
+                "shipperCustomerId": {
+                    "format": "int64",
+                    "description": "Shipper Identity Number of Customer \r\nG\u00f6nderici M\u00fc\u015fteri Numaras\u0131",
+                    "type": "integer"
+                },
+                "recipientCustomerId": {
+                    "format": "int64",
+                    "description": "Recepient Identity Number of Customer \r\nAl\u0131c\u0131 M\u00fc\u015fteri Numaras\u0131",
+                    "type": "integer"
+                },
+                "shipperCustomerFullName": {
+                    "description": "Shipper Customer FullName\r\nG\u00f6nderici M\u00fc\u015fteri Tam Ad\u0131",
+                    "type": "string"
+                },
+                "recipientCustomerFullName": {
+                    "description": "Recipient Customer Full Name\r\nAl\u0131c\u0131 M\u00fc\u015fteri Tam Ad\u0131",
+                    "type": "string"
+                },
+                "shipperBranch": {
+                    "description": "Shipper Branch\r\nG\u00f6nderici \u015fube",
+                    "type": "string"
+                },
+                "recipientBranch": {
+                    "description": "Recipient Branch\r\nAl\u0131c\u0131 \u015eube",
+                    "type": "string"
+                }
+            }
+        },
+        "ProblemDetails": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "status": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "detail": {
+                    "type": "string"
+                },
+                "instance": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": {
+                "type": "object"
+            }
+        },
+        "GetInvoiceDetailListRequest": {
+            "type": "object",
+            "properties": {
+                "eInvoiceId": {
+                    "description": "E-Invoice Number\r\nE-Fatura Numaras\u0131",
+                    "type": "string"
+                },
+                "invoiceSerialNumber": {
+                    "description": "Invoice Serial Number \r\nFatura Seri Numaras\u0131",
+                    "type": "string"
+                },
+                "invoiceNumber": {
+                    "description": "Invoice Number\r\nFatura Numaras\u0131",
+                    "type": "string"
+                },
+                "invoiceType": {
+                    "format": "int32",
+                    "description": "Invoice Type\r\nFatura T\u00fcr\u00fc",
+                    "type": "integer"
+                }
+            },
+            "example": {
+                "eInvoiceId": "",
+                "invoiceSerialNumber": "9L",
+                "invoiceNumber": "674661",
+                "invoiceType": 3
+            }
+        },
+        "GetInvoiceDetailListResponse": {
+            "type": "object",
+            "properties": {
+                "sequenceNumber": {
+                    "type": "string"
+                },
+                "invoiceDateTime": {
+                    "description": "Invoice Date\r\nFatura Kesim Tarihi",
+                    "type": "string"
+                },
+                "shipperBranch": {
+                    "description": "Shipper Branch\r\nG\u00f6nderici \u015eube",
+                    "type": "string"
+                },
+                "shipmentId": {
+                    "description": "Identity Number of Shipment\r\nG\u00f6nderi Numaras\u0131",
+                    "type": "string"
+                },
+                "shipperCustomerFullName": {
+                    "description": "Shipper Customer Full Name\r\nG\u00f6nderici M\u00fc\u015fteri Tam Ad\u0131",
+                    "type": "string"
+                },
+                "recipientCustomerFullName": {
+                    "description": "Recipient Customer Full Name\r\nAl\u0131c\u0131 M\u00fc\u015fteri Tam Ad\u0131",
+                    "type": "string"
+                },
+                "invoiceSerialNumber": {
+                    "description": "Invoice Serial number \r\nFatura Seri Numaras\u0131",
+                    "type": "string"
+                },
+                "invoiceNumber": {
+                    "description": "Invoice Number\r\nFatura Numaras\u0131",
+                    "type": "string"
+                },
+                "eInvoiceId": {
+                    "description": "E-Invoice Number\r\nE-Fatura Numaras\u0131",
+                    "type": "string"
+                },
+                "billOfLandingId": {
+                    "description": "Bill Of LandingId\r\n\u0130rsaliye Numaras\u0131",
+                    "type": "string"
+                },
+                "deliveringBySurname": {
+                    "description": "Delivering By Surname\r\nTeslim Eden Soyad\u0131",
+                    "type": "string"
+                },
+                "refCustomerId": {
+                    "description": "Identity Number of Customer in their's own system.\r\nM\u00fc\u015fterinin kendi sistemindeki numaras\u0131",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "subTotal": {
+                    "type": "string"
+                },
+                "kdv": {
+                    "type": "string"
+                },
+                "numberOfPieces": {
+                    "description": "Shipment Total Piece Number\r\nG\u00f6nderi Toplam Par\u00e7a Say\u0131s\u0131",
+                    "type": "string"
+                },
+                "kgDesi": {
+                    "type": "string"
+                },
+                "paymentType": {
+                    "description": "Payment Type of Order: 1:GONDERICI_ODER, 2:ALICI_ODER,3:PLATFORM_ODER\r\n\u00d6deme \u015eekli",
+                    "type": "string"
+                },
+                "finalTotal": {
+                    "description": "Final Total\r\nGenel Toplam",
+                    "type": "string"
+                },
+                "isCOD": {
+                    "format": "int32",
+                    "description": "Indicates whether it is Cash On Delivery.\r\nKap\u0131da \u00d6deme mi?",
+                    "type": "integer"
+                },
+                "codAmount": {
+                    "description": "Cash on Delivery Amount\r\nKap\u0131da \u00d6deme Miktar\u0131",
+                    "type": "string"
+                },
+                "packagingType": {
+                    "description": "Package Type of Order:  1:DOSYA, 2:M\u0130, 3:PAKET, 4:KOL\u0130\r\nKargo Cinsi",
+                    "type": "string"
+                },
+                "deliveryType": {
+                    "description": "Delivery Type of Order: 1:ADRESE_TESLIM, 2:ALICISI_HABERL\u0130 \r\nTeslim \u015eekli",
+                    "type": "string"
+                },
+                "shipmentServiceType": {
+                    "description": "Shipment Service Type: 1:STANDART_TESL\u0130MAT, 7:GUN\u0130C\u0130_TESL\u0130MAT, 8:AK\u015eAM_TESL\u0130MAT\r\nG\u00f6nderi Tipi",
+                    "type": "string"
+                },
+                "smsPreference1": {
+                    "format": "int32",
+                    "description": "SMSPreference Is Send SMS to Recipient When Shipment Reached to Destination Branch\r\nKargo var\u0131\u015f \u015fubesine ula\u015ft\u0131\u011f\u0131nda al\u0131c\u0131ya SMS gitsin mi?",
+                    "type": "integer"
+                },
+                "smsPreference2": {
+                    "format": "int32",
+                    "description": "Is Send SMS to Recipient When Shpiment First Prepare\r\nKargo ilk haz\u0131rland\u0131\u011f\u0131nda al\u0131c\u0131ya SMS gitsin mi?",
+                    "type": "integer"
+                },
+                "smsPreference3": {
+                    "format": "int32",
+                    "description": "Is Send SMS to Shipper When Shipment Delivered\r\nKargo teslim edildi\u011finde g\u00f6ndericiye SMS gitsin mi?",
+                    "type": "integer"
+                },
+                "isDelivered": {
+                    "format": "int32",
+                    "description": "Is Shipment Delivered?\r\nG\u00f6nderi Teslim Edildi Mi?",
+                    "type": "integer"
+                },
+                "deliveryDateTime": {
+                    "description": "Shipment Delivery Date\r\nTeslim Tarihi",
+                    "type": "string"
+                },
+                "deliveryTo": {
+                    "description": "Name and Surname who delivery to shipment.\r\nG\u00f6nderiyi teslim alan ad\u0131 ve soyad\u0131.",
+                    "type": "string"
+                },
+                "checkOutBranch": {
+                    "description": "CheckOut Branch\r\nTeslim Alan \u015eube",
+                    "type": "string"
+                },
+                "shipperCity": {
+                    "description": "Shipper City\r\nG\u00f6nderici \u0130l",
+                    "type": "string"
+                },
+                "recipientBranch": {
+                    "description": "RecipientBranch\r\nAl\u0131c\u0131 \u015eube",
+                    "type": "string"
+                },
+                "recipientCity": {
+                    "description": "Recipient City\r\nTeslim \u0130li",
+                    "type": "string"
+                },
+                "recipientAddress": {
+                    "description": "Recipient Address\r\nAl\u0131c\u0131 Adresi",
+                    "type": "string"
+                },
+                "wayBillId": {
+                    "description": "WayBillId \r\nKonsitmento Numaras\u0131",
+                    "type": "string"
+                },
+                "recipientCustomerId": {
+                    "format": "int64",
+                    "description": "Recepient Identity Number of Customer \r\nAl\u0131c\u0131 M\u00fc\u015fteri Numaras\u0131",
+                    "type": "integer"
+                },
+                "recipientHomePhoneNumber": {
+                    "type": "string"
+                },
+                "recipientBussinessPhoneNumber": {
+                    "type": "string"
+                },
+                "recipientMobilePhoneNumber": {
+                    "type": "string"
+                },
+                "lastStatusDescription": {
+                    "description": "Shipment Last Status Description\r\nG\u00f6nderi Son Durumunun A\u00e7\u0131klamas\u0131",
+                    "type": "string"
+                },
+                "lastStatusCode": {
+                    "description": "Shipment Last Status Code\r\nG\u00f6nderi Son Durum Kodu",
+                    "type": "string"
+                },
+                "lastStatusNumber": {
+                    "description": "Shipment Last Status Number\r\nG\u00f6nderi Son Durum Numaras\u0131",
+                    "type": "string"
+                }
+            }
+        },
+        "GetCommissionInvoiceListRequest": {
+            "type": "object",
+            "properties": {
+                "startDate": {
+                    "type": "string"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "invoiceSerialNumber": {
+                    "description": "Invoice Serial Number \r\nFatura Seri Numaras\u0131",
+                    "type": "string"
+                },
+                "invoiceNumber": {
+                    "description": "Invoice Number\r\nFatura Numaras\u0131",
+                    "type": "string"
+                },
+                "isSubCompanyIncluded": {
+                    "format": "int32",
+                    "description": "is SubCompany Included?\r\nAlt firmalar dahil edilsin mi?",
+                    "type": "integer"
+                },
+                "dateType": {
+                    "description": "Date Type\r\nFatura ATarihi",
+                    "type": "string"
+                }
+            },
+            "example": {
+                "startDate": "",
+                "endDate": "",
+                "invoiceSerialNumber": "HA",
+                "invoiceNumber": "94408",
+                "isSubCompanyIncluded": 0,
+                "dateType": "FATURA"
+            }
+        },
+        "GetCommissionInvoiceListResponse": {
+            "type": "object",
+            "properties": {
+                "shippperId": {
+                    "description": "Shippper Id \r\nTahsilat Yap\u0131lan M\u00fc\u015fteri Numaras\u0131",
+                    "type": "string"
+                },
+                "shipper": {
+                    "description": "Shipper\r\nG\u00f6nderici",
+                    "type": "string"
+                },
+                "invoiceSerialNumber": {
+                    "description": "Invoice Serial Number \r\nFatura Seri Numaras\u0131",
+                    "type": "string"
+                },
+                "invoiceNumber": {
+                    "description": "Invoice Number\r\nFatura Numaras\u0131",
+                    "type": "string"
+                },
+                "shipmentDate": {
+                    "description": "Shipment Date\r\nG\u00f6nderi Tarihi",
+                    "type": "string"
+                },
+                "codAmountCommission": {
+                    "description": "COD Amount Commission\r\nKap\u0131da \u00d6deme Komisyon Miktar\u0131",
+                    "type": "string"
+                },
+                "codAmount": {
+                    "description": "Cash on Delivery Amount\r\nKap\u0131da \u00d6deme Miktar\u0131",
+                    "type": "string"
+                },
+                "creditCardAmount": {
+                    "description": "Credit Card Amount\r\nKredi Kart\u0131 Komisyon \u00dccreti",
+                    "type": "string"
+                },
+                "codAmountSubTotal": {
+                    "description": "Cash on Delivery Amount Sub Total\r\nKap\u0131da \u00d6deme Ara Toplam\u0131 Miktar\u0131",
+                    "type": "string"
+                },
+                "codAmountKDV": {
+                    "description": "Cash on Delivery Amount KDV\r\nKap\u0131da \u00d6deme KDV Miktar\u0131",
+                    "type": "string"
+                },
+                "codAmountFinalTotal": {
+                    "description": "Cash on Delivery Amount Final Total\r\nKap\u0131da \u00d6deme Toplam Miktar\u0131",
+                    "type": "string"
+                },
+                "paymentTotal": {
+                    "description": "Payment Total\r\nToplam \u00d6deme Miktar\u0131",
+                    "type": "string"
+                },
+                "paymentDate": {
+                    "description": "Payment Date\r\n\u00d6deme Tarihi",
+                    "type": "string"
+                },
+                "paymentConfirm": {
+                    "description": "Payment Confirm\r\n\u00d6deme Onay\u0131",
+                    "type": "string"
+                },
+                "paymentStatus": {
+                    "description": "Payment Status\r\n\u00d6deme Durumu",
+                    "type": "string"
+                },
+                "paymentDescription": {
+                    "description": "Payment Description\r\n\u00d6deme A\u00e7\u0131klamas\u0131",
+                    "type": "string"
+                },
+                "paymentAmount": {
+                    "description": "Payment Amount\r\n\u00d6deme Miktar\u0131",
+                    "type": "string"
+                },
+                "invoiceStatus": {
+                    "description": "Invoice Status\r\nFatura Durumu",
+                    "type": "string"
+                },
+                "arrearsAmount": {
+                    "description": "Arrears Amount\r\nKalan Miktar",
+                    "type": "string"
+                }
+            }
+        },
+        "GetCommissionInvoiceDetailListRequest": {
+            "type": "object",
+            "properties": {
+                "startDate": {
+                    "type": "string"
+                },
+                "endDate": {
+                    "type": "string"
+                },
+                "invoiceSerialNumber": {
+                    "description": "Invoice Serial Number \r\nFatura Seri Numaras\u0131",
+                    "type": "string"
+                },
+                "invoiceNumber": {
+                    "description": "Invoice Number\r\nFatura Numaras\u0131",
+                    "type": "string"
+                },
+                "isSubCompanyIncluded": {
+                    "format": "int32",
+                    "description": "is SubCompany Included?\r\nAlt firmalar dahil edilsin mi?",
+                    "type": "integer"
+                }
+            },
+            "example": {
+                "startDate": "",
+                "endDate": "",
+                "invoiceSerialNumber": "HA",
+                "invoiceNumber": "94408",
+                "isSubCompanyIncluded": 0
+            }
+        },
+        "GetCommissionInvoiceDetailListResponse": {
+            "type": "object",
+            "properties": {
+                "shipmentDate": {
+                    "description": "Shipment Date\r\nFatura Kesim Tarihi",
+                    "type": "string"
+                },
+                "shipper": {
+                    "description": "Shipper\r\nG\u00f6nderici",
+                    "type": "string"
+                },
+                "recipient": {
+                    "description": "Recipient \r\nAl\u0131c\u0131",
+                    "type": "string"
+                },
+                "recipientAddress": {
+                    "description": "Recipient Address\r\nAl\u0131c\u0131 Adres",
+                    "type": "string"
+                },
+                "referenceId": {
+                    "description": "Identity Number of Customer in their's own system.\r\nM\u00fc\u015fterinin kendi sistemindeki numaras\u0131",
+                    "type": "string"
+                },
+                "billOfLandingId": {
+                    "description": "Bill Of LandingId\r\n\u0130rsaliye Numaras\u0131",
+                    "type": "string"
+                },
+                "invoiceSerialNumber": {
+                    "description": "Invoice Serial Number \r\nFatura Seri Numaras\u0131",
+                    "type": "string"
+                },
+                "invoiceNumber": {
+                    "description": "Invoice Number\r\nFatura Numaras\u0131",
+                    "type": "string"
+                },
+                "numberOfPieces": {
+                    "description": "Shipment total piece number\r\nG\u00f6nderi toplam par\u00e7a say\u0131s\u0131",
+                    "type": "string"
+                },
+                "kgDesi": {
+                    "type": "string"
+                },
+                "finalTotal": {
+                    "description": "Final Total\r\nGenel Toplam",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "codAmount": {
+                    "description": "Cash on Delivery Amount\r\nKap\u0131da \u00d6deme Miktar\u0131",
+                    "type": "string"
+                },
+                "shipmentDeliveryDate": {
+                    "description": "Shipment Delivery Date\r\nG\u00f6nderi Teslim Tarihi",
+                    "type": "string"
+                },
+                "deliveryTo": {
+                    "description": "Name and Surname who delivery to shipment.\r\nG\u00f6nderiyi teslim alan ad\u0131 ve soyad\u0131.",
+                    "type": "string"
+                },
+                "commissionInvoiceDate": {
+                    "description": "Commission Invoice Date\r\nKomisyon Fatura Kesim Tarihi",
+                    "type": "string"
+                },
+                "commissionInvoiceSerialNumber": {
+                    "description": "Commission Invoice Serial number\r\nKomisyon Faturas\u0131 Seri Numaras\u0131",
+                    "type": "string"
+                },
+                "commissionInvoiceNumber": {
+                    "description": "Commission Invoice Number\r\nKomisyon Faturas\u0131 Numaras\u0131",
+                    "type": "string"
+                },
+                "codAmountWithoutKDV": {
+                    "description": "Shipment Cash on Delivery Amount whitout KDV\r\nKDVsiz Kap\u0131da \u00d6deme Miktar\u0131",
+                    "type": "string"
+                },
+                "paymentDate": {
+                    "description": "Payment Date\r\n\u00d6deme Tarihi",
+                    "type": "string"
+                },
+                "codPaymentType": {
+                    "type": "string",
+                    "description": "COD Payment Type\r\nMal Bedeli \u00d6deme \u015eekli - Nakit / Kredi Kart\u0131"
+                },
+                "postagePrice": {
+                    "type": "string",
+                    "description": "Postage Price\r\nPosta \u00dccreti"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "api-key-1": {
+            "description": "",
+            "in": "header",
+            "name": "X-IBM-Client-Id",
+            "type": "apiKey"
+        },
+        "api-key-2": {
+            "description": "",
+            "in": "header",
+            "name": "X-IBM-Client-Secret",
+            "type": "apiKey"
+        }
+    },
+    "security": [
+        {
+            "api-key-2": [],
+            "api-key-1": []
+        }
+    ],
+    "schemes": [
+        "https"
+    ],
+    "host": "testapi.mngkargo.com.tr"
+}
