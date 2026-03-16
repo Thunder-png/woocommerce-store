@@ -559,6 +559,11 @@ class DEMW_Order_Actions {
 			if ( is_wp_error( $wait_error ) ) {
 				return $wait_error;
 			}
+
+			$branch_ready_error = $this->get_branch_readiness_error( $reference_id );
+			if ( is_wp_error( $branch_ready_error ) ) {
+				return $branch_ready_error;
+			}
 		}
 
 		if ( isset( $payload['referenceId'] ) && '' === (string) $payload['referenceId'] ) {
@@ -623,6 +628,58 @@ class DEMW_Order_Actions {
 						'dhl-ecommerce-mng-woocommerce'
 					),
 					$remaining
+				)
+			);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Check whether destination branch appears to be ready before barcode call.
+	 *
+	 * @param string $reference_id Reference id.
+	 * @return WP_Error|null
+	 */
+	private function get_branch_readiness_error( $reference_id ) {
+		$reference_id = trim( (string) $reference_id );
+		if ( '' === $reference_id ) {
+			return null;
+		}
+
+		$order_result = $this->api_client->get_order_by_reference( $reference_id );
+		if ( is_wp_error( $order_result ) ) {
+			// Do not hard-block on query errors; let barcode endpoint decide.
+			return null;
+		}
+
+		$data = is_array( $order_result['data'] ) ? $order_result['data'] : array();
+		$branch_code = $this->extract_value(
+			$data,
+			array(
+				'destinationBranchCode',
+				'recipientBranchCode',
+				'receiverBranchCode',
+				'branchCode',
+				'shipment.destinationBranchCode',
+				'order.destinationBranchCode',
+				'shipment.recipientBranchCode',
+			)
+		);
+
+		if ( '' !== trim( $branch_code ) ) {
+			return null;
+		}
+
+		$raw = wp_json_encode( $data );
+		$raw = is_string( $raw ) ? $raw : '';
+		$normalized = strtoupper( $raw );
+		if ( false !== strpos( $normalized, 'VARI' ) && false !== strpos( $normalized, 'SUBE' ) && false !== strpos( $normalized, 'BULUNAMADI' ) ) {
+			return new WP_Error(
+				'demw_branch_not_ready_precheck',
+				__(
+					'Destination branch is still not ready for this order. Wait 2-5 minutes and run Create Shipment again.',
+					'dhl-ecommerce-mng-woocommerce'
 				)
 			);
 		}

@@ -254,6 +254,22 @@ class DEMW_API_Client {
 	}
 
 	/**
+	 * Get order detail from Standard Query by reference id.
+	 *
+	 * @param string $reference_id Reference id.
+	 * @return array<string,mixed>|WP_Error
+	 */
+	public function get_order_by_reference( $reference_id ) {
+		$reference_id = trim( (string) $reference_id );
+		if ( '' === $reference_id ) {
+			return new WP_Error( 'demw_missing_reference_id', __( 'Reference ID is required.', 'dhl-ecommerce-mng-woocommerce' ) );
+		}
+
+		$path = sprintf( self::PATH_STD_GET_ORDER, rawurlencode( $reference_id ) );
+		return $this->request( 'GET', $path );
+	}
+
+	/**
 	 * Get shipment detail from Standard Query by reference id.
 	 *
 	 * @param string $reference_id Reference id.
