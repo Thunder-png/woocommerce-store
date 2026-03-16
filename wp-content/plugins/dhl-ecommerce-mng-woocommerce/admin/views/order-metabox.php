@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $status_class = ! empty( $meta['last_error'] ) ? 'demw-badge demw-badge-error' : 'demw-badge demw-badge-ok';
 $last_response_preview = function_exists( 'mb_substr' ) ? mb_substr( (string) $meta['last_response'], 0, 400 ) : substr( (string) $meta['last_response'], 0, 400 );
+$current_stage = ( ! empty( $meta['tracking_number'] ) || ! empty( $meta['shipment_id'] ) ) ? __( 'Stage 3 completed (barcode created)', 'dhl-ecommerce-mng-woocommerce' ) : ( ! empty( $meta['order_created'] ) ? __( 'Stage 2 completed (recipient + order synced)', 'dhl-ecommerce-mng-woocommerce' ) : __( 'Stage 1 pending', 'dhl-ecommerce-mng-woocommerce' ) );
 ?>
 <div class="demw-metabox">
 	<?php if ( is_array( $notice ) && ! empty( $notice['message'] ) ) : ?>
@@ -26,8 +27,12 @@ $last_response_preview = function_exists( 'mb_substr' ) ? mb_substr( (string) $m
 		</span>
 	</p>
 	<p><strong><?php echo esc_html__( 'Reference ID', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong> <?php echo esc_html( $meta['reference_id'] ? $meta['reference_id'] : '-' ); ?></p>
+	<p><strong><?php echo esc_html__( 'Shipment Stage', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong> <?php echo esc_html( $current_stage ); ?></p>
 	<p><strong><?php echo esc_html__( 'Shipment ID', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong> <?php echo esc_html( $meta['shipment_id'] ? $meta['shipment_id'] : '-' ); ?></p>
 	<p><strong><?php echo esc_html__( 'Tracking Number', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong> <?php echo esc_html( $meta['tracking_number'] ? $meta['tracking_number'] : '-' ); ?></p>
+	<?php if ( ! empty( $meta['order_created'] ) && empty( $meta['tracking_number'] ) && ! empty( $meta['order_synced_at'] ) ) : ?>
+		<p><em><?php echo esc_html__( 'Stage 1-2 were completed. Use Create Shipment again to run barcode generation step.', 'dhl-ecommerce-mng-woocommerce' ); ?></em></p>
+	<?php endif; ?>
 	<p>
 		<strong><?php echo esc_html__( 'Label', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong>
 		<?php if ( ! empty( $meta['label_url'] ) ) : ?>

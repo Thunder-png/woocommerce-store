@@ -163,11 +163,13 @@ class DEMW_Order_Mapper {
 			return $marketplace;
 		}
 		$location = $this->resolve_city_district_names( $base['country'], $base['city'], $base['state'] );
+		$reference_id = $this->sanitize_reference_id( $base['reference_id'] );
+		$order_pieces = $this->normalize_order_piece_list( $base['order_pieces'] );
 
 		return array(
 			'order'          => array(
-				'referenceId'         => $base['reference_id'],
-				'barcode'             => $base['reference_id'],
+				'referenceId'         => $reference_id,
+				'barcode'             => $reference_id,
 				'billOfLandingId'     => 'WC-INV-' . $base['order_number'],
 				'isCOD'               => $base['is_cod'] ? 1 : 0,
 				'codAmount'           => $base['cod_amount'],
@@ -183,7 +185,7 @@ class DEMW_Order_Mapper {
 				'marketPlaceShortCode'=> $marketplace['short_code'],
 				'marketPlaceSaleCode' => $marketplace['sale_code'],
 			),
-			'orderPieceList' => $base['order_pieces'],
+			'orderPieceList' => $order_pieces,
 			'recipient'      => array(
 				'customerId'           => '',
 				'refCustomerId'        => '',
@@ -198,7 +200,7 @@ class DEMW_Order_Mapper {
 				'taxNumber'            => '',
 				'fullName'             => $base['recipient_name'],
 				'homePhoneNumber'      => '',
-				'mobilePhoneNumber'    => $base['recipient_phone'],
+				'mobilePhoneNumber'    => $this->normalize_phone_for_mng( $base['recipient_phone'] ),
 			),
 		);
 	}
@@ -217,9 +219,11 @@ class DEMW_Order_Mapper {
 
 		$message = sprintf( 'WooCommerce Order #%s', $base['order_number'] );
 		$message = sanitize_text_field( $message );
+		$reference_id = $this->sanitize_reference_id( $base['reference_id'] );
+		$order_pieces = $this->normalize_order_piece_list( $base['order_pieces'] );
 
 		return array(
-			'referenceId'                  => $base['reference_id'],
+			'referenceId'                  => $reference_id,
 			'billOfLandingId'              => 'WC-INV-' . $base['order_number'],
 			'isCOD'                        => $base['is_cod'] ? 1 : 0,
 			'codAmount'                    => $base['cod_amount'],
@@ -231,7 +235,7 @@ class DEMW_Order_Mapper {
 			'additionalContent4'           => '',
 			// Docs sample for CreateBarcodeRequest uses packagingType=2.
 			'packagingType'                => 2,
-			'orderPieceList'               => $base['order_pieces'],
+			'orderPieceList'               => $order_pieces,
 		);
 	}
 
@@ -493,6 +497,63 @@ class DEMW_Order_Mapper {
 		}
 
 		return $digits;
+	}
+
+	/**
+	 * Sanitize reference identifier for MNG constraints.
+	 *
+	 * @param string $reference_id Reference id.
+	 * @return string
+	 */
+	private function sanitize_reference_id( $reference_id ) {
+		$reference_id = strtoupper( trim( (string) $reference_id ) );
+		$reference_id = preg_replace( '/[^A-Z0-9_\-]/', '', $reference_id );
+		$reference_id = is_string( $reference_id ) ? $reference_id : '';
+
+		if ( '' === $reference_id ) {
+			$reference_id = 'WC_FALLBACK';
+		}
+
+		return substr( $reference_id, 0, 35 );
+	}
+
+	/**
+	 * Normalize piece list shape and scalar types.
+	 *
+	 * @param array<int,array<string,mixed>> $pieces Pieces.
+	 * @return array<int,array<string,mixed>>
+	 */
+	private function normalize_order_piece_list( $pieces ) {
+		$normalized = array();
+		foreach ( (array) $pieces as $piece ) {
+			if ( ! is_array( $piece ) ) {
+				continue;
+			}
+			$barcode = strtoupper( trim( (string) ( $piece['barcode'] ?? '' ) ) );
+			$barcode = preg_replace( '/[^A-Z0-9_\-]/', '', $barcode );
+			$barcode = is_string( $barcode ) ? $barcode : '';
+			if ( '' === $barcode ) {
+				continue;
+			}
+
+			$normalized[] = array(
+				'barcode' => substr( $barcode, 0, 50 ),
+				'desi'    => max( 1, absint( $piece['desi'] ?? 1 ) ),
+				'kg'      => max( 1, absint( $piece['kg'] ?? 1 ) ),
+				'content' => sanitize_text_field( (string) ( $piece['content'] ?? '' ) ),
+			);
+		}
+
+		if ( empty( $normalized ) ) {
+			$normalized[] = array(
+				'barcode' => 'WC_PACKAGE_P1',
+				'desi'    => 1,
+				'kg'      => 1,
+				'content' => __( 'Order package', 'dhl-ecommerce-mng-woocommerce' ),
+			);
+		}
+
+		return $normalized;
 	}
 
 	/**

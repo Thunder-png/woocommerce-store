@@ -30,6 +30,13 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 	 * @var DEMW_Logger|null
 	 */
 	private $demw_logger = null;
+
+	/**
+	 * DEMW location resolver cache.
+	 *
+	 * @var DEMW_Location_Resolver|null
+	 */
+	private $demw_location_resolver = null;
 	/**
 	 * Constructor.
 	 *
@@ -191,20 +198,22 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 
 		$city_name     = isset( $package['destination']['city'] ) ? (string) $package['destination']['city'] : '';
 		$state_name    = isset( $package['destination']['state'] ) ? (string) $package['destination']['state'] : '';
+		$country       = isset( $package['destination']['country'] ) ? (string) $package['destination']['country'] : '';
 		$address_1     = isset( $package['destination']['address'] ) ? (string) $package['destination']['address'] : '';
 		$address_2     = isset( $package['destination']['address_2'] ) ? (string) $package['destination']['address_2'] : '';
 		$full_address  = trim( $address_1 . ' ' . $address_2 );
-		if ( '' === $city_name || '' === $full_address ) {
+		if ( '' === $country || '' === $city_name || '' === $full_address ) {
 			return null;
 		}
 
-		$city_code = $this->resolve_city_code( $city_name, $api_client );
-		if ( '' === $city_code ) {
+		$resolver = $this->get_demw_location_resolver();
+		if ( ! $resolver ) {
 			return null;
 		}
 
-		$district_code = $this->resolve_district_code( $city_code, $state_name, $api_client );
-		if ( '' === $district_code ) {
+		$resolved = $resolver->resolve_by_parts( $country, $city_name, $state_name );
+		if ( is_wp_error( $resolved ) ) {
+			$this->demw_log_error( 'Location resolution failed for rate calculation', array( 'error' => $resolved->get_error_message() ) );
 			return null;
 		}
 
@@ -219,8 +228,8 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 			'paymentType'         => 1,
 			'pickUpType'          => absint( $this->get_option( 'pick_up_type', '1' ) ),
 			'deliveryType'        => 1,
-			'cityCode'            => absint( $city_code ),
-			'districtCode'        => absint( $district_code ),
+			'cityCode'            => absint( $resolved['city_code'] ),
+			'districtCode'        => absint( $resolved['district_code'] ),
 			'address'             => $full_address,
 			'smsPreference1'      => 1,
 			'smsPreference2'      => 0,
@@ -270,88 +279,22 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 	}
 
 	/**
-	 * Resolve city code from destination city name.
+	 * Build DEMW location resolver on demand.
 	 *
-	 * @param string          $city_name City name.
-	 * @param DEMW_API_Client $api_client API client.
-	 * @return string
+	 * @return DEMW_Location_Resolver|null
 	 */
-	private function resolve_city_code( $city_name, DEMW_API_Client $api_client ) {
-		static $city_cache = array();
-		$key = $this->normalize_tr_text( $city_name );
-		if ( '' === $key ) {
-			return '';
+	private function get_demw_location_resolver() {
+		if ( $this->demw_location_resolver instanceof DEMW_Location_Resolver ) {
+			return $this->demw_location_resolver;
 		}
 
-		if ( isset( $city_cache[ $key ] ) ) {
-			return (string) $city_cache[ $key ];
+		$api_client = $this->get_demw_api_client();
+		if ( ! $api_client || ! class_exists( 'DEMW_Location_Resolver' ) ) {
+			return null;
 		}
 
-		$cities = $api_client->get_cities();
-		if ( is_wp_error( $cities ) || ! is_array( $cities ) ) {
-			return '';
-		}
-
-		foreach ( $cities as $city ) {
-			if ( ! is_array( $city ) ) {
-				continue;
-			}
-			$name = isset( $city['name'] ) ? (string) $city['name'] : '';
-			$code = isset( $city['code'] ) ? (string) $city['code'] : '';
-			if ( '' === $name || '' === $code ) {
-				continue;
-			}
-
-			if ( $this->normalize_tr_text( $name ) === $key ) {
-				$city_cache[ $key ] = $code;
-				return $code;
-			}
-		}
-
-		return '';
-	}
-
-	/**
-	 * Resolve district code from state/district name.
-	 *
-	 * @param string          $city_code City code.
-	 * @param string          $district_name District name.
-	 * @param DEMW_API_Client $api_client API client.
-	 * @return string
-	 */
-	private function resolve_district_code( $city_code, $district_name, DEMW_API_Client $api_client ) {
-		$district_name = trim( (string) $district_name );
-		if ( '' === $district_name ) {
-			return '';
-		}
-
-		static $district_cache = array();
-		$cache_key = $city_code . '|' . $this->normalize_tr_text( $district_name );
-		if ( isset( $district_cache[ $cache_key ] ) ) {
-			return (string) $district_cache[ $cache_key ];
-		}
-
-		$districts = $api_client->get_districts( $city_code );
-		if ( is_wp_error( $districts ) || ! is_array( $districts ) ) {
-			return '';
-		}
-
-		foreach ( $districts as $district ) {
-			if ( ! is_array( $district ) ) {
-				continue;
-			}
-			$name = isset( $district['name'] ) ? (string) $district['name'] : '';
-			$code = isset( $district['code'] ) ? (string) $district['code'] : '';
-			if ( '' === $name || '' === $code ) {
-				continue;
-			}
-			if ( $this->normalize_tr_text( $name ) === $this->normalize_tr_text( $district_name ) ) {
-				$district_cache[ $cache_key ] = $code;
-				return $code;
-			}
-		}
-
-		return '';
+		$this->demw_location_resolver = new DEMW_Location_Resolver( $api_client );
+		return $this->demw_location_resolver;
 	}
 
 	/**
@@ -432,37 +375,6 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 		}
 
 		return max( 1, (int) ceil( ( $length * $width * $height ) / 3000 ) );
-	}
-
-	/**
-	 * Normalize text for simple Turkish-insensitive comparisons.
-	 *
-	 * @param string $text Raw text.
-	 * @return string
-	 */
-	private function normalize_tr_text( $text ) {
-		$text = trim( (string) $text );
-		if ( '' === $text ) {
-			return '';
-		}
-
-		$map  = array(
-			'I' => 'i',
-			'İ' => 'i',
-			'Ş' => 's',
-			'ş' => 's',
-			'Ğ' => 'g',
-			'ğ' => 'g',
-			'Ü' => 'u',
-			'ü' => 'u',
-			'Ö' => 'o',
-			'ö' => 'o',
-			'Ç' => 'c',
-			'ç' => 'c',
-		);
-		$text = strtr( $text, $map );
-
-		return function_exists( 'mb_strtolower' ) ? mb_strtolower( $text ) : strtolower( $text );
 	}
 
 	/**

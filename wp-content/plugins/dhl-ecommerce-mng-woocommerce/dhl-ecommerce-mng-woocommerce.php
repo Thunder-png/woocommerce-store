@@ -26,6 +26,7 @@ require_once DEMW_PLUGIN_DIR . 'includes/class-demw-logger.php';
 require_once DEMW_PLUGIN_DIR . 'includes/class-demw-settings.php';
 require_once DEMW_PLUGIN_DIR . 'includes/class-demw-auth.php';
 require_once DEMW_PLUGIN_DIR . 'includes/class-demw-api-client.php';
+require_once DEMW_PLUGIN_DIR . 'includes/class-demw-location-resolver.php';
 require_once DEMW_PLUGIN_DIR . 'includes/class-demw-order-mapper.php';
 require_once DEMW_PLUGIN_DIR . 'includes/class-demw-order-actions.php';
 require_once DEMW_PLUGIN_DIR . 'includes/class-demw-admin-metabox.php';
@@ -85,8 +86,9 @@ final class DEMW_Plugin {
 		$settings     = new DEMW_Settings( $logger );
 		$auth         = new DEMW_Auth( $settings );
 		$api_client   = new DEMW_API_Client( $settings, $auth, $logger );
+		$location_resolver = new DEMW_Location_Resolver( $api_client );
 		$order_mapper = new DEMW_Order_Mapper();
-		$order_action = new DEMW_Order_Actions( $settings, $api_client, $order_mapper, $logger );
+		$order_action = new DEMW_Order_Actions( $settings, $api_client, $order_mapper, $logger, $location_resolver );
 		$metabox      = new DEMW_Admin_Metabox( $settings, $order_action );
 		$settings->set_api_client( $api_client );
 
@@ -95,6 +97,7 @@ final class DEMW_Plugin {
 			'settings'     => $settings,
 			'auth'         => $auth,
 			'api_client'   => $api_client,
+			'location_resolver' => $location_resolver,
 			'order_mapper' => $order_mapper,
 			'order_action' => $order_action,
 			'metabox'      => $metabox,

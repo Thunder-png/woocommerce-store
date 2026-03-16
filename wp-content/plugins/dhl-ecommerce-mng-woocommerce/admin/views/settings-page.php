@@ -69,7 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<option value="plus_command" <?php selected( 'plus_command', $settings['shipment_command_api'] ); ?>><?php echo esc_html__( '2-Step Flow (createRecipient + standardcmd/createOrder, then createbarcode)', 'dhl-ecommerce-mng-woocommerce' ); ?></option>
 							<option value="barcode_command" <?php selected( 'barcode_command', $settings['shipment_command_api'] ); ?>><?php echo esc_html__( 'Barcode Command (createbarcode)', 'dhl-ecommerce-mng-woocommerce' ); ?></option>
 						</select>
-						<p class="description"><?php echo esc_html__( 'Recommended flow: first click runs createRecipient + createOrder (branch detection prep), next click runs createbarcode.', 'dhl-ecommerce-mng-woocommerce' ); ?></p>
+						<p class="description"><?php echo esc_html__( 'Recommended flow: first click runs createRecipient + createOrder (branch detection prep), next click runs createbarcode. If barcode returns 20001, wait briefly and retry.', 'dhl-ecommerce-mng-woocommerce' ); ?></p>
 					</td>
 				</tr>
 			</table>

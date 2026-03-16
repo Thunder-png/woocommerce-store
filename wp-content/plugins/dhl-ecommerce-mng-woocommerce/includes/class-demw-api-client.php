@@ -806,6 +806,16 @@ class DEMW_API_Client {
 				);
 			}
 
+			if ( '26060' === $nested_code || false !== stripos( $nested_desc, 'CustomerId' ) ) {
+				return array(
+					'code'    => 'demw_recipient_customerid_fullname_conflict',
+					'message' => __(
+						'Recipient validation failed (26060): when recipient customerId is provided, fullName must be empty. Keep customerId empty for retail orders and send fullName + phone + address fields.',
+						'dhl-ecommerce-mng-woocommerce'
+					),
+				);
+			}
+
 			if ( '' !== $nested_code ) {
 				$hint = __(
 					'Check barcode payload values (referenceId, billOfLandingId, packagingType, orderPieceList) and uniqueness constraints.',
