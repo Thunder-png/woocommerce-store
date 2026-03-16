@@ -665,15 +665,6 @@ class DEMW_Order_Actions {
 		$order->update_meta_data( '_demw_resolved_neighborhood', (string) ( $resolved['neighborhood'] ?? '' ) );
 		$order->update_meta_data( '_demw_is_mobile_area', ! empty( $resolved['is_mobile_area'] ) ? 1 : 0 );
 		$order->update_meta_data( '_demw_is_out_of_service_area', ! empty( $resolved['is_out_of_service'] ) ? 1 : 0 );
-		if ( ! empty( $resolved['is_out_of_service'] ) ) {
-			return new WP_Error(
-				'demw_out_of_service_area',
-				__(
-					'Recipient address resolves to an out-of-service CBS neighborhood. Update il/ilce/mahalle/address before creating shipment.',
-					'dhl-ecommerce-mng-woocommerce'
-				)
-			);
-		}
 
 		return $payload;
 	}

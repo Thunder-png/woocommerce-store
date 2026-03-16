@@ -187,7 +187,6 @@ class DEMW_Location_Resolver {
 	 */
 	private function match_neighborhood_from_address( $neighborhoods, $full_address ) {
 		$normalized_address = $this->normalize_tr_text( $full_address );
-		$fallback           = '';
 
 		foreach ( $neighborhoods as $item ) {
 			if ( ! is_array( $item ) ) {
@@ -197,15 +196,12 @@ class DEMW_Location_Resolver {
 			if ( '' === $name ) {
 				continue;
 			}
-			if ( '' === $fallback ) {
-				$fallback = $name;
-			}
 			if ( '' !== $normalized_address && false !== strpos( $normalized_address, $this->normalize_tr_text( $name ) ) ) {
 				return $name;
 			}
 		}
 
-		return $fallback;
+		return '';
 	}
 
 	/**

@@ -228,8 +228,12 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 			'paymentType'         => 1,
 			'pickUpType'          => absint( $this->get_option( 'pick_up_type', '1' ) ),
 			'deliveryType'        => 1,
-			'cityCode'            => absint( $resolved['city_code'] ),
-			'districtCode'        => absint( $resolved['district_code'] ),
+			/*
+			 * Standard Query calculate endpoint expects city/district as string
+			 * values (CBS returns string codes such as "06", "074").
+			 */
+			'cityCode'            => (string) $resolved['city_code'],
+			'districtCode'        => (string) $resolved['district_code'],
 			'address'             => $full_address,
 			'smsPreference1'      => 1,
 			'smsPreference2'      => 0,
