@@ -661,7 +661,7 @@ class DEMW_API_Client {
 		}
 
 		$retry_args            = $args;
-		$retry_args['timeout'] = min( 180, (int) $args['timeout'] + 20 );
+		$retry_args['timeout'] = min( 180, (int) $args['timeout'] + 10 );
 
 		if ( $this->settings->is_debug_enabled() ) {
 			$this->logger->error(
@@ -698,11 +698,26 @@ class DEMW_API_Client {
 		}
 
 		$method = strtoupper( (string) $method );
-		if ( 'GET' === $method ) {
+		if ( 'POST' === $method && self::PATH_STD_CALCULATE === $path ) {
 			return true;
 		}
 
-		return ( 'POST' === $method && self::PATH_STD_CALCULATE === $path );
+		if ( 'GET' !== $method ) {
+			return false;
+		}
+
+		$retryable_get_paths = array(
+			self::PATH_CBS_GET_CITIES,
+			'/cbsinfoapi/getdistricts/',
+		);
+
+		foreach ( $retryable_get_paths as $prefix ) {
+			if ( 0 === strpos( (string) $path, $prefix ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

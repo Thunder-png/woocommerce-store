@@ -21,6 +21,13 @@ class DEMW_Location_Resolver {
 	private $api_client;
 
 	/**
+	 * In-request location cache.
+	 *
+	 * @var array<string,array<string,mixed>|WP_Error>
+	 */
+	private $resolved_cache = array();
+
+	/**
 	 * Constructor.
 	 *
 	 * @param DEMW_API_Client $api_client API client.
@@ -67,9 +74,16 @@ class DEMW_Location_Resolver {
 		$city    = trim( (string) $city );
 		$state   = trim( (string) $state );
 		$full_address = trim( (string) $full_address );
+		$cache_key = md5( $country . '|' . $city . '|' . $state . '|' . $full_address );
+
+		if ( isset( $this->resolved_cache[ $cache_key ] ) ) {
+			return $this->resolved_cache[ $cache_key ];
+		}
 
 		if ( 'TR' !== $country || '' === $city ) {
-			return new WP_Error( 'demw_location_not_resolved', __( 'Country/city data is insufficient for location code resolution.', 'dhl-ecommerce-mng-woocommerce' ) );
+			$error = new WP_Error( 'demw_location_not_resolved', __( 'Country/city data is insufficient for location code resolution.', 'dhl-ecommerce-mng-woocommerce' ) );
+			$this->resolved_cache[ $cache_key ] = $error;
+			return $error;
 		}
 
 		$city_name     = $city;
@@ -87,7 +101,9 @@ class DEMW_Location_Resolver {
 
 		$cities = $this->api_client->get_cities();
 		if ( is_wp_error( $cities ) || ! is_array( $cities ) ) {
-			return new WP_Error( 'demw_city_codes_unavailable', __( 'Unable to resolve city code from CBS API.', 'dhl-ecommerce-mng-woocommerce' ) );
+			$error = new WP_Error( 'demw_city_codes_unavailable', __( 'Unable to resolve city code from CBS API.', 'dhl-ecommerce-mng-woocommerce' ) );
+			$this->resolved_cache[ $cache_key ] = $error;
+			return $error;
 		}
 
 		$city_code = '';
@@ -106,12 +122,16 @@ class DEMW_Location_Resolver {
 			}
 		}
 		if ( '' === $city_code ) {
-			return new WP_Error( 'demw_city_code_not_found', __( 'City code could not be matched from CBS API.', 'dhl-ecommerce-mng-woocommerce' ) );
+			$error = new WP_Error( 'demw_city_code_not_found', __( 'City code could not be matched from CBS API.', 'dhl-ecommerce-mng-woocommerce' ) );
+			$this->resolved_cache[ $cache_key ] = $error;
+			return $error;
 		}
 
 		$districts = $this->api_client->get_districts( $city_code );
 		if ( is_wp_error( $districts ) || ! is_array( $districts ) ) {
-			return new WP_Error( 'demw_district_codes_unavailable', __( 'Unable to resolve district code from CBS API.', 'dhl-ecommerce-mng-woocommerce' ) );
+			$error = new WP_Error( 'demw_district_codes_unavailable', __( 'Unable to resolve district code from CBS API.', 'dhl-ecommerce-mng-woocommerce' ) );
+			$this->resolved_cache[ $cache_key ] = $error;
+			return $error;
 		}
 
 		$district_code = '';
@@ -135,7 +155,9 @@ class DEMW_Location_Resolver {
 		}
 
 		if ( '' === $district_code ) {
-			return new WP_Error( 'demw_district_code_not_found', __( 'District code could not be matched from CBS API.', 'dhl-ecommerce-mng-woocommerce' ) );
+			$error = new WP_Error( 'demw_district_code_not_found', __( 'District code could not be matched from CBS API.', 'dhl-ecommerce-mng-woocommerce' ) );
+			$this->resolved_cache[ $cache_key ] = $error;
+			return $error;
 		}
 
 		$neighborhood        = '';
@@ -156,17 +178,13 @@ class DEMW_Location_Resolver {
 			}
 		}
 
-		$out_of_service_areas = $this->api_client->get_out_of_service_areas( $city_code, $district_code );
-		if ( ! is_wp_error( $out_of_service_areas ) && is_array( $out_of_service_areas ) && '' !== $neighborhood ) {
-			$is_out_of_service = $this->contains_neighborhood( $out_of_service_areas, $neighborhood );
-		}
+		/*
+		 * Skip out-of-service/mobile checks in live flow to prevent request fan-out
+		 * and admin screen timeouts. They can be reintroduced behind an explicit
+		 * diagnostics mode if needed.
+		 */
 
-		$mobile_areas = $this->api_client->get_mobile_areas( $city_code, $district_code );
-		if ( ! is_wp_error( $mobile_areas ) && is_array( $mobile_areas ) && '' !== $neighborhood ) {
-			$is_mobile_area = $this->contains_neighborhood( $mobile_areas, $neighborhood );
-		}
-
-		return array(
+		$result = array(
 			'city_code'     => $city_code,
 			'district_code' => $district_code,
 			'city_name'     => $city_name,
@@ -176,6 +194,8 @@ class DEMW_Location_Resolver {
 			'is_mobile_area'    => $is_mobile_area,
 			'normalized_address' => $normalized_address,
 		);
+		$this->resolved_cache[ $cache_key ] = $result;
+		return $result;
 	}
 
 	/**
