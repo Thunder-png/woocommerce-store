@@ -28,6 +28,24 @@ $current_stage = ( ! empty( $meta['tracking_number'] ) || ! empty( $meta['shipme
 	</p>
 	<p><strong><?php echo esc_html__( 'Reference ID', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong> <?php echo esc_html( $meta['reference_id'] ? $meta['reference_id'] : '-' ); ?></p>
 	<p><strong><?php echo esc_html__( 'Shipment Stage', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong> <?php echo esc_html( $current_stage ); ?></p>
+	<?php if ( ! empty( $meta['resolved_neighborhood'] ) ) : ?>
+		<p><strong><?php echo esc_html__( 'Resolved Neighborhood', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong> <?php echo esc_html( $meta['resolved_neighborhood'] ); ?></p>
+	<?php endif; ?>
+	<?php if ( ! empty( $meta['is_mobile_area'] ) || ! empty( $meta['is_out_of_service_area'] ) ) : ?>
+		<p>
+			<strong><?php echo esc_html__( 'CBS Area Flags', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong>
+			<?php
+			$flags = array();
+			if ( ! empty( $meta['is_mobile_area'] ) ) {
+				$flags[] = esc_html__( 'Mobile area', 'dhl-ecommerce-mng-woocommerce' );
+			}
+			if ( ! empty( $meta['is_out_of_service_area'] ) ) {
+				$flags[] = esc_html__( 'Out of service area', 'dhl-ecommerce-mng-woocommerce' );
+			}
+			echo esc_html( implode( ', ', $flags ) );
+			?>
+		</p>
+	<?php endif; ?>
 	<p><strong><?php echo esc_html__( 'Shipment ID', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong> <?php echo esc_html( $meta['shipment_id'] ? $meta['shipment_id'] : '-' ); ?></p>
 	<p><strong><?php echo esc_html__( 'Tracking Number', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong> <?php echo esc_html( $meta['tracking_number'] ? $meta['tracking_number'] : '-' ); ?></p>
 	<?php if ( ! empty( $meta['order_created'] ) && empty( $meta['tracking_number'] ) && ! empty( $meta['order_synced_at'] ) ) : ?>

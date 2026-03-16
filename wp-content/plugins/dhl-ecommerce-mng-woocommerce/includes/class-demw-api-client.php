@@ -34,6 +34,9 @@ class DEMW_API_Client {
 	const PATH_STD_CALCULATE      = '/standardqueryapi/calculate';
 	const PATH_CBS_GET_CITIES     = '/cbsinfoapi/getcities';
 	const PATH_CBS_GET_DISTRICTS  = '/cbsinfoapi/getdistricts/%s';
+	const PATH_CBS_GET_NEIGHBORHOODS = '/cbsinfoapi/getneighborhoods/%s/%s';
+	const PATH_CBS_GET_OUT_OF_SERVICE_AREAS = '/cbsinfoapi/getoutofserviceareas/%s/%s';
+	const PATH_CBS_GET_MOBILE_AREAS = '/cbsinfoapi/getmobileareas/%s/%s';
 	const PATH_LABEL_BY_BARCODE   = '/plusqueryapi/getShipmentByBarcode/%s';
 	const PATH_LABEL_BY_SHIPMENT  = '/plusqueryapi/GetShipmentInfoByShipmentId/%s';
 
@@ -304,6 +307,78 @@ class DEMW_API_Client {
 		}
 
 		$path   = sprintf( self::PATH_CBS_GET_DISTRICTS, rawurlencode( $city_code ) );
+		$result = $this->request( 'GET', $path );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		$data = $result['data'];
+		return is_array( $data ) ? $data : array();
+	}
+
+	/**
+	 * Fetch neighborhoods by city and district codes.
+	 *
+	 * @param string $city_code City code.
+	 * @param string $district_code District code.
+	 * @return array<int,array<string,mixed>>|WP_Error
+	 */
+	public function get_neighborhoods( $city_code, $district_code ) {
+		$city_code     = trim( (string) $city_code );
+		$district_code = trim( (string) $district_code );
+		if ( '' === $city_code || '' === $district_code ) {
+			return new WP_Error( 'demw_missing_location_codes', __( 'City and district codes are required to fetch neighborhoods.', 'dhl-ecommerce-mng-woocommerce' ) );
+		}
+
+		$path = sprintf( self::PATH_CBS_GET_NEIGHBORHOODS, rawurlencode( $city_code ), rawurlencode( $district_code ) );
+		$result = $this->request( 'GET', $path );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		$data = $result['data'];
+		return is_array( $data ) ? $data : array();
+	}
+
+	/**
+	 * Fetch out-of-service neighborhoods by city and district codes.
+	 *
+	 * @param string $city_code City code.
+	 * @param string $district_code District code.
+	 * @return array<int,array<string,mixed>>|WP_Error
+	 */
+	public function get_out_of_service_areas( $city_code, $district_code ) {
+		$city_code     = trim( (string) $city_code );
+		$district_code = trim( (string) $district_code );
+		if ( '' === $city_code || '' === $district_code ) {
+			return new WP_Error( 'demw_missing_location_codes', __( 'City and district codes are required to fetch out of service areas.', 'dhl-ecommerce-mng-woocommerce' ) );
+		}
+
+		$path = sprintf( self::PATH_CBS_GET_OUT_OF_SERVICE_AREAS, rawurlencode( $city_code ), rawurlencode( $district_code ) );
+		$result = $this->request( 'GET', $path );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		$data = $result['data'];
+		return is_array( $data ) ? $data : array();
+	}
+
+	/**
+	 * Fetch mobile neighborhoods by city and district codes.
+	 *
+	 * @param string $city_code City code.
+	 * @param string $district_code District code.
+	 * @return array<int,array<string,mixed>>|WP_Error
+	 */
+	public function get_mobile_areas( $city_code, $district_code ) {
+		$city_code     = trim( (string) $city_code );
+		$district_code = trim( (string) $district_code );
+		if ( '' === $city_code || '' === $district_code ) {
+			return new WP_Error( 'demw_missing_location_codes', __( 'City and district codes are required to fetch mobile areas.', 'dhl-ecommerce-mng-woocommerce' ) );
+		}
+
+		$path = sprintf( self::PATH_CBS_GET_MOBILE_AREAS, rawurlencode( $city_code ), rawurlencode( $district_code ) );
 		$result = $this->request( 'GET', $path );
 		if ( is_wp_error( $result ) ) {
 			return $result;

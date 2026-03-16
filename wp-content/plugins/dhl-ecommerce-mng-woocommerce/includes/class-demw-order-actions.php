@@ -633,6 +633,14 @@ class DEMW_Order_Actions {
 		$payload['recipient']['districtCode'] = (int) $resolved['district_code'];
 		$payload['recipient']['cityName']     = (string) $resolved['city_name'];
 		$payload['recipient']['districtName'] = (string) $resolved['district_name'];
+		if ( ! empty( $resolved['normalized_address'] ) ) {
+			$payload['recipient']['address'] = (string) $resolved['normalized_address'];
+		}
+
+		$order->update_meta_data( '_demw_resolved_neighborhood', (string) ( $resolved['neighborhood'] ?? '' ) );
+		$order->update_meta_data( '_demw_is_mobile_area', ! empty( $resolved['is_mobile_area'] ) ? 1 : 0 );
+		$order->update_meta_data( '_demw_is_out_of_service_area', ! empty( $resolved['is_out_of_service'] ) ? 1 : 0 );
+
 		return $payload;
 	}
 }
