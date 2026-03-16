@@ -248,7 +248,7 @@ class DEMW_Settings {
 			'environment'          => 'development',
 			'development_base_url' => 'https://testapi.mngkargo.com.tr/mngapi/api',
 			'production_base_url'  => '',
-			'timeout'              => 20,
+			'timeout'              => 45,
 			'api_version'          => '',
 			'shipment_command_api' => 'plus_command',
 			'auth_type'            => 'api_key_secret',
@@ -289,7 +289,7 @@ class DEMW_Settings {
 		}
 		$clean['development_base_url'] = DEMW_Helpers::sanitize_base_url( $development_base_url );
 		$clean['production_base_url'] = DEMW_Helpers::sanitize_base_url( $input['production_base_url'] ?? '' );
-		$clean['timeout'] = max( 3, min( 120, absint( $input['timeout'] ?? $defaults['timeout'] ) ) );
+		$clean['timeout'] = max( 5, min( 180, absint( $input['timeout'] ?? $defaults['timeout'] ) ) );
 		$clean['api_version'] = sanitize_text_field( (string) ( $input['api_version'] ?? '' ) );
 		$command_apis     = array( 'plus_command', 'barcode_command' );
 		$clean['shipment_command_api'] = in_array( (string) ( $input['shipment_command_api'] ?? '' ), $command_apis, true ) ? (string) $input['shipment_command_api'] : $defaults['shipment_command_api'];

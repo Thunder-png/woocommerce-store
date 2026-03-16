@@ -562,7 +562,7 @@ class DEMW_API_Client {
 
 		$args = array(
 			'method'  => $method,
-			'timeout' => (int) $this->settings->get( 'timeout', 20 ),
+			'timeout' => (int) $this->settings->get( 'timeout', 45 ),
 			'headers' => $headers,
 		);
 
@@ -574,13 +574,13 @@ class DEMW_API_Client {
 			$this->logger->request( $url, $headers, $body, $this->settings->should_log_request_body() );
 		}
 
-		$response = wp_remote_request( $url, $args );
+		$response = $this->perform_request_with_optional_retry( $url, $args, $method, $path, $body );
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
 			$user_message  = sprintf( __( 'Request failed: %s', 'dhl-ecommerce-mng-woocommerce' ), $error_message );
 			if ( false !== stripos( $error_message, 'timed out' ) ) {
 				$user_message = sprintf(
-					__( 'Request timed out. Increase timeout setting or check network/firewall access to carrier API. Raw error: %s', 'dhl-ecommerce-mng-woocommerce' ),
+					__( 'Request timed out. Increase timeout setting (recommended 60-90 seconds) or check network/firewall access to carrier API. Raw error: %s', 'dhl-ecommerce-mng-woocommerce' ),
 					$error_message
 				);
 			}
@@ -637,6 +637,72 @@ class DEMW_API_Client {
 			'body'   => $raw_body,
 			'data'   => is_array( $decoded_body ) ? $decoded_body : $raw_body,
 		);
+	}
+
+	/**
+	 * Perform HTTP request and retry once for timeout on safe endpoints.
+	 *
+	 * @param string              $url Request url.
+	 * @param array<string,mixed> $args Request args.
+	 * @param string              $method HTTP method.
+	 * @param string              $path Endpoint path.
+	 * @param array<string,mixed> $body Request body for logging.
+	 * @return array<string,mixed>|WP_Error
+	 */
+	private function perform_request_with_optional_retry( $url, $args, $method, $path, $body ) {
+		$response = wp_remote_request( $url, $args );
+		if ( ! is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$error_message = (string) $response->get_error_message();
+		if ( ! $this->should_retry_timeout_request( $method, $path, $error_message ) ) {
+			return $response;
+		}
+
+		$retry_args            = $args;
+		$retry_args['timeout'] = min( 180, (int) $args['timeout'] + 20 );
+
+		if ( $this->settings->is_debug_enabled() ) {
+			$this->logger->error(
+				'Retrying timeout request once',
+				array(
+					'url'            => $url,
+					'path'           => $path,
+					'method'         => $method,
+					'initial_timeout'=> (int) $args['timeout'],
+					'retry_timeout'  => (int) $retry_args['timeout'],
+					'error'          => $error_message,
+					'request_body'   => $body,
+				)
+			);
+		}
+
+		return wp_remote_request( $url, $retry_args );
+	}
+
+	/**
+	 * Determine if request should be retried after timeout.
+	 *
+	 * Retry is enabled only for read-only calls and calculate endpoint.
+	 * Shipment creation calls are excluded to avoid duplicate records.
+	 *
+	 * @param string $method HTTP method.
+	 * @param string $path Endpoint path.
+	 * @param string $error_message Error message.
+	 * @return bool
+	 */
+	private function should_retry_timeout_request( $method, $path, $error_message ) {
+		if ( false === stripos( $error_message, 'timed out' ) ) {
+			return false;
+		}
+
+		$method = strtoupper( (string) $method );
+		if ( 'GET' === $method ) {
+			return true;
+		}
+
+		return ( 'POST' === $method && self::PATH_STD_CALCULATE === $path );
 	}
 
 	/**

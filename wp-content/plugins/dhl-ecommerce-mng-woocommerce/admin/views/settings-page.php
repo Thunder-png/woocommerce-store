@@ -52,7 +52,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<tr>
 					<th scope="row"><label for="demw_timeout"><?php echo esc_html__( 'Connection Timeout (sec)', 'dhl-ecommerce-mng-woocommerce' ); ?></label></th>
 					<td>
-						<input type="number" min="3" max="120" id="demw_timeout" name="demw_settings[timeout]" value="<?php echo esc_attr( (string) $settings['timeout'] ); ?>" />
+						<input type="number" min="5" max="180" id="demw_timeout" name="demw_settings[timeout]" value="<?php echo esc_attr( (string) $settings['timeout'] ); ?>" />
+						<p class="description"><?php echo esc_html__( 'For slow carrier responses use 60-90 seconds. The client retries once on timeout for GET and calculate endpoints.', 'dhl-ecommerce-mng-woocommerce' ); ?></p>
 					</td>
 				</tr>
 				<tr>
