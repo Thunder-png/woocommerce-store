@@ -1,0 +1,1574 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0",
+        "title": "Standard Query API",
+        "description": "Sipari\u015f ve g\u00f6nderi bilgilerini, g\u00f6nderi durumunu, g\u00f6nderi haraketlerini getiren ve g\u00f6nderi ta\u015f\u0131ma \u00fccretini hesaplayan API'd\u0131r. | It is the API that gets order and shipment information, shipment status, shipment movements and calculates shipment transport cost.",
+        "termsOfService": "http://swagger.io/terms/"
+    },
+    "basePath": "/mngapi/api/standardqueryapi",
+    "paths": {
+        "/getorder/{referenceId}": {
+            "get": {
+                "tags": [
+                    "StandardQuery"
+                ],
+                "summary": "Get Order",
+                "description": "\u0130lgili referans numaras\u0131na ait sipari\u015f bilgilerini getirir. | Returns the order information of the relevant reference number.",
+                "operationId": "GetorderByReferenceIdGet",
+                "consumes": [],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "referenceId",
+                        "in": "path",
+                        "description": "gets order according to given referenceId",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "x-api-version",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get Order",
+                        "schema": {
+                            "$ref": "#/definitions/GetOrderResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "order": {
+                                    "orderType": "NORMAL",
+                                    "shipmentServiceType": "STANDART_TESL\u0130MAT",
+                                    "packagingType": "DOSYA",
+                                    "isTransformedToShipment": 1,
+                                    "paymentType": "GONDERICI_ODER",
+                                    "deliveryType": "ADRESE_TESLIM",
+                                    "orderDate": "03-02-2020 11:20:34",
+                                    "isVerifiedOnMarketPlace": 0,
+                                    "referenceId": "SIPARIS34567",
+                                    "barcode": "SIPARIS34567",
+                                    "billOfLandingId": "\u0130rsaliye 1",
+                                    "isCOD": 0,
+                                    "codAmount": 0,
+                                    "content": "\u0130\u00e7erik 1",
+                                    "smsPreference1": 1,
+                                    "smsPreference2": 0,
+                                    "smsPreference3": 0,
+                                    "description": "A\u00e7\u0131klma 1",
+                                    "marketPlaceShortCode": "",
+                                    "marketPlaceSaleCode": ""
+                                },
+                                "orderPieceList": [
+                                    {
+                                        "numberOfPieces": 1,
+                                        "kgDesi": 2,
+                                        "barcode": "SIPARIS34567_PARCA1",
+                                        "desi": 2,
+                                        "kg": 1,
+                                        "content": "Par\u00e7a a\u00e7\u0131klama 1"
+                                    },
+                                    {
+                                        "numberOfPieces": 1,
+                                        "kgDesi": 3,
+                                        "barcode": "SIPARIS34567_PARCA2",
+                                        "desi": 2,
+                                        "kg": 3,
+                                        "content": "Par\u00e7a a\u00e7\u0131klama 2"
+                                    }
+                                ],
+                                "shipper": {
+                                    "customerId": 146405879,
+                                    "refCustomerId": "",
+                                    "city": "",
+                                    "district": "",
+                                    "address": "",
+                                    "bussinessPhoneNumber": "",
+                                    "email": "",
+                                    "taxOffice": "",
+                                    "taxNumber": "",
+                                    "fullName": "",
+                                    "homePhoneNumber": "",
+                                    "mobilePhoneNumber": ""
+                                },
+                                "recipient": {
+                                    "refCustomerId": "",
+                                    "city": "\u0130stanbul",
+                                    "district": "Levent",
+                                    "address": "H\u00fcrriyet Mah. Ahmet Yesevi Cad. \u0130kizler Sok.",
+                                    "bussinessPhoneNumber": "",
+                                    "email": "email@ornekemail.com",
+                                    "taxOffice": "",
+                                    "taxNumber": "",
+                                    "fullName": "Ad 2",
+                                    "homePhoneNumber": "5555555555",
+                                    "mobilePhoneNumber": ""
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Order not found",
+                        "schema": {
+                            "$ref": "#/definitions/ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/getshipment/{referenceId}": {
+            "get": {
+                "tags": [
+                    "StandardQuery"
+                ],
+                "summary": "Get Shipment",
+                "description": "\u0130lgili referans numaras\u0131na ait g\u00f6nderi bilgilerini getirir. E\u011fer sipari\u015f faturala\u015fm\u0131\u015f ise bu bilgi elde edilebilir. | Returns the shipment information of the relevant reference number. If the order has been invoiced, this information can be obtained.",
+                "operationId": "GetshipmentByReferenceIdGet",
+                "consumes": [],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "referenceId",
+                        "in": "path",
+                        "description": "gets shipmment according to given referenceId",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "x-api-version",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/GetShipmentResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "shipment": {
+                                    "shipmentServiceType": "STANDART_TESL\u0130MAT",
+                                    "packagingType": "PAKET",
+                                    "paymentType": "GONDERICI_ODER",
+                                    "deliveryType": "ADRESE_TESLIM",
+                                    "referenceId": "SIPARIS34567",
+                                    "shipmentId": "931001401082",
+                                    "shipmentSerialNumber": "FM",
+                                    "shipmentNumber": "306971",
+                                    "shipmentDateTime": "20-02-2020 15:59:51",
+                                    "pieceCount": 0,
+                                    "totalKg": 1,
+                                    "totalDesi": 1,
+                                    "totalKgDesi": 1,
+                                    "total": 34.61,
+                                    "kdv": 6.23,
+                                    "finalTotal": 40.84,
+                                    "shipmentStatusCode": 5,
+                                    "isMarketPlaceShipment": 0,
+                                    "isMarketPlacePays": 0,
+                                    "shipperBranch": "ATLAS",
+                                    "billOfLandingId": "\u0130rsaliye 1",
+                                    "isCOD": 0,
+                                    "codAmount": "0",
+                                    "content": "\u0130\u00e7erik 1",
+                                    "estimatedDeliveryDate": "21-02-2020",
+                                    "isDelivered": 0
+                                },
+                                "shipmentPieceList": [
+                                    {
+                                        "numberOfPieces": 1,
+                                        "kgDesi": 2,
+                                        "barcode": "SIPARIS34567_PARCA1",
+                                        "desi": 2,
+                                        "kg": 1,
+                                        "content": "Par\u00e7a a\u00e7\u0131klama 1"
+                                    },
+                                    {
+                                        "numberOfPieces": 1,
+                                        "kgDesi": 2,
+                                        "barcode": "SIPARIS34567_PARCA2",
+                                        "desi": 2,
+                                        "kg": 1,
+                                        "content": "Par\u00e7a a\u00e7\u0131klama 2"
+                                    }
+                                ],
+                                "shipper": {
+                                    "customerId": 847555,
+                                    "refCustomerId": "",
+                                    "city": "",
+                                    "district": "",
+                                    "address": "",
+                                    "bussinessPhoneNumber": "",
+                                    "email": "",
+                                    "taxOffice": "",
+                                    "taxNumber": "",
+                                    "fullName": "",
+                                    "homePhoneNumber": "",
+                                    "mobilePhoneNumber": ""
+                                },
+                                "recipient": {
+                                    "refCustomerId": "",
+                                    "city": "\u0130stanbul",
+                                    "district": "Levent",
+                                    "address": "H\u00fcrriyet Mah. Ahmet Yesevi Cad. \u0130kizler Sok.",
+                                    "bussinessPhoneNumber": "",
+                                    "email": "email@ornekemail.com",
+                                    "taxOffice": "",
+                                    "taxNumber": "",
+                                    "fullName": "Ad 2",
+                                    "homePhoneNumber": "5555555555",
+                                    "mobilePhoneNumber": ""
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Shipment not found",
+                        "schema": {
+                            "$ref": "#/definitions/ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/getshipmentByShipmentId/{shipmentId}": {
+            "get": {
+                "tags": [
+                    "StandardQuery"
+                ],
+                "summary": "Get Shipment by ShipmentId",
+                "description": "\u0130lgili g\u00f6nderi numaras\u0131na ait g\u00f6nderi bilgilerini getirir. E\u011fer sipari\u015f faturala\u015fm\u0131\u015f ise bu bilgi elde edilebilir. | Returns the shipment information of the relevant shipmentId. If the order has been invoiced, this information can be obtained.",
+                "operationId": "GetshipmentByShipmentIdByShipmentIdGet",
+                "consumes": [],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "shipmentId",
+                        "in": "path",
+                        "description": "gets status of shipment according to given shipmentId",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "x-api-version",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/GetShipmentResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "shipment": {
+                                    "shipmentServiceType": "STANDART_TESL\u0130MAT",
+                                    "packagingType": "PAKET",
+                                    "paymentType": "GONDERICI_ODER",
+                                    "deliveryType": "ADRESE_TESLIM",
+                                    "referenceId": "SIPARIS34567",
+                                    "shipmentId": "931001401082",
+                                    "shipmentSerialNumber": "FM",
+                                    "shipmentNumber": "306971",
+                                    "shipmentDateTime": "20-02-2020 15:59:51",
+                                    "pieceCount": 0,
+                                    "totalKg": 1,
+                                    "totalDesi": 1,
+                                    "totalKgDesi": 1,
+                                    "total": 34.61,
+                                    "kdv": 6.23,
+                                    "finalTotal": 40.84,
+                                    "shipmentStatusCode": 5,
+                                    "isMarketPlaceShipment": 0,
+                                    "isMarketPlacePays": 0,
+                                    "shipperBranch": "ATLAS",
+                                    "billOfLandingId": "\u0130rsaliye 1",
+                                    "isCOD": 0,
+                                    "codAmount": "0",
+                                    "content": "\u0130\u00e7erik 1",
+                                    "estimatedDeliveryDate": "21-02-2020",
+                                    "isDelivered": 0
+                                },
+                                "shipmentPieceList": [
+                                    {
+                                        "numberOfPieces": 1,
+                                        "kgDesi": 2,
+                                        "barcode": "SIPARIS34567_PARCA1",
+                                        "desi": 2,
+                                        "kg": 1,
+                                        "content": "Par\u00e7a a\u00e7\u0131klama 1"
+                                    },
+                                    {
+                                        "numberOfPieces": 1,
+                                        "kgDesi": 2,
+                                        "barcode": "SIPARIS34567_PARCA2",
+                                        "desi": 2,
+                                        "kg": 1,
+                                        "content": "Par\u00e7a a\u00e7\u0131klama 2"
+                                    }
+                                ],
+                                "shipper": {
+                                    "customerId": 847555,
+                                    "refCustomerId": "",
+                                    "city": "",
+                                    "district": "",
+                                    "address": "",
+                                    "bussinessPhoneNumber": "",
+                                    "email": "",
+                                    "taxOffice": "",
+                                    "taxNumber": "",
+                                    "fullName": "",
+                                    "homePhoneNumber": "",
+                                    "mobilePhoneNumber": ""
+                                },
+                                "recipient": {
+                                    "refCustomerId": "",
+                                    "city": "\u0130stanbul",
+                                    "district": "Levent",
+                                    "address": "H\u00fcrriyet Mah. Ahmet Yesevi Cad. \u0130kizler Sok.",
+                                    "bussinessPhoneNumber": "",
+                                    "email": "email@ornekemail.com",
+                                    "taxOffice": "",
+                                    "taxNumber": "",
+                                    "fullName": "Ad 2",
+                                    "homePhoneNumber": "5555555555",
+                                    "mobilePhoneNumber": ""
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Shipment not found",
+                        "schema": {
+                            "$ref": "#/definitions/ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/getshipmentstatus/{referenceId}": {
+            "get": {
+                "tags": [
+                    "StandardQuery"
+                ],
+                "summary": "Get Shipment Status by ReferenceId",
+                "description": "\u0130lgili referans numaras\u0131na ait g\u00f6nderi durum bilgisini getirir. E\u011fer sipari\u015f faturala\u015fm\u0131\u015f ise bu bilgi elde edilebilir. | Returns the shipment status information of the relevant referenceId. If the order has been invoiced, this information can be obtained.",
+                "operationId": "GetshipmentstatusByReferenceIdGet",
+                "consumes": [],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "referenceId",
+                        "in": "path",
+                        "description": "gets status of order according to given referenceId",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "x-api-version",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/GetShipmentStatusResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "shipmentStatusCode": 5,
+                                "orderId": "5464767",
+                                "referenceId": "SIPARIS34567",
+                                "shipmentId": "14556546",
+                                "shipmentSerialandNumber": "F56576",
+                                "shipmentDateTime": "12-02-2019 10:30",
+                                "shipmentStatus": "Teslim_Edildi",
+                                "statusDateTime": "13-02-2019 12:03",
+                                "trackingUrl": "www.mngkargo.com.tr/track/14556546",
+                                "isDelivered": 1,
+                                "deliveryDateTime": "13-02-2019 14:56",
+                                "deliveryTo": "Sema Kudu"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Shipment not found",
+                        "schema": {
+                            "$ref": "#/definitions/ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/getshipmentstatusByShipmentId/{shipmentId}": {
+            "get": {
+                "tags": [
+                    "StandardQuery"
+                ],
+                "summary": "Get Shipment Status by ShipmentId",
+                "description": "\u0130lgili g\u00f6nderi numaras\u0131na ait g\u00f6nderi durum bilgisini getirir. E\u011fer sipari\u015f faturala\u015fm\u0131\u015f ise bu bilgi elde edilebilir. | Returns the shipment status information of the relevant shipmentId. If the order has been invoiced, this information can be obtained.",
+                "operationId": "GetshipmentstatusByShipmentIdByShipmentIdGet",
+                "consumes": [],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "shipmentId",
+                        "in": "path",
+                        "description": "gets status of order according to given referenceId",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "x-api-version",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/GetShipmentStatusResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "shipmentStatusCode": 5,
+                                "orderId": "5464767",
+                                "referenceId": "SIPARIS34567",
+                                "shipmentId": "14556546",
+                                "shipmentSerialandNumber": "F56576",
+                                "shipmentDateTime": "12-02-2019 10:30",
+                                "shipmentStatus": "Teslim_Edildi",
+                                "statusDateTime": "13-02-2019 12:03",
+                                "trackingUrl": "www.mngkargo.com.tr/track/14556546",
+                                "isDelivered": 1,
+                                "deliveryDateTime": "13-02-2019 14:56",
+                                "deliveryTo": "Sema Kudu"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Shipment not found",
+                        "schema": {
+                            "$ref": "#/definitions/ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/trackshipment/{referenceId}": {
+            "get": {
+                "tags": [
+                    "StandardQuery"
+                ],
+                "summary": "Track Shipment by ReferenceId",
+                "description": "\u0130lgili referans numaras\u0131na ait g\u00f6nderi hareketlerini getirir. E\u011fer sipari\u015f faturala\u015fm\u0131\u015f ise bu bilgi elde edilebilir. | Returns the shipment movements of the relevant referenceId. If the order has been invoiced, this information can be obtained.",
+                "operationId": "TrackshipmentByReferenceIdGet",
+                "consumes": [],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "referenceId",
+                        "in": "path",
+                        "description": "tracks order according to given referenceId",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "x-api-version",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "uniqueItems": false,
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/TrackShipmentResponse"
+                            }
+                        },
+                        "examples": {
+                            "application/json": [
+                                {
+                                    "referenceId": "SIPARIS_28654",
+                                    "eventSequence": "1",
+                                    "eventStatus": "G\u00f6nderi Haz\u0131rland\u0131",
+                                    "eventStatusEn": "Shipment Created",
+                                    "eventDateTime": "12-02-2019 20:30:45",
+                                    "eventDateTimeFormat": "dd-MM-yyyy HH:mm:ss",
+                                    "eventDateTimezone": "GMT+03:00",
+                                    "eventDateTime2": "2019-02-12 20:30:45",
+                                    "eventDateTime2Format": "yyyy-MM-dd HH:mm:ss",
+                                    "eventDateTime2zone": "GMT+03:00",
+                                    "location": "Atalar \u015eube",
+                                    "country": "TR",
+                                    "locationAddress": "\u0130STANBUL (KARTAL)",
+                                    "locationPhone": "0216 494 28 84- 494 28 58",
+                                    "deliveryDateTime": "13-02-2019 14:56",
+                                    "deliveryTo": "Sema Kudu",
+                                    "description": "",
+                                    "pieceTotal": "1"
+                                },
+                                {
+                                    "referenceId": "SIPARIS_28654",
+                                    "eventSequence": "2",
+                                    "eventStatus": "Transfer A\u015famas\u0131nda",
+                                    "eventStatusEn": "In Transit",
+                                    "eventDateTime": "12-02-2019 20:30:55",
+                                    "eventDateTimeFormat": "dd-MM-yyyy HH:mm:ss",
+                                    "eventDateTimezone": "GMT+03:00",
+                                    "eventDateTime2": "2019-02-12 20:30:55",
+                                    "eventDateTime2Format": "yyyy-MM-dd HH:mm:ss",
+                                    "eventDateTime2zone": "GMT+03:00",
+                                    "location": "Marmara Aktarma",
+                                    "country": "TR",
+                                    "locationAddress": "\u0130STANBUL",
+                                    "locationPhone": "0216 494 28 84- 494 28 58",
+                                    "deliveryDateTime": "13-02-2019 14:56",
+                                    "deliveryTo": "Sema Kudu",
+                                    "description": "",
+                                    "pieceTotal": "1"
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Shipment not found",
+                        "schema": {
+                            "$ref": "#/definitions/ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/trackshipmentByShipmentId/{shipmentId}": {
+            "get": {
+                "tags": [
+                    "StandardQuery"
+                ],
+                "summary": "Track Shipment by ShipmentId",
+                "description": "\u0130lgili g\u00f6nderi numaras\u0131na ait g\u00f6nderi hareketlerini getirir. E\u011fer sipari\u015f faturala\u015fm\u0131\u015f ise bu bilgi elde edilebilir. | Returns the shipment movements of the relevant shipmentId. If the order has been invoiced, this information can be obtained.",
+                "operationId": "TrackshipmentByShipmentIdByShipmentIdGet",
+                "consumes": [],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "shipmentId",
+                        "in": "path",
+                        "description": "tracks order according to given shipmentId",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "x-api-version",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "uniqueItems": false,
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/TrackShipmentResponse"
+                            }
+                        },
+                        "examples": {
+                            "application/json": [
+                                {
+                                    "referenceId": "SIPARIS_28654",
+                                    "eventSequence": "1",
+                                    "eventStatus": "G\u00f6nderi Haz\u0131rland\u0131",
+                                    "eventStatusEn": "Shipment Created",
+                                    "eventDateTime": "12-02-2019 20:30:45",
+                                    "eventDateTimeFormat": "dd-MM-yyyy HH:mm:ss",
+                                    "eventDateTimezone": "GMT+03:00",
+                                    "eventDateTime2": "2019-02-12 20:30:45",
+                                    "eventDateTime2Format": "yyyy-MM-dd HH:mm:ss",
+                                    "eventDateTime2zone": "GMT+03:00",
+                                    "location": "Atalar \u015eube",
+                                    "country": "TR",
+                                    "locationAddress": "\u0130STANBUL (KARTAL)",
+                                    "locationPhone": "0216 494 28 84- 494 28 58",
+                                    "deliveryDateTime": "13-02-2019 14:56",
+                                    "deliveryTo": "Sema Kudu",
+                                    "description": "",
+                                    "pieceTotal": "1"
+                                },
+                                {
+                                    "referenceId": "SIPARIS_28654",
+                                    "eventSequence": "2",
+                                    "eventStatus": "Transfer A\u015famas\u0131nda",
+                                    "eventStatusEn": "In Transit",
+                                    "eventDateTime": "12-02-2019 20:30:55",
+                                    "eventDateTimeFormat": "dd-MM-yyyy HH:mm:ss",
+                                    "eventDateTimezone": "GMT+03:00",
+                                    "eventDateTime2": "2019-02-12 20:30:55",
+                                    "eventDateTime2Format": "yyyy-MM-dd HH:mm:ss",
+                                    "eventDateTime2zone": "GMT+03:00",
+                                    "location": "Marmara Aktarma",
+                                    "country": "TR",
+                                    "locationAddress": "\u0130STANBUL",
+                                    "locationPhone": "0216 494 28 84- 494 28 58",
+                                    "deliveryDateTime": "13-02-2019 14:56",
+                                    "deliveryTo": "Sema Kudu",
+                                    "description": "",
+                                    "pieceTotal": "1"
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Shipment not found",
+                        "schema": {
+                            "$ref": "#/definitions/ProblemDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/calculate": {
+            "post": {
+                "tags": [
+                    "StandardQuery"
+                ],
+                "summary": "Calculate",
+                "description": "G\u00f6nderi ta\u015f\u0131ma \u00fccretini hesaplar. Zorunlu di\u011fer alanlar\u0131n d\u0131\u015f\u0131nda ya RecipientCustomerId ya da al\u0131c\u0131n\u0131n CityCode, DistrictCode, Address alanlar\u0131 da zorunludur. | Calculates the shipment transport cost. Out of other required areas either RecipientCustomerId or Recipient's CityCode, DistrictCode, Address areas are also required.",
+                "operationId": "CalculatePost",
+                "consumes": [
+                    "application/json-patch+json",
+                    "application/json",
+                    "text/json",
+                    "application/*+json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "calculateRequest",
+                        "in": "body",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/definitions/CalculateRequest"
+                        }
+                    },
+                    {
+                        "name": "x-api-version",
+                        "in": "header",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Authorization",
+                        "in": "header",
+                        "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/CalculateResponse"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "transferRemuneration": 4.5,
+                                "privateServicePrice": 3,
+                                "pickUpPrice": 1,
+                                "deliveryPrice": 2,
+                                "smsPrice": 2,
+                                "insurancePrice": 1,
+                                "postPrice": 2.6,
+                                "subTotal": 12,
+                                "kdv": 2,
+                                "finalTotal": 16
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "GetOrderResponse": {
+            "type": "object",
+            "properties": {
+                "order": {
+                    "$ref": "#/definitions/OrderOUT"
+                },
+                "orderPieceList": {
+                    "uniqueItems": false,
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/OrderPieceListOUT"
+                    }
+                },
+                "shipper": {
+                    "$ref": "#/definitions/CustomerOUT"
+                },
+                "recipient": {
+                    "$ref": "#/definitions/CustomerOUT"
+                }
+            }
+        },
+        "OrderOUT": {
+            "required": [
+                "referenceId",
+                "content",
+                "smsPreference1",
+                "smsPreference2",
+                "smsPreference3",
+                "description"
+            ],
+            "type": "object",
+            "properties": {
+                "orderType": {
+                    "description": "Descripes type of Order : 1:NORMAL, 2:GELECEK ,3:C2C, 4=ALICI_BAYI\r\nSipari\u015f T\u00fcr\u00fc",
+                    "type": "string"
+                },
+                "shipmentServiceType": {
+                    "description": "Shipment Service Type: 1:STANDART_TESL\u0130MAT, 7:GUN\u0130C\u0130_TESL\u0130MAT, 8:AK\u015eAM_TESL\u0130MAT\r\nG\u00f6nderi Tipi",
+                    "type": "string"
+                },
+                "packagingType": {
+                    "description": "Package Type of Order:  1:DOSYA, 2:M\u0130, 3:PAKET, 4:KOL\u0130\r\nKargo Cinsi",
+                    "type": "string"
+                },
+                "isTransformedToShipment": {
+                    "format": "int32",
+                    "description": "Describes whether order transformed to shipment or not.\r\nSipari\u015f g\u00f6nderile\u015fti mi?",
+                    "type": "integer"
+                },
+                "paymentType": {
+                    "description": "Payment Type of Order: 1:GONDERICI_ODER, 2:ALICI_ODER,3:PLATFORM_ODER\r\n\u00d6deme \u015eekli",
+                    "type": "string"
+                },
+                "deliveryType": {
+                    "description": "Delivery Type of Order: 1:ADRESE_TESLIM, 2:ALICISI_HABERL\u0130 \r\nTeslim \u015eekli",
+                    "type": "string"
+                },
+                "orderDate": {
+                    "description": "Order Date\r\nSipari\u015f Tarihi",
+                    "type": "string"
+                },
+                "isVerifiedOnMarketPlace": {
+                    "format": "int32",
+                    "description": "Indicates whether it verified on related MarketPlace platform.\r\nSipari\u015fin pazaryerinde do\u011frulan\u0131p do\u011frulanmad\u0131\u011f\u0131n\u0131 g\u00f6sterir.",
+                    "type": "integer"
+                },
+                "shipmentId": {
+                    "description": "Identity Number of Shipment\r\nG\u00f6nderi Numaras\u0131",
+                    "type": "string"
+                },
+                "referenceId": {
+                    "description": "Identity Number of Order, ReferenceId must be unique foreach order. ReferenceId must be uppercase.\r\nSipari\u015f Numaras\u0131, Sipari\u015f numaras\u0131 her sipari\u015f i\u00e7in benzersiz olmal\u0131d\u0131r. Sipari\u015f numaras\u0131 b\u00fcy\u00fckharflerden olu\u015fmal\u0131d\u0131r.",
+                    "type": "string"
+                },
+                "barcode": {
+                    "description": "Barcode must be same with ReferenceId. Barcode must be uppercase.\r\nBarkod ReferenceId ile ayn\u0131 olmal\u0131d\u0131r. Barkod b\u00fcy\u00fckharflerden olu\u015fmal\u0131d\u0131r.",
+                    "type": "string"
+                },
+                "billOfLandingId": {
+                    "description": "Bill Of LandingId\r\n\u0130rsaliye Numaras\u0131",
+                    "type": "string"
+                },
+                "isCOD": {
+                    "format": "int32",
+                    "description": "Indicates whether it is Cash On Delivery.\r\nKap\u0131da \u00d6deme mi?",
+                    "type": "integer"
+                },
+                "codAmount": {
+                    "format": "double",
+                    "description": "Cash on Delivery Amount\r\nKap\u0131da \u00d6deme Miktar\u0131",
+                    "type": "number"
+                },
+                "content": {
+                    "description": "Content\r\nGenel \u0130\u00e7erik Bilgisi",
+                    "type": "string"
+                },
+                "smsPreference1": {
+                    "format": "int32",
+                    "description": "SMSPreference Is Send SMS to Recipient When Shipment Reached to Destination Branch\r\nKargo var\u0131\u015f \u015fubesine ula\u015ft\u0131\u011f\u0131nda al\u0131c\u0131ya SMS gitsin mi?",
+                    "type": "integer"
+                },
+                "smsPreference2": {
+                    "format": "int32",
+                    "description": "Is Send SMS to Recipient When Shpiment First Prepare\r\nKargo ilk haz\u0131rland\u0131\u011f\u0131nda al\u0131c\u0131ya SMS gitsin mi?",
+                    "type": "integer"
+                },
+                "smsPreference3": {
+                    "format": "int32",
+                    "description": "Is Send SMS to Shipper When Shipment Delivered\r\nKargo teslim edildi\u011finde g\u00f6ndericiye SMS gitsin mi?",
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "marketPlaceShortCode": {
+                    "description": "Short MarketPlace Code of Order : ex: TRND, N11, GG, VIVE\r\nPazaryeri Kodu  \u00f6rne\u011fin: TRND, N11, GG, VIVE",
+                    "type": "string"
+                },
+                "marketPlaceSaleCode": {
+                    "description": "Sale Code of MarketPlace\r\nPazaryeri Sat\u0131\u015f Kodu",
+                    "type": "string"
+                }
+            }
+        },
+        "OrderPieceListOUT": {
+            "required": [
+                "barcode",
+                "desi",
+                "kg"
+            ],
+            "type": "object",
+            "properties": {
+                "numberOfPieces": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "kgDesi": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "barcode": {
+                    "type": "string"
+                },
+                "desi": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "kg": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                }
+            }
+        },
+        "CustomerOUT": {
+            "type": "object",
+            "properties": {
+                "customerId": {
+                    "format": "int64",
+                    "description": "Identity Number of Customer \r\nM\u00fc\u015fteri Numaras\u0131",
+                    "type": "integer"
+                },
+                "refCustomerId": {
+                    "description": "Identity Number of Customer in their's own system.\r\nM\u00fc\u015fterinin kendi sistemindeki numaras\u0131",
+                    "type": "string"
+                },
+                "city": {
+                    "type": "string"
+                },
+                "district": {
+                    "type": "string"
+                },
+                "address": {
+                    "type": "string"
+                },
+                "bussinessPhoneNumber": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "taxOffice": {
+                    "type": "string"
+                },
+                "taxNumber": {
+                    "description": "Tax Office\r\nVergi Dairesi",
+                    "type": "string"
+                },
+                "fullName": {
+                    "description": "Tax Number\r\nVergi Numaras\u0131",
+                    "type": "string"
+                },
+                "homePhoneNumber": {
+                    "type": "string"
+                },
+                "mobilePhoneNumber": {
+                    "type": "string"
+                }
+            }
+        },
+        "ProblemDetails": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "status": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "detail": {
+                    "type": "string"
+                },
+                "instance": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": {
+                "type": "object"
+            }
+        },
+        "GetShipmentResponse": {
+            "type": "object",
+            "properties": {
+                "shipment": {
+                    "$ref": "#/definitions/ShipmentOUT"
+                },
+                "shipmentPieceList": {
+                    "uniqueItems": false,
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/OrderPieceListOUT"
+                    }
+                },
+                "shipper": {
+                    "$ref": "#/definitions/CustomerOUT"
+                },
+                "recipient": {
+                    "$ref": "#/definitions/CustomerOUT"
+                }
+            }
+        },
+        "ShipmentOUT": {
+            "type": "object",
+            "properties": {
+                "shipmentServiceType": {
+                    "description": "Shipment service type: 1:STANDART_TESL\u0130MAT, 7:GUN\u0130C\u0130_TESL\u0130MAT, 8:AK\u015eAM_TESL\u0130MAT\r\nG\u00f6nderi Tipi",
+                    "type": "string"
+                },
+                "packagingType": {
+                    "description": "Package Type of Order:  1:DOSYA, 2:M\u0130, 3:PAKET, 4:KOL\u0130\r\nKargo Cinsi",
+                    "type": "string"
+                },
+                "paymentType": {
+                    "description": "Payment Type of Order: P:GONDERICI_ODER, U:ALICI_ODER, PL:PLATFORM_ODER\r\n\u00d6deme T\u00fcr\u00fc",
+                    "type": "string"
+                },
+                "deliveryType": {
+                    "description": "Delivery Type of Order: 1:ADRESE_TESLIM, 2:ALICISI_HABERL\u0130 \r\nTeslim T\u00fcr\u00fc",
+                    "type": "string"
+                },
+                "referenceId": {
+                    "description": "Identity Number of Order\r\nSipari\u015f Numaras\u0131",
+                    "type": "string"
+                },
+                "shipmentId": {
+                    "description": "Identity Number of Shipment\r\nG\u00f6nderi Numaras\u0131",
+                    "type": "string"
+                },
+                "shipmentSerialNumber": {
+                    "type": "string"
+                },
+                "shipmentNumber": {
+                    "type": "string"
+                },
+                "shipmentDateTime": {
+                    "description": "Shipment Date\r\nG\u00f6nderi Tarihi",
+                    "type": "string"
+                },
+                "pieceCount": {
+                    "format": "int32",
+                    "description": "Shipment Piece Count \r\nG\u00f6nderi Par\u00e7a Say\u0131s\u0131",
+                    "type": "integer"
+                },
+                "totalKg": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "totalDesi": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "totalKgDesi": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "total": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "kdv": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "finalTotal": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "shipmentStatusCode": {
+                    "format": "int32",
+                    "description": "Shipment Status Code: 1:G\u00f6nderi_Haz\u0131rland\u0131, 2:Transfer_A\u015famas\u0131nda, 3: Teslimat_Birimine_Ula\u015ft\u0131, 4: Al\u0131c\u0131_Adresine_Y\u00f6nlendirildi, 5: Teslim_Edildi, 6:Teslim_Edilemedi, 7:Geri_Geliyor, 8: Destek_Gerekiyor       \r\nG\u00f6nderi Durum Kodu",
+                    "type": "integer"
+                },
+                "isMarketPlaceShipment": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "isMarketPlacePays": {
+                    "format": "int32",
+                    "description": "Market Place is pays ?\r\nG\u00f6nderi \u00fccretini platform mu \u00f6der ?",
+                    "type": "integer"
+                },
+                "receivingBranch": {
+                    "description": "Recipient Branch\r\nAl\u0131c\u0131 \u015eube",
+                    "type": "string"
+                },
+                "shipperBranch": {
+                    "description": "Shipper Branch\r\nG\u00f6nderici \u015eube",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "billOfLandingId": {
+                    "description": "Bill Of LandingId\r\n\u0130rsaliye Numaras\u0131",
+                    "type": "string"
+                },
+                "isCOD": {
+                    "format": "int32",
+                    "description": "Indicates whether it is Cash On Delivery.\r\nKap\u0131da \u00d6deme mi?",
+                    "type": "integer"
+                },
+                "codAmount": {
+                    "description": "Cash on Delivery Amount\r\nKap\u0131da \u00d6deme Miktar\u0131",
+                    "type": "string"
+                },
+                "content": {
+                    "description": "Content\r\nGenel \u0130\u00e7erik Bilgisi",
+                    "type": "string"
+                },
+                "estimatedDeliveryDate": {
+                    "description": "Shipment Estimated Delivery Date\r\nG\u00f6nderi Tahmini Teslim Tarihi",
+                    "type": "string"
+                },
+                "deliveryDate": {
+                    "description": "Shipment Delivery Date\r\nG\u00f6nderi Teslim Tarihi",
+                    "type": "string"
+                },
+                "isDelivered": {
+                    "format": "int32",
+                    "description": "Is Shipment Delivered?\r\nG\u00f6nderi Teslim Edildi Mi?",
+                    "type": "integer"
+                },
+                "deliveryTo": {
+                    "description": "Name and Surname who delivery to shipment.\r\nG\u00f6nderiyi teslim alan ad\u0131 ve soyad\u0131.",
+                    "type": "string"
+                }
+            }
+        },
+        "GetShipmentStatusResponse": {
+            "type": "object",
+            "properties": {
+                "shipmentStatusCode": {
+                    "format": "int32",
+                    "description": "Shipment Status Code\r\nG\u00f6nderi Durum Codu",
+                    "type": "integer"
+                },
+                "orderId": {
+                    "description": "Identity Number of Order",
+                    "type": "string"
+                },
+                "referenceId": {
+                    "description": "Identity Number of Order\r\nSipari\u015f Numaras\u0131",
+                    "type": "string"
+                },
+                "shipmentId": {
+                    "description": "Identity Number of Shipment",
+                    "type": "string"
+                },
+                "shipmentSerialandNumber": {
+                    "description": "Shipment Serial and Number\r\nG\u00f6nderi Seri ve Numaras\u0131",
+                    "type": "string"
+                },
+                "shipmentDateTime": {
+                    "description": "Shipment DateTime \r\nG\u00f6nderi tarihi",
+                    "type": "string"
+                },
+                "shipmentStatus": {
+                    "description": "Shipment Status\r\nG\u00f6nderi Durumu",
+                    "type": "string"
+                },
+                "statusDateTime": {
+                    "description": "Status DateTime \r\nDurumu Tarihi",
+                    "type": "string"
+                },
+                "trackingUrl": {
+                    "description": "TrackingUrl\r\nTakip Linki",
+                    "type": "string"
+                },
+                "isDelivered": {
+                    "format": "int32",
+                    "description": "Is Shipment Delivered?\r\nG\u00f6nderi Teslim Edildi Mi?",
+                    "type": "integer"
+                },
+                "deliveryDateTime": {
+                    "description": "Delivery DateTime\r\nTeslim Tarihi",
+                    "type": "string"
+                },
+                "deliveryTo": {
+                    "description": "Name and Surname who delivery to shipment.\r\nG\u00f6nderiyi teslim alan ad\u0131 ve soyad\u0131.",
+                    "type": "string"
+                },
+                "retrieveShipmentId": {
+                    "description": "Identity Number of Shipment if it is Retrieved\r\n\u0130ade yap\u0131lm\u0131\u015fsa geri G\u00f6nderilen G\u00f6nderi Numaras\u0131",
+                    "type": "string"
+                }
+            }
+        },
+        "TrackShipmentResponse": {
+            "type": "object",
+            "properties": {
+                "referenceId": {
+                    "description": "Identity Number of Order\r\nSipari\u015f Numaras\u0131",
+                    "type": "string"
+                },
+                "shipmentId": {
+                    "description": "Identity Number of Shipment\r\nG\u00f6nderi Numaras\u0131",
+                    "type": "string"
+                },
+                "eventSequence": {
+                    "type": "string"
+                },
+                "eventStatus": {
+                    "description": "Event Status: 1:G\u00f6nderi_Haz\u0131rland\u0131, 2:Transfer_A\u015famas\u0131nda, 3: Teslimat_Birimine_Ula\u015ft\u0131, 4: Al\u0131c\u0131_Adresine_Y\u00f6nlendirildi, 5: Teslim_Edildi, 6:Teslim_Edilemedi, 7:Geri_Geliyor, 8: Destek_Gerekiyor       \r\nOlay Durumu",
+                    "type": "string"
+                },
+                "eventStatusEn": {
+                    "type": "string"
+                },
+                "eventDateTime": {
+                    "type": "string",
+                    "description": "Event DateTime\r\nHareket Tarihi"
+                },
+                "eventDateTimeFormat": {
+                    "type": "string",
+                    "description": "Event DateTime Time Format\r\nHareket Tarihi Tarih format\u0131"
+                },
+                "eventDateTimezone": {
+                    "type": "string",
+                    "description": "Event DateTime Timezone\r\nHareket Tarihi Saat Dilimi"
+                },
+                "eventDateTime2": {
+                    "type": "string",
+                    "description": "Event DateTime2\r\nHareket Tarihi (Farkl\u0131 Format)"
+                },
+                "eventDateTime2Format": {
+                    "type": "string",
+                    "description": "Event DateTime2 Time Format\r\nHareket Tarihi Tarih format\u0131"
+                },
+                "eventDateTime2zone": {
+                    "type": "string",
+                    "description": "Event DateTime2 Timezone\r\nHareket Tarihi Saat Dilimi"
+                },
+                "location": {
+                    "type": "string",
+                    "description": "Location\r\nYer"
+                },
+                "country": {
+                    "type": "string",
+                    "description": "Location\r\nYer"
+                },
+                "locationAddress": {
+                    "type": "string",
+                    "description": "Location Address\r\nAdres"
+                },
+                "locationPhone": {
+                    "description": "Location Phone\r\nTelefon",
+                    "type": "string"
+                },
+                "deliveryDateTime": {
+                    "description": "Delivery DateTime\r\nTeslim Tarihi",
+                    "type": "string"
+                },
+                "deliveryTo": {
+                    "description": "Name and Surname who delivery to shipment.\r\nG\u00f6nderiyi teslim alan ad\u0131 ve soyad\u0131.",
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "pieceTotal": {
+                    "description": "Piece Total\r\nToplam Par\u00e7a Say\u0131s\u0131",
+                    "type": "string"
+                }
+            }
+        },
+        "CalculateRequest": {
+            "required": [
+                "shipmentServiceType",
+                "packagingType",
+                "paymentType",
+                "pickUpType",
+                "deliveryType",
+                "smsPreference1",
+                "smsPreference2",
+                "smsPreference3"
+            ],
+            "type": "object",
+            "properties": {
+                "shipmentServiceType": {
+                    "format": "int32",
+                    "description": "Shipment Service Type: 1:STANDART_TESL\u0130MAT, 7:GUN\u0130C\u0130_TESL\u0130MAT, 8:AK\u015eAM_TESL\u0130MAT\r\nG\u00f6nderi Tipi",
+                    "type": "integer"
+                },
+                "packagingType": {
+                    "format": "int32",
+                    "description": "Package Type of Order:  1:DOSYA, 2:M\u0130, 3:PAKET, 4:KOL\u0130\r\nKargo Cinsi",
+                    "type": "integer"
+                },
+                "paymentType": {
+                    "format": "int32",
+                    "description": "Payment Type of Order: 1:GONDERICI_ODER, 2:ALICI_ODER,3:PLATFORM_ODER\r\n\u00d6deme \u015eekli",
+                    "type": "integer"
+                },
+                "pickUpType": {
+                    "format": "int32",
+                    "description": "Pick Up Type of Shipment: 1: ADRESTEN ALIM, 2: SUBEYE GETIRILDI\r\nTeslim Al\u0131m \u015eekli",
+                    "type": "integer"
+                },
+                "deliveryType": {
+                    "format": "int32",
+                    "description": "Delivery Type of Order: 1:ADRESE_TESLIM, 2:ALICISI_HABERL\u0130 \r\nTeslim \u015eekli",
+                    "type": "integer"
+                },
+                "recipientCustomerId": {
+                    "format": "int64",
+                    "description": "Identity Number of Customer in their's own system.\r\nM\u00fc\u015fterinin kendi sistemindeki numaras\u0131",
+                    "type": "integer"
+                },
+                "cityCode": {
+                    "format": "int32",
+                    "description": "Code of City you can provide code information from CBS Info API.\r\n\u015eehir Kodu, CBS Info API'den kod bilgisi al\u0131nabilir.",
+                    "type": "integer"
+                },
+                "districtCode": {
+                    "format": "int32",
+                    "description": "Code of District you can provide code information from CBS Info API.\r\n\u0130l\u00e7e Kodu, CBS Info API'den kod bilgisi al\u0131nabilir.",
+                    "type": "integer"
+                },
+                "address": {
+                    "type": "string"
+                },
+                "smsPreference1": {
+                    "format": "int32",
+                    "description": "SMSPreference Is Send SMS to Recipient When Shipment Reached to Destination Branch\r\nKargo var\u0131\u015f \u015fubesine ula\u015ft\u0131\u011f\u0131nda al\u0131c\u0131ya SMS gitsin mi?",
+                    "type": "integer"
+                },
+                "smsPreference2": {
+                    "format": "int32",
+                    "description": "Is Send SMS to Recipient When Shpiment First Prepare\r\nKargo ilk haz\u0131rland\u0131\u011f\u0131nda al\u0131c\u0131ya SMS gitsin mi?",
+                    "type": "integer"
+                },
+                "smsPreference3": {
+                    "format": "int32",
+                    "description": "Is Send SMS to Shipper When Shipment Delivered\r\nKargo teslim edildi\u011finde g\u00f6ndericiye SMS gitsin mi?",
+                    "type": "integer"
+                },
+                "orderPieceList": {
+                    "uniqueItems": false,
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/OrderPieceList"
+                    }
+                }
+            },
+            "example": {
+                "shipmentServiceType": 1,
+                "packagingType": 1,
+                "paymentType": 1,
+                "pickUpType": 1,
+                "deliveryType": 1,
+                "recipientCustomerId": "null",
+                "cityCode": 34,
+                "districtCode": 56,
+                "address": "karadeniz mahallesi 1144 sokak no 25",
+                "smsPreference1": 1,
+                "smsPreference2": 1,
+                "smsPreference3": 0,
+                "orderPieceList": [
+                    {
+                        "barcode": "SIPARIS34567_PARCA1",
+                        "desi": 2,
+                        "kg": 1,
+                        "content": "Par\u00e7a a\u00e7\u0131klama 1"
+                    },
+                    {
+                        "barcode": "SIPARIS34567_PARCA2",
+                        "desi": 2,
+                        "kg": 3,
+                        "content": "Par\u00e7a a\u00e7\u0131klama 2"
+                    }
+                ]
+            }
+        },
+        "OrderPieceList": {
+            "required": [
+                "barcode",
+                "desi",
+                "kg"
+            ],
+            "type": "object",
+            "properties": {
+                "barcode": {
+                    "type": "string"
+                },
+                "desi": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "kg": {
+                    "format": "int32",
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "string"
+                }
+            }
+        },
+        "CalculateResponse": {
+            "type": "object",
+            "properties": {
+                "transferRemuneration": {
+                    "format": "double",
+                    "description": "Shipment Transfer Remuneration\r\nTa\u015f\u0131ma \u00dccreti",
+                    "type": "number"
+                },
+                "privateServicePrice": {
+                    "format": "double",
+                    "description": "Private Service Price\r\n\u00d6zel Hizmet \u00dccreti",
+                    "type": "number"
+                },
+                "pickUpPrice": {
+                    "format": "double",
+                    "description": "Shipment Pick Up Price \r\nG\u00f6nderi Al\u0131m \u00dccreti",
+                    "type": "number"
+                },
+                "deliveryPrice": {
+                    "format": "double",
+                    "description": "Delivery Price\r\nG\u00f6nderi Ta\u015f\u0131ma \u00dccreti",
+                    "type": "number"
+                },
+                "smsPrice": {
+                    "format": "double",
+                    "description": "SMS Price \r\nSMS \u00dccreti",
+                    "type": "number"
+                },
+                "insurancePrice": {
+                    "format": "double",
+                    "description": "Insurance Price\r\nSigort Primi",
+                    "type": "number"
+                },
+                "postPrice": {
+                    "format": "double",
+                    "description": "Post Price\r\nPosta \u00dccreti",
+                    "type": "number"
+                },
+                "subTotal": {
+                    "format": "double",
+                    "description": "Sub Total \r\nAra Toplam\u0131",
+                    "type": "number"
+                },
+                "kdv": {
+                    "format": "double",
+                    "type": "number"
+                },
+                "finalTotal": {
+                    "format": "double",
+                    "description": "Final Total \r\nGenel Toplam",
+                    "type": "number"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "api-key-1": {
+            "description": "",
+            "in": "header",
+            "name": "X-IBM-Client-Id",
+            "type": "apiKey"
+        },
+        "api-key-2": {
+            "description": "",
+            "in": "header",
+            "name": "X-IBM-Client-Secret",
+            "type": "apiKey"
+        }
+    },
+    "security": [
+        {
+            "api-key-2": [],
+            "api-key-1": []
+        }
+    ],
+    "schemes": [
+        "https"
+    ],
+    "host": "testapi.mngkargo.com.tr"
+}

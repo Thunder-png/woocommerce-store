@@ -25,6 +25,7 @@ $last_response_preview = function_exists( 'mb_substr' ) ? mb_substr( (string) $m
 			<?php echo esc_html( $meta['last_status'] ? $meta['last_status'] : __( 'N/A', 'dhl-ecommerce-mng-woocommerce' ) ); ?>
 		</span>
 	</p>
+	<p><strong><?php echo esc_html__( 'Reference ID', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong> <?php echo esc_html( $meta['reference_id'] ? $meta['reference_id'] : '-' ); ?></p>
 	<p><strong><?php echo esc_html__( 'Shipment ID', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong> <?php echo esc_html( $meta['shipment_id'] ? $meta['shipment_id'] : '-' ); ?></p>
 	<p><strong><?php echo esc_html__( 'Tracking Number', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong> <?php echo esc_html( $meta['tracking_number'] ? $meta['tracking_number'] : '-' ); ?></p>
 	<p>

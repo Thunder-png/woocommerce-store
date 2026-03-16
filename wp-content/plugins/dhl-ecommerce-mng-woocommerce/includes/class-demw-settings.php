@@ -245,10 +245,12 @@ class DEMW_Settings {
 	 */
 	public function defaults() {
 		return array(
-			'environment'          => 'sandbox',
-			'sandbox_base_url'     => 'https://testapi.mngkargo.com.tr',
+			'environment'          => 'development',
+			'development_base_url' => 'https://testapi.mngkargo.com.tr/mngapi/api',
 			'production_base_url'  => '',
 			'timeout'              => 20,
+			'api_version'          => '',
+			'shipment_command_api' => 'plus_command',
 			'auth_type'            => 'api_key_secret',
 			'api_key'              => '',
 			'api_secret'           => '',
@@ -275,10 +277,22 @@ class DEMW_Settings {
 		$defaults = $this->defaults();
 		$clean    = array();
 
-		$clean['environment'] = in_array( (string) ( $input['environment'] ?? '' ), array( 'sandbox', 'production' ), true ) ? (string) $input['environment'] : $defaults['environment'];
-		$clean['sandbox_base_url'] = DEMW_Helpers::sanitize_base_url( $input['sandbox_base_url'] ?? '' );
+		$raw_environment = (string) ( $input['environment'] ?? '' );
+		if ( 'sandbox' === $raw_environment ) {
+			$raw_environment = 'development';
+		}
+		$clean['environment'] = in_array( $raw_environment, array( 'development', 'production' ), true ) ? $raw_environment : $defaults['environment'];
+
+		$development_base_url = $input['development_base_url'] ?? '';
+		if ( '' === (string) $development_base_url && isset( $input['sandbox_base_url'] ) ) {
+			$development_base_url = $input['sandbox_base_url'];
+		}
+		$clean['development_base_url'] = DEMW_Helpers::sanitize_base_url( $development_base_url );
 		$clean['production_base_url'] = DEMW_Helpers::sanitize_base_url( $input['production_base_url'] ?? '' );
 		$clean['timeout'] = max( 3, min( 120, absint( $input['timeout'] ?? $defaults['timeout'] ) ) );
+		$clean['api_version'] = sanitize_text_field( (string) ( $input['api_version'] ?? '' ) );
+		$command_apis     = array( 'plus_command', 'barcode_command' );
+		$clean['shipment_command_api'] = in_array( (string) ( $input['shipment_command_api'] ?? '' ), $command_apis, true ) ? (string) $input['shipment_command_api'] : $defaults['shipment_command_api'];
 
 		$auth_types = array( 'api_key_secret', 'username_password', 'bearer_token', 'custom_header' );
 		$clean['auth_type'] = in_array( (string) ( $input['auth_type'] ?? '' ), $auth_types, true ) ? (string) $input['auth_type'] : $defaults['auth_type'];

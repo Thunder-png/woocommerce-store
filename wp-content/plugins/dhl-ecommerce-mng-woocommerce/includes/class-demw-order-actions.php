@@ -196,13 +196,107 @@ class DEMW_Order_Actions {
 	 * @return array<string,mixed>|WP_Error
 	 */
 	private function run_create_shipment( WC_Order $order ) {
-		$payload = $this->mapper->map_order_to_shipment_payload( $order );
+		$command_api = (string) $this->settings->get( 'shipment_command_api', 'plus_command' );
+		$using_barcode_command = ( 'barcode_command' === $command_api );
+
+		$reference_id = (string) $order->get_meta( '_demw_reference_id', true );
+		if ( '' === $reference_id ) {
+			$reference_id = strtoupper( 'WC_' . (string) $order->get_order_number() );
+			$order->update_meta_data( '_demw_reference_id', $reference_id );
+			$order->save();
+		}
+
+		// New scenario for Plus mode:
+		// 1) createRecipient + 2) standardcmdapi/createOrder (first click)
+		// 3) barcodecmdapi/createbarcode (later click when packaging is ready).
+		if ( 'plus_command' === $command_api ) {
+			$order_created = DEMW_Helpers::as_bool( $order->get_meta( '_demw_order_created', true ) );
+			if ( ! $order_created ) {
+				$recipient_payload = $this->mapper->map_order_to_recipient_payload( $order );
+				if ( is_wp_error( $recipient_payload ) ) {
+					$this->persist_last_error( $order, $recipient_payload->get_error_message() );
+					return $recipient_payload;
+				}
+				$recipient_payload = $this->enrich_recipient_payload_with_location_codes( $recipient_payload, $order );
+
+				$recipient_result = $this->api_client->create_recipient( $recipient_payload );
+				if ( is_wp_error( $recipient_result ) ) {
+					$this->persist_last_error( $order, $recipient_result->get_error_message() );
+					$this->save_exchange_meta( $order );
+					return $recipient_result;
+				}
+
+				$order_payload = $this->mapper->map_order_to_standard_order_payload( $order );
+				if ( is_wp_error( $order_payload ) ) {
+					$this->persist_last_error( $order, $order_payload->get_error_message() );
+					return $order_payload;
+				}
+				$order_payload = $this->enrich_standard_order_payload_with_location_codes( $order_payload, $order );
+
+				$order_result = $this->api_client->create_order( $order_payload );
+				if ( is_wp_error( $order_result ) ) {
+					$this->persist_last_error( $order, $order_result->get_error_message() );
+					$this->save_exchange_meta( $order );
+					return $order_result;
+				}
+
+				$order_data = is_array( $order_result['data'] ) ? $order_result['data'] : array();
+				$reference_id = $this->extract_value( $order_data, array( 'referenceId' ) );
+				if ( '' === $reference_id ) {
+					$reference_id = strtoupper( 'WC_' . (string) $order->get_order_number() );
+				}
+
+				$order->update_meta_data( '_demw_reference_id', $reference_id );
+				$order->update_meta_data( '_demw_order_created', 1 );
+				$order->update_meta_data( '_demw_order_synced_at', time() );
+				$order->update_meta_data( '_demw_last_status', __( 'Recipient and order data synced', 'dhl-ecommerce-mng-woocommerce' ) );
+				$order->update_meta_data( '_demw_last_error', '' );
+				$this->update_common_meta( $order );
+				$this->save_exchange_meta( $order );
+				$order->save();
+
+				$this->add_order_note(
+					$order,
+					sprintf(
+						/* translators: %s: reference id */
+						__( 'DHL/MNG stage completed: createRecipient + createOrder. Reference: %s. Run Create Shipment again to generate barcode.', 'dhl-ecommerce-mng-woocommerce' ),
+						$reference_id
+					)
+				);
+
+				return array( 'message' => __( 'Recipient and order synced. Click Create Shipment again for barcode generation.', 'dhl-ecommerce-mng-woocommerce' ) );
+			}
+		}
+
+		$payload = $this->mapper->map_order_to_barcode_payload( $order );
 		if ( is_wp_error( $payload ) ) {
 			$this->persist_last_error( $order, $payload->get_error_message() );
 			return $payload;
 		}
 
-		$result = $this->api_client->create_shipment( $payload );
+		if ( 'plus_command' === $command_api ) {
+			$synced_at = absint( $order->get_meta( '_demw_order_synced_at', true ) );
+			$wait_sec  = 60;
+			if ( $synced_at > 0 && ( time() - $synced_at ) < $wait_sec ) {
+				$remaining = max( 1, $wait_sec - ( time() - $synced_at ) );
+				return new WP_Error(
+					'demw_wait_for_branch_resolution',
+					sprintf(
+						/* translators: %d: seconds */
+						__(
+							'Order/recipient synced successfully, but destination branch may still be resolving on carrier side. Please wait %d seconds, then run Create Shipment again.',
+							'dhl-ecommerce-mng-woocommerce'
+						),
+						$remaining
+					)
+				);
+			}
+		}
+		if ( isset( $payload['referenceId'] ) && '' === (string) $payload['referenceId'] ) {
+			$payload['referenceId'] = $reference_id;
+		}
+
+		$result = $this->api_client->create_barcode( $payload );
 		if ( is_wp_error( $result ) ) {
 			$this->persist_last_error( $order, $result->get_error_message() );
 			$this->save_exchange_meta( $order );
@@ -211,12 +305,16 @@ class DEMW_Order_Actions {
 
 		$data            = is_array( $result['data'] ) ? $result['data'] : array();
 		$shipment_id     = $this->extract_value( $data, array( 'shipmentId', 'orderInvoiceId', 'shipment.shipmentId' ) );
-		$tracking_number = $this->extract_value( $data, array( 'trackingNumber', 'barcode', 'shipmentPieceList.0.barcode' ) );
+		$tracking_number = $this->extract_value( $data, array( 'trackingNumber', 'barcode', 'shipmentPieceList.0.barcode', 'barcodes.0.value' ) );
+		if ( '' === $tracking_number && isset( $payload['referenceId'] ) ) {
+			$tracking_number = (string) $payload['referenceId'];
+		}
 		if ( '' === $shipment_id && '' === $tracking_number ) {
 			$this->persist_last_error( $order, __( 'Shipment created but shipment ID/tracking number was missing in response.', 'dhl-ecommerce-mng-woocommerce' ) );
 		}
 
 		$order->update_meta_data( '_demw_carrier', 'dhl_ecommerce_mng' );
+		$order->update_meta_data( '_demw_reference_id', $reference_id );
 		$order->update_meta_data( '_demw_shipment_id', $shipment_id );
 		$order->update_meta_data( '_demw_tracking_number', $tracking_number );
 		$order->update_meta_data( '_demw_last_status', __( 'Shipment created', 'dhl-ecommerce-mng-woocommerce' ) );
@@ -227,7 +325,7 @@ class DEMW_Order_Actions {
 
 		$note = sprintf(
 			/* translators: 1: shipment id, 2: tracking number */
-			__( 'DHL/MNG shipment created. Shipment ID: %1$s, Tracking: %2$s', 'dhl-ecommerce-mng-woocommerce' ),
+			__( 'DHL/MNG barcode shipment created. Shipment ID: %1$s, Tracking: %2$s', 'dhl-ecommerce-mng-woocommerce' ),
 			'' !== $shipment_id ? $shipment_id : '-',
 			'' !== $tracking_number ? $tracking_number : '-'
 		);
@@ -245,9 +343,12 @@ class DEMW_Order_Actions {
 	private function run_query_status( WC_Order $order ) {
 		$shipment_id     = (string) $order->get_meta( '_demw_shipment_id', true );
 		$tracking_number = (string) $order->get_meta( '_demw_tracking_number', true );
+		$reference_id    = (string) $order->get_meta( '_demw_reference_id', true );
 		$old_status      = (string) $order->get_meta( '_demw_last_status', true );
 
-		$result = $this->api_client->query_shipment_status( $shipment_id, $tracking_number );
+		$result = '' !== $reference_id
+			? $this->api_client->query_shipment_status_by_reference( $reference_id )
+			: $this->api_client->query_shipment_status( $shipment_id, $tracking_number );
 		if ( is_wp_error( $result ) ) {
 			$this->persist_last_error( $order, $result->get_error_message() );
 			$this->save_exchange_meta( $order );
@@ -255,7 +356,7 @@ class DEMW_Order_Actions {
 		}
 
 		$data       = is_array( $result['data'] ) ? $result['data'] : array();
-		$new_status = $this->extract_value( $data, array( 'shipment.shipmentLastMove', 'shipment.shipmentStatusCode', '0.eventStatus', 'eventStatus' ) );
+		$new_status = $this->extract_value( $data, array( 'shipment.shipmentLastMove', 'shipment.shipmentStatusCode', 'shipmentStatus', 'status', '0.shipmentLastMove', '0.eventStatus', 'eventStatus' ) );
 		if ( '' === $new_status ) {
 			$new_status = __( 'Status response received', 'dhl-ecommerce-mng-woocommerce' );
 		}
@@ -282,8 +383,9 @@ class DEMW_Order_Actions {
 	private function run_get_label( WC_Order $order ) {
 		$shipment_id     = (string) $order->get_meta( '_demw_shipment_id', true );
 		$tracking_number = (string) $order->get_meta( '_demw_tracking_number', true );
+		$reference_id    = (string) $order->get_meta( '_demw_reference_id', true );
 
-		$result = $this->api_client->get_label( $shipment_id, $tracking_number );
+		$result = $this->api_client->get_label( $shipment_id, $tracking_number, $reference_id );
 		if ( is_wp_error( $result ) ) {
 			$this->persist_last_error( $order, $result->get_error_message() );
 			$this->save_exchange_meta( $order );
@@ -291,7 +393,16 @@ class DEMW_Order_Actions {
 		}
 
 		$data      = is_array( $result['data'] ) ? $result['data'] : array();
-		$label_url = $this->extract_value( $data, array( 'labelUrl', 'url', 'pdfUrl' ) );
+		$label_url = $this->extract_value( $data, array( 'labelUrl', 'trackingUrl', 'shipmentFollowUrl', 'shipment.shipmentFollowUrl', 'url', 'pdfUrl' ) );
+		$shipment_from_response = $this->extract_value( $data, array( 'shipmentId', 'shipment.shipmentId' ) );
+		$tracking_from_response = $this->extract_value( $data, array( 'trackingNumber', 'barcode', 'shipmentPieceList.0.barcode', 'cargoBarcode' ) );
+
+		if ( '' === $shipment_id && '' !== $shipment_from_response ) {
+			$order->update_meta_data( '_demw_shipment_id', $shipment_from_response );
+		}
+		if ( '' === $tracking_number && '' !== $tracking_from_response ) {
+			$order->update_meta_data( '_demw_tracking_number', $tracking_from_response );
+		}
 
 		$order->update_meta_data( '_demw_label_url', $label_url );
 		$order->update_meta_data( '_demw_label_data', DEMW_Helpers::encode_for_storage( $data ) );
@@ -456,5 +567,184 @@ class DEMW_Order_Actions {
 		}
 
 		return admin_url( 'post.php?post=' . $order_id . '&action=edit' );
+	}
+
+	/**
+	 * Enrich CreateRecipient payload with city/district codes via CBS API.
+	 *
+	 * @param array<string,mixed> $payload Recipient payload.
+	 * @param WC_Order            $order Order.
+	 * @return array<string,mixed>
+	 */
+	private function enrich_recipient_payload_with_location_codes( $payload, WC_Order $order ) {
+		if ( ! isset( $payload['recipient'] ) || ! is_array( $payload['recipient'] ) ) {
+			return $payload;
+		}
+
+		$resolved = $this->resolve_location_codes_for_order( $order );
+		if ( is_wp_error( $resolved ) ) {
+			return $payload;
+		}
+
+		$payload['recipient']['cityCode']     = (int) $resolved['city_code'];
+		$payload['recipient']['districtCode'] = (int) $resolved['district_code'];
+		$payload['recipient']['cityName']     = (string) $resolved['city_name'];
+		$payload['recipient']['districtName'] = (string) $resolved['district_name'];
+		return $payload;
+	}
+
+	/**
+	 * Enrich Standard CreateOrder payload with city/district codes via CBS API.
+	 *
+	 * @param array<string,mixed> $payload Order payload.
+	 * @param WC_Order            $order Order.
+	 * @return array<string,mixed>
+	 */
+	private function enrich_standard_order_payload_with_location_codes( $payload, WC_Order $order ) {
+		if ( ! isset( $payload['recipient'] ) || ! is_array( $payload['recipient'] ) ) {
+			return $payload;
+		}
+
+		$resolved = $this->resolve_location_codes_for_order( $order );
+		if ( is_wp_error( $resolved ) ) {
+			return $payload;
+		}
+
+		$payload['recipient']['cityCode']     = (int) $resolved['city_code'];
+		$payload['recipient']['districtCode'] = (int) $resolved['district_code'];
+		$payload['recipient']['cityName']     = (string) $resolved['city_name'];
+		$payload['recipient']['districtName'] = (string) $resolved['district_name'];
+		return $payload;
+	}
+
+	/**
+	 * Resolve recipient location to city/district code pair.
+	 *
+	 * @param WC_Order $order Order.
+	 * @return array{city_code:string,district_code:string,city_name:string,district_name:string}|WP_Error
+	 */
+	private function resolve_location_codes_for_order( WC_Order $order ) {
+		$country  = (string) $order->get_shipping_country();
+		$city     = (string) $order->get_shipping_city();
+		$state    = (string) $order->get_shipping_state();
+		$address1 = (string) $order->get_shipping_address_1();
+
+		if ( '' === trim( $address1 ) ) {
+			$country = (string) $order->get_billing_country();
+			$city    = (string) $order->get_billing_city();
+			$state   = (string) $order->get_billing_state();
+		}
+
+		$country = strtoupper( trim( $country ) );
+		$city    = trim( $city );
+		$state   = trim( $state );
+		if ( 'TR' !== $country || '' === $city ) {
+			return new WP_Error( 'demw_location_not_resolved', __( 'Country/city data is insufficient for location code resolution.', 'dhl-ecommerce-mng-woocommerce' ) );
+		}
+
+		$city_name     = $city;
+		$district_name = $state;
+		if ( preg_match( '/^TR\d{2}$/i', $state ) ) {
+			$state_name = '';
+			if ( function_exists( 'WC' ) && WC()->countries && isset( WC()->countries->states['TR'][ $state ] ) ) {
+				$state_name = (string) WC()->countries->states['TR'][ $state ];
+			}
+			if ( '' !== $state_name ) {
+				$city_name = $state_name;
+			}
+			$district_name = $city;
+		}
+
+		$cities = $this->api_client->get_cities();
+		if ( is_wp_error( $cities ) || ! is_array( $cities ) ) {
+			return new WP_Error( 'demw_city_codes_unavailable', __( 'Unable to resolve city code from CBS API.', 'dhl-ecommerce-mng-woocommerce' ) );
+		}
+
+		$city_code = '';
+		foreach ( $cities as $item ) {
+			if ( ! is_array( $item ) ) {
+				continue;
+			}
+			$name = isset( $item['name'] ) ? (string) $item['name'] : '';
+			$code = isset( $item['code'] ) ? (string) $item['code'] : '';
+			if ( '' === $name || '' === $code ) {
+				continue;
+			}
+			if ( $this->normalize_tr_text( $name ) === $this->normalize_tr_text( $city_name ) ) {
+				$city_code = $code;
+				break;
+			}
+		}
+		if ( '' === $city_code ) {
+			return new WP_Error( 'demw_city_code_not_found', __( 'City code could not be matched from CBS API.', 'dhl-ecommerce-mng-woocommerce' ) );
+		}
+
+		$districts = $this->api_client->get_districts( $city_code );
+		if ( is_wp_error( $districts ) || ! is_array( $districts ) ) {
+			return new WP_Error( 'demw_district_codes_unavailable', __( 'Unable to resolve district code from CBS API.', 'dhl-ecommerce-mng-woocommerce' ) );
+		}
+
+		$district_code = '';
+		foreach ( $districts as $item ) {
+			if ( ! is_array( $item ) ) {
+				continue;
+			}
+			$name = isset( $item['name'] ) ? (string) $item['name'] : '';
+			$code = isset( $item['code'] ) ? (string) $item['code'] : '';
+			if ( '' === $name || '' === $code ) {
+				continue;
+			}
+			if ( $this->normalize_tr_text( $name ) === $this->normalize_tr_text( $district_name ) ) {
+				$district_code = $code;
+				break;
+			}
+		}
+
+		if ( '' === $district_code && ! empty( $districts[0]['code'] ) ) {
+			// Conservative fallback to first district for city if exact match fails.
+			$district_code = (string) $districts[0]['code'];
+		}
+
+		if ( '' === $district_code ) {
+			return new WP_Error( 'demw_district_code_not_found', __( 'District code could not be matched from CBS API.', 'dhl-ecommerce-mng-woocommerce' ) );
+		}
+
+		return array(
+			'city_code'     => $city_code,
+			'district_code' => $district_code,
+			'city_name'     => $city_name,
+			'district_name' => $district_name,
+		);
+	}
+
+	/**
+	 * Normalize text for Turkish-insensitive comparisons.
+	 *
+	 * @param string $text Raw text.
+	 * @return string
+	 */
+	private function normalize_tr_text( $text ) {
+		$text = trim( (string) $text );
+		if ( '' === $text ) {
+			return '';
+		}
+
+		$map = array(
+			'I' => 'i',
+			'İ' => 'i',
+			'Ş' => 's',
+			'ş' => 's',
+			'Ğ' => 'g',
+			'ğ' => 'g',
+			'Ü' => 'u',
+			'ü' => 'u',
+			'Ö' => 'o',
+			'ö' => 'o',
+			'Ç' => 'c',
+			'ç' => 'c',
+		);
+		$text = strtr( $text, $map );
+
+		return function_exists( 'mb_strtolower' ) ? mb_strtolower( $text ) : strtolower( $text );
 	}
 }

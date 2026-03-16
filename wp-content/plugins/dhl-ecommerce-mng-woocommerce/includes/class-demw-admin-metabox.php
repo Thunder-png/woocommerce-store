@@ -109,6 +109,7 @@ class DEMW_Admin_Metabox {
 
 		$order_id = $order->get_id();
 		$meta     = array(
+			'reference_id'    => (string) $order->get_meta( '_demw_reference_id', true ),
 			'shipment_id'     => (string) $order->get_meta( '_demw_shipment_id', true ),
 			'tracking_number' => (string) $order->get_meta( '_demw_tracking_number', true ),
 			'label_url'       => (string) $order->get_meta( '_demw_label_url', true ),

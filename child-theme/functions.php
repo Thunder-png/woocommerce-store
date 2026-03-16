@@ -76,14 +76,6 @@ function wcs_child_enqueue_assets() {
             array( 'wcs-custom-style', 'wcs-bootstrap-icons' ),
             wcs_asset_version( 'assets/css/product-card.css', $child_theme->get( 'Version' ) )
         );
-
-        wp_enqueue_script(
-            'wcs-filter-ajax',
-            get_stylesheet_directory_uri() . '/assets/js/wcs-filter-ajax.js',
-            array(),
-            wcs_asset_version( 'assets/js/wcs-filter-ajax.js', $child_theme->get( 'Version' ) ),
-            true
-        );
     }
 
     $branding_base_url = trailingslashit( get_stylesheet_directory_uri() ) . 'assets/branding/';
@@ -261,14 +253,6 @@ function wcs_child_enqueue_assets() {
         );
 
         wp_enqueue_script(
-            'wcs-spec-card',
-            get_stylesheet_directory_uri() . '/assets/js/wcs-spec-card.js',
-            array( 'jquery' ),
-            wcs_asset_version( 'assets/js/wcs-spec-card.js', $child_theme->get( 'Version' ) ),
-            true
-        );
-
-        wp_enqueue_script(
             'wcs-ajax-add-to-cart',
             get_stylesheet_directory_uri() . '/assets/js/wcs-ajax-add-to-cart.js',
             array( 'jquery', 'wc-add-to-cart', 'wc-cart-fragments' ),
@@ -427,29 +411,23 @@ function wcs_shop_no_sidebar_layout( $layout ) {
         return 'no-sidebar';
     }
 
+    // My Account sayfasında da sidebar kapat — kendi nav'ımız var.
+    if ( function_exists( 'is_account_page' ) && is_account_page() ) {
+        return 'no-sidebar';
+    }
+
     return $layout;
 }
 add_filter( 'astra_page_layout', 'wcs_shop_no_sidebar_layout', 99 );
 add_filter( 'astra_woo_shop_sidebar_init', '__return_false' );
 
-/**
- * Spec kartı için varyasyon verisine göz aralığı, ip kalınlığı ve regi (renk) ekle.
- *
- * @param array                  $data     Variation data sent to JS.
- * @param WC_Product_Variable    $product  Variable product.
- * @param WC_Product_Variation   $variation Variation product.
- * @return array
- */
-function wcs_add_spec_card_to_variation_data( $data, $product, $variation ) {
-    if ( ! $variation instanceof WC_Product_Variation ) {
-        return $data;
+// My Account sayfasında Astra content wrapper genişliğini full yap.
+add_filter( 'astra_content_layout_type', function( $layout ) {
+    if ( function_exists( 'is_account_page' ) && is_account_page() ) {
+        return 'fluid';
     }
-    $data['wcs_spec_goz']  = $variation->get_attribute( 'pa_goz-araligi' ) ?: '';
-    $data['wcs_spec_ip']   = $variation->get_attribute( 'pa_ip-kalinligi' ) ?: '';
-    $data['wcs_spec_renk'] = $variation->get_attribute( 'pa_renk' ) ?: '';
-    return $data;
-}
-add_filter( 'woocommerce_available_variation', 'wcs_add_spec_card_to_variation_data', 10, 3 );
+    return $layout;
+}, 99 );
 
 /**
  * Render site footer — new template-part.
@@ -620,173 +598,21 @@ function wcs_register_filterable_attributes() {
 add_action( 'init', 'wcs_register_filterable_attributes', 20 );
 
 /**
- * Filtre gruplarını ve hangi product_tag slug'larının hangi gruba ait olduğunu tanımlar.
- * URL parametresi: tag_{group_key}={tag_slug}
- *
- * Gruplara kendi tag slug'larınızı ekleyebilirsiniz.
- * Sadece veritabanında gerçekten var olan tag'ler filtre seçeneği olarak gösterilir.
- *
- * @return array<string, array{label:string, tags:string[]}>
- */
-/**
- * Tag slug'ları, CSV import sırasında WP'nin sanitize_title() uyguladığı
- * değerlerdir.  Örnek dönüşümler:
- *   "4mm · 5×5 (Aparat Dahil)" → "4mm-5x5-aparat-dahil"
- *   "sarı"                     → "sari"
- *   "1.5mm · 2×2"              → "15mm-2x2"   (nokta kaldırılır)
- */
-function wcs_get_tag_filter_groups() {
-    return array(
-
-        /* ── Kullanım Alanı ──────────────────────────────────────────── */
-        'kullanim_alani' => array(
-            'label' => __( 'Kullanım Alanı', 'woocommerce-store-child' ),
-            'tags'  => array(
-                'cocuk-guvenlik-filesi',    // Çocuk Filesi
-                'kedi-balkon-filesi',        // Kedi Filesi
-                'kus-filesi',               // Kuş Filesi
-                'havuz-guvenlik-filesi',    // Havuz Filesi
-                'merdiven-guvenlik-filesi', // Merdiven Filesi
-                'balkon-guvenlik-filesi',   // Balkon Güvenlik Filesi
-                'turuncu-guvenlik-file',    // Turuncu (şantiye/inşaat)
-                'mavi-guvenlik-file',       // Mavi Güvenlik File
-                'sari-guvenlik-file',       // Sarı Güvenlik File
-                'yesil-guvenlik-file',      // Yeşil Güvenlik File
-                'siyah-guvenlik-file',      // Siyah Güvenlik File
-            ),
-        ),
-
-        /* ── Renk ────────────────────────────────────────────────────── */
-        'renk' => array(
-            'label' => __( 'Renk', 'woocommerce-store-child' ),
-            'tags'  => array(
-                'beyaz',    // Beyaz
-                'siyah',    // Siyah
-                'turuncu',  // Turuncu
-                'mavi',     // Mavi
-                'sari',     // Sarı
-                'yesil',    // Yeşil
-            ),
-        ),
-
-        /* ── Teknik Özellik (ip kalınlığı · göz aralığı) ─────────────── */
-        'teknik_ozellik' => array(
-            'label' => __( 'Teknik Özellik', 'woocommerce-store-child' ),
-            'tags'  => array(
-                '4mm-·-5x5-aparat-dahil', // 4mm · 5×5 (Aparat Dahil) — Çocuk, Havuz, Balkon
-                '3mm-·-4x4-siyah',        // 3mm · 4×4 Siyah           — Kedi, Siyah File
-                '3mm-·-4x4',              // 3mm · 4×4                  — Merdiven
-                '15mm-·-2x2',             // 1.5mm · 2×2                — Kuş
-                '4mm-·-5x5-renkli',       // 4mm · 5×5 Renkli           — Turuncu/Mavi/Sarı/Yeşil
-            ),
-        ),
-
-        /* ── Ölçü Tipi ───────────────────────────────────────────────── */
-        'olcu_tipi' => array(
-            'label' => __( 'Ölçü Tipi', 'woocommerce-store-child' ),
-            'tags'  => array(
-                'ozel-olcu', // Özel Ölçü (m² bazlı sipariş ürünleri)
-            ),
-        ),
-
-    );
-}
-
-/**
- * Shop/arşiv sayfalarında tag_{group} parametrelerini ana sorguya enjekte eder.
- * Birden fazla grup seçiliyse aralarında AND mantığı uygulanır.
- */
-function wcs_filter_by_product_tag( WP_Query $query ) {
-    if ( is_admin() || ! $query->is_main_query() ) {
-        return;
-    }
-    if ( ! ( function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() ) ) ) {
-        return;
-    }
-
-    $groups    = wcs_get_tag_filter_groups();
-    $additions = array();
-
-    foreach ( $groups as $group_key => $group_cfg ) {
-        $param = 'tag_' . $group_key;
-        if ( empty( $_GET[ $param ] ) ) {
-            continue;
-        }
-        $additions[] = array(
-            'taxonomy' => 'product_tag',
-            'field'    => 'slug',
-            'terms'    => sanitize_title( wp_unslash( $_GET[ $param ] ) ),
-        );
-    }
-
-    if ( empty( $additions ) ) {
-        return;
-    }
-
-    $tax_query = (array) $query->get( 'tax_query' );
-    foreach ( $additions as $clause ) {
-        $tax_query[] = $clause;
-    }
-    $query->set( 'tax_query', $tax_query );
-}
-add_action( 'pre_get_posts', 'wcs_filter_by_product_tag', 20 );
-
-/**
- * Render shop filter bar — product_tag, gruplu filtre.
+ * Render shop filter bar — pill/chip bazlı modern filtre.
+ * Her attribute için aktif seçim sticky bar'da rozet olarak gösterilir.
  */
 function wcs_render_shop_attribute_filters() {
     if ( ! function_exists( 'is_shop' ) || ( ! is_shop() && ! is_product_taxonomy() ) ) {
         return;
     }
 
-    // DB'deki tüm product_tag'leri slug → term eşlemesiyle al
-    $all_tags_raw = get_terms( array(
-        'taxonomy'   => 'product_tag',
-        'hide_empty' => true,
-        'orderby'    => 'name',
-        'order'      => 'ASC',
-    ) );
+    $definitions = wcs_get_filterable_attribute_definitions();
 
-    if ( is_wp_error( $all_tags_raw ) || empty( $all_tags_raw ) ) {
-        return;
-    }
-
-    $tags_by_slug = array();
-    foreach ( $all_tags_raw as $t ) {
-        $tags_by_slug[ $t->slug ] = $t;
-    }
-
-    // Grup config'ini al ve DB'de var olan tag'lerle eşleştir
-    $group_defs     = wcs_get_tag_filter_groups();
-    $rendered_groups = array();
-
-    foreach ( $group_defs as $group_key => $group_cfg ) {
-        $group_terms = array();
-        foreach ( $group_cfg['tags'] as $tag_slug ) {
-            if ( isset( $tags_by_slug[ $tag_slug ] ) ) {
-                $group_terms[] = $tags_by_slug[ $tag_slug ];
-            }
-        }
-        if ( empty( $group_terms ) ) {
-            continue; // bu gruptaki tag'lerden hiçbiri DB'de yoksa grubu gösterme
-        }
-        $param = 'tag_' . $group_key;
-        $rendered_groups[ $group_key ] = array(
-            'label'    => $group_cfg['label'],
-            'terms'    => $group_terms,
-            'param'    => $param,
-            'selected' => isset( $_GET[ $param ] ) ? sanitize_title( wp_unslash( $_GET[ $param ] ) ) : '',
-        );
-    }
-
-    if ( empty( $rendered_groups ) ) {
-        return;
-    }
-
-    // Kaç grup aktif?
+    // Aktif filtre sayısını hesapla
     $active_count = 0;
-    foreach ( $rendered_groups as $grp ) {
-        if ( ! empty( $grp['selected'] ) ) $active_count++;
+    foreach ( $definitions as $slug => $config ) {
+        $key = 'filter_pa_' . $slug;
+        if ( ! empty( $_GET[ $key ] ) ) $active_count++;
     }
 
     $shop_url = function_exists( 'is_product_taxonomy' ) && is_product_taxonomy()
@@ -797,7 +623,7 @@ function wcs_render_shop_attribute_filters() {
     <div class="wcs-filter-bar" id="wcs-filter-bar">
         <div class="wcs-filter-bar__inner">
 
-            <!-- Sol: Filtrele butonu + aktif pill'ler -->
+            <!-- Sol: Filtre etiketi + aktif sayacı -->
             <div class="wcs-filter-bar__left">
                 <button type="button" class="wcs-filter-bar__toggle" id="wcs-filter-toggle" aria-expanded="false" aria-controls="wcs-filter-panel">
                     <i class="bi bi-sliders2" aria-hidden="true"></i>
@@ -808,16 +634,19 @@ function wcs_render_shop_attribute_filters() {
                     <i class="bi bi-chevron-down wcs-filter-bar__chevron" aria-hidden="true"></i>
                 </button>
 
-                <!-- Seçili her grup için bir aktif pill -->
-                <?php foreach ( $rendered_groups as $grp ) :
-                    if ( empty( $grp['selected'] ) ) continue;
-                    $active_term  = get_term_by( 'slug', $grp['selected'], 'product_tag' );
-                    $active_label = $active_term ? $active_term->name : $grp['selected'];
-                    $remove_url   = remove_query_arg( $grp['param'], add_query_arg( array() ) );
+                <!-- Aktif filtre rozet'leri -->
+                <?php foreach ( $definitions as $slug => $config ) :
+                    $key = 'filter_pa_' . $slug;
+                    if ( empty( $_GET[ $key ] ) ) continue;
+                    $val = sanitize_title( wp_unslash( $_GET[ $key ] ) );
+                    $term = get_term_by( 'slug', $val, 'pa_' . $slug );
+                    $label = $term ? $term->name : $val;
+                    // URL temizle
+                    $remove_url = remove_query_arg( $key, add_query_arg( array() ) );
                 ?>
                     <span class="wcs-filter-bar__active-pill">
-                        <span class="wcs-filter-bar__active-pill-label"><?php echo esc_html( $grp['label'] ); ?>:</span>
-                        <strong><?php echo esc_html( $active_label ); ?></strong>
+                        <span class="wcs-filter-bar__active-pill-label"><?php echo esc_html( $config['label'] ); ?>:</span>
+                        <strong><?php echo esc_html( $label ); ?></strong>
                         <a href="<?php echo esc_url( $remove_url ); ?>" class="wcs-filter-bar__active-pill-remove" aria-label="<?php esc_attr_e( 'Filtreyi kaldır', 'woocommerce-store-child' ); ?>">
                             <i class="bi bi-x" aria-hidden="true"></i>
                         </a>
@@ -850,35 +679,38 @@ function wcs_render_shop_attribute_filters() {
         <div class="wcs-filter-panel" id="wcs-filter-panel" hidden>
             <form class="wcs-filter-panel__form" method="get" action="<?php echo esc_url( $shop_url ); ?>">
 
-                <!-- Her grup ayrı bir satır -->
-                <?php foreach ( $rendered_groups as $grp ) : ?>
+                <?php foreach ( $definitions as $slug => $config ) :
+                    $taxonomy  = 'pa_' . $slug;
+                    $query_key = 'filter_' . $taxonomy;
+                    if ( ! taxonomy_exists( $taxonomy ) ) continue;
+                    $terms = get_terms( array( 'taxonomy' => $taxonomy, 'hide_empty' => true ) );
+                    if ( is_wp_error( $terms ) || empty( $terms ) ) continue;
+                    $selected = isset( $_GET[ $query_key ] ) ? sanitize_title( wp_unslash( $_GET[ $query_key ] ) ) : '';
+                ?>
                     <div class="wcs-filter-panel__group">
-                        <h3 class="wcs-filter-panel__group-title"><?php echo esc_html( $grp['label'] ); ?></h3>
+                        <h3 class="wcs-filter-panel__group-title"><?php echo esc_html( $config['label'] ); ?></h3>
                         <div class="wcs-filter-panel__options">
-
-                            <label class="wcs-filter-option<?php echo '' === $grp['selected'] ? ' wcs-filter-option--active' : ''; ?>">
-                                <input type="radio" name="<?php echo esc_attr( $grp['param'] ); ?>" value=""
-                                    <?php checked( $grp['selected'], '' ); ?> hidden>
+                            <label class="wcs-filter-option<?php echo '' === $selected ? ' wcs-filter-option--active' : ''; ?>">
+                                <input type="radio" name="<?php echo esc_attr( $query_key ); ?>" value=""
+                                    <?php checked( $selected, '' ); ?> hidden>
                                 <?php esc_html_e( 'Tümü', 'woocommerce-store-child' ); ?>
                             </label>
-
-                            <?php foreach ( $grp['terms'] as $term ) : ?>
-                                <label class="wcs-filter-option<?php echo $grp['selected'] === $term->slug ? ' wcs-filter-option--active' : ''; ?>">
-                                    <input type="radio" name="<?php echo esc_attr( $grp['param'] ); ?>"
+                            <?php foreach ( $terms as $term ) : ?>
+                                <label class="wcs-filter-option<?php echo $selected === $term->slug ? ' wcs-filter-option--active' : ''; ?>">
+                                    <input type="radio" name="<?php echo esc_attr( $query_key ); ?>"
                                         value="<?php echo esc_attr( $term->slug ); ?>"
-                                        <?php checked( $grp['selected'], $term->slug ); ?> hidden>
+                                        <?php checked( $selected, $term->slug ); ?> hidden>
                                     <?php echo esc_html( $term->name ); ?>
                                 </label>
                             <?php endforeach; ?>
-
                         </div>
                     </div>
                 <?php endforeach; ?>
 
-                <!-- Mevcut query params'ı koru; tag_* radyolardan gelir, tekrarlanmaz -->
+                <!-- Gizli hidden alanlar — mevcut query params koru -->
                 <?php foreach ( $_GET as $key => $value ) :
                     if ( ! is_string( $key ) ) continue;
-                    if ( 'paged' === $key || 0 === strpos( $key, 'tag_' ) ) continue;
+                    if ( 0 === strpos( $key, 'filter_pa_' ) || 0 === strpos( $key, 'query_type_pa_' ) || 'paged' === $key ) continue;
                 ?>
                     <input type="hidden" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( wp_unslash( $value ) ); ?>">
                 <?php endforeach; ?>

@@ -30,16 +30,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<th scope="row"><label for="demw_environment"><?php echo esc_html__( 'Environment', 'dhl-ecommerce-mng-woocommerce' ); ?></label></th>
 					<td>
 						<select id="demw_environment" name="demw_settings[environment]">
-							<option value="sandbox" <?php selected( 'sandbox', $settings['environment'] ); ?>><?php echo esc_html__( 'Sandbox', 'dhl-ecommerce-mng-woocommerce' ); ?></option>
+							<option value="development" <?php selected( 'development', ( 'sandbox' === $settings['environment'] ? 'development' : $settings['environment'] ) ); ?>><?php echo esc_html__( 'Development', 'dhl-ecommerce-mng-woocommerce' ); ?></option>
 							<option value="production" <?php selected( 'production', $settings['environment'] ); ?>><?php echo esc_html__( 'Production', 'dhl-ecommerce-mng-woocommerce' ); ?></option>
 						</select>
 						<p class="description"><?php echo esc_html__( 'Active environment controls which base URL is used for API requests.', 'dhl-ecommerce-mng-woocommerce' ); ?></p>
 					</td>
 				</tr>
 				<tr>
-					<th scope="row"><label for="demw_sandbox_base_url"><?php echo esc_html__( 'Sandbox Base URL', 'dhl-ecommerce-mng-woocommerce' ); ?></label></th>
+					<th scope="row"><label for="demw_development_base_url"><?php echo esc_html__( 'Development Base URL', 'dhl-ecommerce-mng-woocommerce' ); ?></label></th>
 					<td>
-						<input type="url" class="regular-text" id="demw_sandbox_base_url" name="demw_settings[sandbox_base_url]" value="<?php echo esc_attr( $settings['sandbox_base_url'] ); ?>" />
+						<input type="url" class="regular-text" id="demw_development_base_url" name="demw_settings[development_base_url]" value="<?php echo esc_attr( isset( $settings['development_base_url'] ) ? $settings['development_base_url'] : ( $settings['sandbox_base_url'] ?? '' ) ); ?>" />
+						<p class="description"><?php echo esc_html__( 'Example: https://testapi.mngkargo.com.tr/mngapi/api (host-only form is also accepted).', 'dhl-ecommerce-mng-woocommerce' ); ?></p>
 					</td>
 				</tr>
 				<tr>
@@ -52,6 +53,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<th scope="row"><label for="demw_timeout"><?php echo esc_html__( 'Connection Timeout (sec)', 'dhl-ecommerce-mng-woocommerce' ); ?></label></th>
 					<td>
 						<input type="number" min="3" max="120" id="demw_timeout" name="demw_settings[timeout]" value="<?php echo esc_attr( (string) $settings['timeout'] ); ?>" />
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="demw_api_version"><?php echo esc_html__( 'API Version Header (x-api-version)', 'dhl-ecommerce-mng-woocommerce' ); ?></label></th>
+					<td>
+						<input type="text" class="regular-text" id="demw_api_version" name="demw_settings[api_version]" value="<?php echo esc_attr( $settings['api_version'] ); ?>" />
+						<p class="description"><?php echo esc_html__( 'Optional. If your MNG account requires x-api-version, enter it here.', 'dhl-ecommerce-mng-woocommerce' ); ?></p>
+					</td>
+				</tr>
+				<tr>
+					<th scope="row"><label for="demw_shipment_command_api"><?php echo esc_html__( 'Shipment Command API', 'dhl-ecommerce-mng-woocommerce' ); ?></label></th>
+					<td>
+						<select id="demw_shipment_command_api" name="demw_settings[shipment_command_api]">
+							<option value="plus_command" <?php selected( 'plus_command', $settings['shipment_command_api'] ); ?>><?php echo esc_html__( '2-Step Flow (createRecipient + standardcmd/createOrder, then createbarcode)', 'dhl-ecommerce-mng-woocommerce' ); ?></option>
+							<option value="barcode_command" <?php selected( 'barcode_command', $settings['shipment_command_api'] ); ?>><?php echo esc_html__( 'Barcode Command (createbarcode)', 'dhl-ecommerce-mng-woocommerce' ); ?></option>
+						</select>
+						<p class="description"><?php echo esc_html__( 'Recommended flow: first click runs createRecipient + createOrder (branch detection prep), next click runs createbarcode.', 'dhl-ecommerce-mng-woocommerce' ); ?></p>
 					</td>
 				</tr>
 			</table>
@@ -74,19 +92,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</tr>
 				<tr data-demw-auth="api_key_secret username_password">
 					<th scope="row"><label for="demw_api_key"><?php echo esc_html__( 'API Key', 'dhl-ecommerce-mng-woocommerce' ); ?></label></th>
-					<td><input type="text" class="regular-text" id="demw_api_key" name="demw_settings[api_key]" value="<?php echo esc_attr( $settings['api_key'] ); ?>" autocomplete="off" /></td>
+					<td>
+						<input type="text" class="regular-text" id="demw_api_key" name="demw_settings[api_key]" value="<?php echo esc_attr( $settings['api_key'] ); ?>" autocomplete="off" />
+						<p class="description"><?php echo esc_html__( 'Mapped to X-IBM-Client-Id header.', 'dhl-ecommerce-mng-woocommerce' ); ?></p>
+					</td>
 				</tr>
 				<tr data-demw-auth="api_key_secret username_password">
 					<th scope="row"><label for="demw_api_secret"><?php echo esc_html__( 'API Secret', 'dhl-ecommerce-mng-woocommerce' ); ?></label></th>
-					<td><input type="password" class="regular-text" id="demw_api_secret" name="demw_settings[api_secret]" value="<?php echo esc_attr( $settings['api_secret'] ); ?>" autocomplete="new-password" /></td>
+					<td>
+						<input type="password" class="regular-text" id="demw_api_secret" name="demw_settings[api_secret]" value="<?php echo esc_attr( $settings['api_secret'] ); ?>" autocomplete="new-password" />
+						<p class="description"><?php echo esc_html__( 'Mapped to X-IBM-Client-Secret header.', 'dhl-ecommerce-mng-woocommerce' ); ?></p>
+					</td>
 				</tr>
 				<tr data-demw-auth="username_password">
 					<th scope="row"><label for="demw_username"><?php echo esc_html__( 'Username / Customer Number', 'dhl-ecommerce-mng-woocommerce' ); ?></label></th>
-					<td><input type="text" class="regular-text" id="demw_username" name="demw_settings[username]" value="<?php echo esc_attr( $settings['username'] ); ?>" autocomplete="off" /></td>
+					<td>
+						<input type="text" class="regular-text" id="demw_username" name="demw_settings[username]" value="<?php echo esc_attr( $settings['username'] ); ?>" autocomplete="off" />
+						<p class="description"><?php echo esc_html__( 'For MNG Identity API this maps to customerNumber in POST /token request body and must be numeric (Int64).', 'dhl-ecommerce-mng-woocommerce' ); ?></p>
+					</td>
 				</tr>
 				<tr data-demw-auth="username_password">
 					<th scope="row"><label for="demw_password"><?php echo esc_html__( 'Password', 'dhl-ecommerce-mng-woocommerce' ); ?></label></th>
-					<td><input type="password" class="regular-text" id="demw_password" name="demw_settings[password]" value="<?php echo esc_attr( $settings['password'] ); ?>" autocomplete="new-password" /></td>
+					<td>
+						<input type="password" class="regular-text" id="demw_password" name="demw_settings[password]" value="<?php echo esc_attr( $settings['password'] ); ?>" autocomplete="new-password" />
+						<p class="description"><?php echo esc_html__( 'Used in POST /token request body as password.', 'dhl-ecommerce-mng-woocommerce' ); ?></p>
+					</td>
 				</tr>
 				<tr data-demw-auth="bearer_token">
 					<th scope="row"><label for="demw_bearer_token"><?php echo esc_html__( 'Bearer Token', 'dhl-ecommerce-mng-woocommerce' ); ?></label></th>

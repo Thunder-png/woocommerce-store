@@ -1,0 +1,481 @@
+<?php
+/**
+ * WooCommerce shipping method registration for DHL MNG.
+ *
+ * @package DEMW
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+if ( ! class_exists( 'WC_Shipping_Method' ) ) {
+	return;
+}
+
+/**
+ * DHL MNG shipping method.
+ */
+class DEMW_Shipping_Method extends WC_Shipping_Method {
+	/**
+	 * API client cache.
+	 *
+	 * @var DEMW_API_Client|null
+	 */
+	private $demw_api_client = null;
+
+	/**
+	 * DEMW logger cache.
+	 *
+	 * @var DEMW_Logger|null
+	 */
+	private $demw_logger = null;
+	/**
+	 * Constructor.
+	 *
+	 * @param int $instance_id Instance ID.
+	 */
+	public function __construct( $instance_id = 0 ) {
+		$this->id                 = 'demw_dhl_mng';
+		$this->instance_id        = absint( $instance_id );
+		$this->method_title       = __( 'DHL eCommerce MNG', 'dhl-ecommerce-mng-woocommerce' );
+		$this->method_description = __( 'DHL eCommerce Turkey / MNG Kargo shipping method.', 'dhl-ecommerce-mng-woocommerce' );
+		$this->supports           = array(
+			'shipping-zones',
+			'instance-settings',
+			'instance-settings-modal',
+		);
+
+		$this->init();
+	}
+
+	/**
+	 * Initialize settings and hooks.
+	 *
+	 * @return void
+	 */
+	public function init() {
+		$this->init_instance_form_fields();
+		$this->init_settings();
+
+		$this->title      = $this->get_option( 'title', __( 'DHL MNG Kargo', 'dhl-ecommerce-mng-woocommerce' ) );
+		$this->enabled    = $this->get_option( 'enabled', 'yes' );
+		$this->tax_status = $this->get_option( 'tax_status', 'taxable' );
+
+		add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
+	}
+
+	/**
+	 * Instance fields shown in shipping zone method modal.
+	 *
+	 * @return void
+	 */
+	public function init_instance_form_fields() {
+		$this->instance_form_fields = array(
+			'title'      => array(
+				'title'       => __( 'Method title', 'dhl-ecommerce-mng-woocommerce' ),
+				'type'        => 'text',
+				'description' => __( 'Shown to customers during checkout.', 'dhl-ecommerce-mng-woocommerce' ),
+				'default'     => __( 'DHL MNG Kargo', 'dhl-ecommerce-mng-woocommerce' ),
+				'desc_tip'    => true,
+			),
+			'tax_status' => array(
+				'title'   => __( 'Tax status', 'dhl-ecommerce-mng-woocommerce' ),
+				'type'    => 'select',
+				'default' => 'taxable',
+				'options' => array(
+					'taxable' => __( 'Taxable', 'dhl-ecommerce-mng-woocommerce' ),
+					'none'    => _x( 'None', 'Tax status', 'dhl-ecommerce-mng-woocommerce' ),
+				),
+			),
+			'cost'       => array(
+				'title'             => __( 'Cost', 'dhl-ecommerce-mng-woocommerce' ),
+				'type'              => 'price',
+				'placeholder'       => '0',
+				'description'       => __( 'Flat shipping cost for this method.', 'dhl-ecommerce-mng-woocommerce' ),
+				'default'           => '0',
+				'desc_tip'          => true,
+				'sanitize_callback' => array( $this, 'sanitize_cost' ),
+			),
+			'rate_source' => array(
+				'title'       => __( 'Rate source', 'dhl-ecommerce-mng-woocommerce' ),
+				'type'        => 'select',
+				'default'     => 'flat',
+				'options'     => array(
+					'flat' => __( 'Flat cost (manual)', 'dhl-ecommerce-mng-woocommerce' ),
+					'api'  => __( 'Carrier API (standardqueryapi/calculate)', 'dhl-ecommerce-mng-woocommerce' ),
+				),
+				'description' => __( 'When Carrier API is selected, checkout rate is calculated from cart desi/kg and destination address.', 'dhl-ecommerce-mng-woocommerce' ),
+				'desc_tip'    => true,
+			),
+			'fallback_cost' => array(
+				'title'             => __( 'Fallback cost', 'dhl-ecommerce-mng-woocommerce' ),
+				'type'              => 'price',
+				'placeholder'       => '0',
+				'description'       => __( 'Used when API pricing fails.', 'dhl-ecommerce-mng-woocommerce' ),
+				'default'           => '0',
+				'desc_tip'          => true,
+				'sanitize_callback' => array( $this, 'sanitize_cost' ),
+			),
+			'packaging_type' => array(
+				'title'   => __( 'Packaging type', 'dhl-ecommerce-mng-woocommerce' ),
+				'type'    => 'select',
+				'default' => '3',
+				'options' => array(
+					'1' => __( 'Dosya', 'dhl-ecommerce-mng-woocommerce' ),
+					'2' => __( 'Mi', 'dhl-ecommerce-mng-woocommerce' ),
+					'3' => __( 'Paket', 'dhl-ecommerce-mng-woocommerce' ),
+					'4' => __( 'Koli', 'dhl-ecommerce-mng-woocommerce' ),
+				),
+			),
+			'pick_up_type' => array(
+				'title'   => __( 'Pick up type', 'dhl-ecommerce-mng-woocommerce' ),
+				'type'    => 'select',
+				'default' => '1',
+				'options' => array(
+					'1' => __( 'Adresten Alim', 'dhl-ecommerce-mng-woocommerce' ),
+					'2' => __( 'Subeye Getirildi', 'dhl-ecommerce-mng-woocommerce' ),
+				),
+			),
+		);
+	}
+
+	/**
+	 * Calculate shipping rates for package.
+	 *
+	 * @param array<string,mixed> $package Package details.
+	 * @return void
+	 */
+	public function calculate_shipping( $package = array() ) {
+		if ( 'yes' !== $this->enabled ) {
+			return;
+		}
+
+		$rate_source = (string) $this->get_option( 'rate_source', 'flat' );
+		$fallback    = (float) $this->get_option( 'fallback_cost', $this->get_option( 'cost', '0' ) );
+		$cost        = (float) $this->get_option( 'cost', '0' );
+
+		if ( 'api' === $rate_source ) {
+			$api_cost = $this->calculate_cost_from_api( $package );
+			if ( is_numeric( $api_cost ) ) {
+				$cost = (float) $api_cost;
+			} else {
+				$cost = $fallback;
+			}
+		}
+
+		$cost = wc_format_decimal( $cost );
+
+		$rate = array(
+			'id'       => $this->get_rate_id(),
+			'label'    => $this->title,
+			'cost'     => $cost,
+			'package'  => $package,
+			'calc_tax' => 'none' === $this->tax_status ? '' : 'per_order',
+		);
+
+		$this->add_rate( $rate );
+	}
+
+	/**
+	 * Calculate shipping cost from carrier API.
+	 *
+	 * @param array<string,mixed> $package Package.
+	 * @return float|null
+	 */
+	private function calculate_cost_from_api( $package ) {
+		$api_client = $this->get_demw_api_client();
+		if ( ! $api_client ) {
+			return null;
+		}
+
+		$city_name     = isset( $package['destination']['city'] ) ? (string) $package['destination']['city'] : '';
+		$state_name    = isset( $package['destination']['state'] ) ? (string) $package['destination']['state'] : '';
+		$address_1     = isset( $package['destination']['address'] ) ? (string) $package['destination']['address'] : '';
+		$address_2     = isset( $package['destination']['address_2'] ) ? (string) $package['destination']['address_2'] : '';
+		$full_address  = trim( $address_1 . ' ' . $address_2 );
+		if ( '' === $city_name || '' === $full_address ) {
+			return null;
+		}
+
+		$city_code = $this->resolve_city_code( $city_name, $api_client );
+		if ( '' === $city_code ) {
+			return null;
+		}
+
+		$district_code = $this->resolve_district_code( $city_code, $state_name, $api_client );
+		if ( '' === $district_code ) {
+			return null;
+		}
+
+		$order_piece_list = $this->build_order_piece_list_from_package( $package );
+		if ( empty( $order_piece_list ) ) {
+			return null;
+		}
+
+		$payload = array(
+			'shipmentServiceType' => 1,
+			'packagingType'       => absint( $this->get_option( 'packaging_type', '3' ) ),
+			'paymentType'         => 1,
+			'pickUpType'          => absint( $this->get_option( 'pick_up_type', '1' ) ),
+			'deliveryType'        => 1,
+			'cityCode'            => absint( $city_code ),
+			'districtCode'        => absint( $district_code ),
+			'address'             => $full_address,
+			'smsPreference1'      => 1,
+			'smsPreference2'      => 0,
+			'smsPreference3'      => 0,
+			'orderPieceList'      => $order_piece_list,
+		);
+
+		$result = $api_client->calculate_transport_cost( $payload );
+		if ( is_wp_error( $result ) ) {
+			$this->demw_log_error( 'Rate calculation failed', array( 'error' => $result->get_error_message() ) );
+			return null;
+		}
+
+		$data = is_array( $result['data'] ) ? $result['data'] : array();
+		$final_total = isset( $data['finalTotal'] ) ? (float) $data['finalTotal'] : null;
+		if ( null !== $final_total && $final_total >= 0 ) {
+			return $final_total;
+		}
+
+		$sub_total = isset( $data['subTotal'] ) ? (float) $data['subTotal'] : null;
+		if ( null !== $sub_total && $sub_total >= 0 ) {
+			return $sub_total;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Build DEMW API client on demand.
+	 *
+	 * @return DEMW_API_Client|null
+	 */
+	private function get_demw_api_client() {
+		if ( $this->demw_api_client instanceof DEMW_API_Client ) {
+			return $this->demw_api_client;
+		}
+
+		if ( ! class_exists( 'DEMW_Settings' ) || ! class_exists( 'DEMW_Auth' ) || ! class_exists( 'DEMW_Logger' ) || ! class_exists( 'DEMW_API_Client' ) ) {
+			return null;
+		}
+
+		$this->demw_logger = new DEMW_Logger();
+		$settings          = new DEMW_Settings( $this->demw_logger );
+		$auth              = new DEMW_Auth( $settings );
+		$this->demw_api_client = new DEMW_API_Client( $settings, $auth, $this->demw_logger );
+		return $this->demw_api_client;
+	}
+
+	/**
+	 * Resolve city code from destination city name.
+	 *
+	 * @param string          $city_name City name.
+	 * @param DEMW_API_Client $api_client API client.
+	 * @return string
+	 */
+	private function resolve_city_code( $city_name, DEMW_API_Client $api_client ) {
+		static $city_cache = array();
+		$key = $this->normalize_tr_text( $city_name );
+		if ( '' === $key ) {
+			return '';
+		}
+
+		if ( isset( $city_cache[ $key ] ) ) {
+			return (string) $city_cache[ $key ];
+		}
+
+		$cities = $api_client->get_cities();
+		if ( is_wp_error( $cities ) || ! is_array( $cities ) ) {
+			return '';
+		}
+
+		foreach ( $cities as $city ) {
+			if ( ! is_array( $city ) ) {
+				continue;
+			}
+			$name = isset( $city['name'] ) ? (string) $city['name'] : '';
+			$code = isset( $city['code'] ) ? (string) $city['code'] : '';
+			if ( '' === $name || '' === $code ) {
+				continue;
+			}
+
+			if ( $this->normalize_tr_text( $name ) === $key ) {
+				$city_cache[ $key ] = $code;
+				return $code;
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * Resolve district code from state/district name.
+	 *
+	 * @param string          $city_code City code.
+	 * @param string          $district_name District name.
+	 * @param DEMW_API_Client $api_client API client.
+	 * @return string
+	 */
+	private function resolve_district_code( $city_code, $district_name, DEMW_API_Client $api_client ) {
+		$district_name = trim( (string) $district_name );
+		if ( '' === $district_name ) {
+			return '';
+		}
+
+		static $district_cache = array();
+		$cache_key = $city_code . '|' . $this->normalize_tr_text( $district_name );
+		if ( isset( $district_cache[ $cache_key ] ) ) {
+			return (string) $district_cache[ $cache_key ];
+		}
+
+		$districts = $api_client->get_districts( $city_code );
+		if ( is_wp_error( $districts ) || ! is_array( $districts ) ) {
+			return '';
+		}
+
+		foreach ( $districts as $district ) {
+			if ( ! is_array( $district ) ) {
+				continue;
+			}
+			$name = isset( $district['name'] ) ? (string) $district['name'] : '';
+			$code = isset( $district['code'] ) ? (string) $district['code'] : '';
+			if ( '' === $name || '' === $code ) {
+				continue;
+			}
+			if ( $this->normalize_tr_text( $name ) === $this->normalize_tr_text( $district_name ) ) {
+				$district_cache[ $cache_key ] = $code;
+				return $code;
+			}
+		}
+
+		return '';
+	}
+
+	/**
+	 * Build orderPieceList from cart package items.
+	 *
+	 * @param array<string,mixed> $package Package.
+	 * @return array<int,array<string,mixed>>
+	 */
+	private function build_order_piece_list_from_package( $package ) {
+		$items       = isset( $package['contents'] ) && is_array( $package['contents'] ) ? $package['contents'] : array();
+		$order_pieces = array();
+		$piece_index = 1;
+
+		foreach ( $items as $item ) {
+			if ( ! is_array( $item ) || empty( $item['data'] ) || ! $item['data'] instanceof WC_Product ) {
+				continue;
+			}
+
+			/** @var WC_Product $product */
+			$product = $item['data'];
+			$qty     = isset( $item['quantity'] ) ? max( 1, absint( $item['quantity'] ) ) : 1;
+			$name    = (string) $product->get_name();
+
+			$piece_kg   = $this->calculate_piece_kg( $product );
+			$piece_desi = $this->calculate_piece_desi( $product, $piece_kg );
+
+			for ( $i = 0; $i < $qty; $i++ ) {
+				$order_pieces[] = array(
+					'barcode' => 'WC_CHECKOUT_P' . $piece_index,
+					'desi'    => $piece_desi,
+					'kg'      => $piece_kg,
+					'content' => $name,
+				);
+				$piece_index++;
+			}
+		}
+
+		if ( empty( $order_pieces ) ) {
+			$order_pieces[] = array(
+				'barcode' => 'WC_CHECKOUT_P1',
+				'desi'    => 1,
+				'kg'      => 1,
+				'content' => __( 'Checkout package', 'dhl-ecommerce-mng-woocommerce' ),
+			);
+		}
+
+		return $order_pieces;
+	}
+
+	/**
+	 * Calculate integer KG from product weight.
+	 *
+	 * @param WC_Product $product Product.
+	 * @return int
+	 */
+	private function calculate_piece_kg( WC_Product $product ) {
+		$weight = (float) wc_get_weight( $product->get_weight(), 'kg' );
+		if ( $weight <= 0 ) {
+			return 1;
+		}
+		return max( 1, (int) ceil( $weight ) );
+	}
+
+	/**
+	 * Calculate desi from product dimensions.
+	 *
+	 * @param WC_Product $product Product.
+	 * @param int        $fallback_kg Fallback kg value.
+	 * @return int
+	 */
+	private function calculate_piece_desi( WC_Product $product, $fallback_kg ) {
+		$length = (float) wc_get_dimension( $product->get_length(), 'cm' );
+		$width  = (float) wc_get_dimension( $product->get_width(), 'cm' );
+		$height = (float) wc_get_dimension( $product->get_height(), 'cm' );
+
+		if ( $length <= 0 || $width <= 0 || $height <= 0 ) {
+			return max( 1, (int) $fallback_kg );
+		}
+
+		return max( 1, (int) ceil( ( $length * $width * $height ) / 3000 ) );
+	}
+
+	/**
+	 * Normalize text for simple Turkish-insensitive comparisons.
+	 *
+	 * @param string $text Raw text.
+	 * @return string
+	 */
+	private function normalize_tr_text( $text ) {
+		$text = trim( (string) $text );
+		if ( '' === $text ) {
+			return '';
+		}
+
+		$map  = array(
+			'I' => 'i',
+			'İ' => 'i',
+			'Ş' => 's',
+			'ş' => 's',
+			'Ğ' => 'g',
+			'ğ' => 'g',
+			'Ü' => 'u',
+			'ü' => 'u',
+			'Ö' => 'o',
+			'ö' => 'o',
+			'Ç' => 'c',
+			'ç' => 'c',
+		);
+		$text = strtr( $text, $map );
+
+		return function_exists( 'mb_strtolower' ) ? mb_strtolower( $text ) : strtolower( $text );
+	}
+
+	/**
+	 * Log DEMW shipping-rate error safely.
+	 *
+	 * @param string               $message Message.
+	 * @param array<string,mixed>  $context Context.
+	 * @return void
+	 */
+	private function demw_log_error( $message, $context = array() ) {
+		if ( ! $this->demw_logger instanceof DEMW_Logger ) {
+			return;
+		}
+		$this->demw_logger->error( $message, $context );
+	}
+}

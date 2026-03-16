@@ -79,6 +79,8 @@ final class DEMW_Plugin {
 			return;
 		}
 
+		$this->register_shipping_method_hooks();
+
 		$logger       = new DEMW_Logger();
 		$settings     = new DEMW_Settings( $logger );
 		$auth         = new DEMW_Auth( $settings );
@@ -101,6 +103,28 @@ final class DEMW_Plugin {
 		$settings->hooks();
 		$order_action->hooks();
 		$metabox->hooks();
+	}
+
+	/**
+	 * Register WooCommerce shipping method integration hooks.
+	 *
+	 * @return void
+	 */
+	private function register_shipping_method_hooks() {
+		add_action(
+			'woocommerce_shipping_init',
+			function() {
+				require_once DEMW_PLUGIN_DIR . 'includes/class-demw-shipping-method.php';
+			}
+		);
+
+		add_filter(
+			'woocommerce_shipping_methods',
+			function( $methods ) {
+				$methods['demw_dhl_mng'] = 'DEMW_Shipping_Method';
+				return $methods;
+			}
+		);
 	}
 
 	/**

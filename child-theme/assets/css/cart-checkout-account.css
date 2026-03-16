@@ -369,108 +369,384 @@
   .wcs-cart-shell__inner { padding: 1.25rem 1.1rem 1.6rem; }
 }
 
-/* Account: layout */
+/* ═══════════════════════════════════════════════════════════════
+   MY ACCOUNT — Karaca File · Full Layout Override
+   Astra'nın .woocommerce div'i bypass edildi.
+   Grid: .wcs-ma-nav (sol) + .wcs-ma-content (sağ)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Astra'nın account wrapper stillerini sıfırla ─────────────── */
 .woocommerce-account .woocommerce {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 2fr);
-  gap: 2rem;
-  max-width: 1160px;
-  margin: 2.5rem auto 3rem;
-  padding: 0 1rem;
+  display: block !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  grid-template-columns: none !important;
+  gap: 0 !important;
 }
 
-.wcs-account-nav {
-  background: #ffffff;
-  border-radius: 14px;
-  border: 1px solid rgba(15, 19, 30, 0.08);
-  padding: 1.25rem 1.25rem 1.5rem;
+/* Astra'nın My Account başlığını gizle */
+.woocommerce-account .entry-title,
+.woocommerce-account h1.entry-title,
+.woocommerce-account .page-title { display: none !important; }
+
+/* ── Sayfa arka planı ─────────────────────────────────────────── */
+.woocommerce-account .site-main,
+.woocommerce-account .ast-container { background: var(--color-structure-white, #f8f8f8); }
+
+/* ── Ana layout grid — nav + content ─────────────────────────── */
+/* my-account.php override'ından gelen direkt çocuklar:
+   1. .wcs-ma-nav (navigation.php)
+   2. .wcs-ma-content (my-account.php içindeki div) */
+.woocommerce-account .woocommerce {
+  /* block olarak bırak, içini grid yap */
 }
 
-.wcs-account-nav__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.woocommerce-account .woocommerce > .wcs-ma-nav,
+.woocommerce-account .woocommerce > .wcs-ma-content {
+  /* grid uygulanamıyorsa fallback için float */
 }
 
-.wcs-account-nav__item {
-  margin-bottom: 0.2rem;
+/* Gerçek grid container: nav + content yan yana */
+.woocommerce-account .woocommerce:has(.wcs-ma-nav) {
+  display: grid !important;
+  grid-template-columns: 260px 1fr !important;
+  gap: 1.75rem !important;
+  max-width: 1200px !important;
+  margin: 2rem auto 3rem !important;
+  padding: 0 1.5rem !important;
+  align-items: flex-start !important;
 }
 
-.wcs-account-nav__link {
-  display: block;
-  padding: 0.6rem 0.75rem;
-  border-radius: 8px;
-  text-decoration: none;
-  font-size: 0.9rem;
-  color: rgba(15, 19, 30, 0.8);
+/* :has() desteklemeyen tarayıcılar için fallback */
+.woocommerce-account .woocommerce {
+  display: grid !important;
+  grid-template-columns: 260px 1fr !important;
+  gap: 1.75rem !important;
+  max-width: 1200px !important;
+  margin: 2rem auto 3rem !important;
+  padding: 0 1.5rem !important;
+  align-items: flex-start !important;
 }
 
-.is-active .wcs-account-nav__link,
-.wcs-account-nav__link:hover {
-  background: rgba(193, 46, 55, 0.06);
-  color: var(--wcs-color-accent, #c12e37);
+/* WooCommerce'in kendi iç navigation wrapper'ını gizle (kendi nav'ımız var) */
+.woocommerce-account .woocommerce-MyAccount-navigation { display: none !important; }
+
+/* Content wrapper */
+.wcs-ma-content {
+  min-width: 0; /* grid overflow önle */
 }
 
-.wcs-account-dashboard__header {
-  margin-bottom: 1.5rem;
+/* ══════════════════════════════════════════════════════════════
+   SOL: NAVİGASYON SIDEBAR
+══════════════════════════════════════════════════════════════ */
+.wcs-ma-nav {
+  background: var(--color-industrial-navy, #0f131e);
+  border-radius: 16px;
+  overflow: hidden;
+  position: sticky;
+  top: 90px;
+  width: 260px;
+  flex-shrink: 0;
+  min-width: 0;
 }
 
-.wcs-account-dashboard__title {
-  margin: 0 0 0.35rem;
+/* Profil kartı */
+.wcs-ma-nav__profile {
+  display: flex; align-items: center; gap: 0.85rem;
+  padding: 1.5rem 1.25rem 1.25rem;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.03);
 }
 
-.wcs-account-dashboard__subtitle {
-  margin: 0;
-  font-size: 0.95rem;
-  color: rgba(43, 46, 55, 0.78);
+.wcs-ma-nav__avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--color-safety-red, #c12e37);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; font-weight: 800; color: #fff;
+  flex-shrink: 0; letter-spacing: -0.02em;
 }
 
-.wcs-account-dashboard__grid {
-  display: grid;
-  gap: 1.5rem;
+.wcs-ma-nav__profile-info {
+  display: flex; flex-direction: column; gap: 0.15rem; min-width: 0;
 }
 
-.wcs-account-card {
-  background: #ffffff;
-  border-radius: 14px;
-  border: 1px solid rgba(15, 19, 30, 0.08);
-  padding: 1.25rem 1.5rem 1.5rem;
+.wcs-ma-nav__name {
+  font-size: 0.875rem; font-weight: 700; color: #fff;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-.wcs-account-card__title {
-  margin: 0 0 1rem;
-  font-size: 0.95rem;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: rgba(15, 19, 30, 0.72);
+.wcs-ma-nav__email {
+  font-size: 0.72rem; color: rgba(255,255,255,0.4);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-/* Responsive */
-@media (max-width: 960px) {
-  .wcs-cart-shell__grid,
-  .wcs-checkout-shell__grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
+/* Nav listesi */
+.wcs-ma-nav__list { list-style: none; margin: 0; padding: 0.6rem 0; }
+.wcs-ma-nav__item { margin: 0.1rem 0.5rem; }
 
-  .wcs-cart-shell__col--summary,
-  .wcs-checkout-shell__col--summary {
-    border-left: 0;
-    padding-left: 0;
-    border-top: 1px solid rgba(15, 19, 30, 0.06);
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-  }
+.wcs-ma-nav__link {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.65rem 0.85rem; border-radius: 10px;
+  color: rgba(255,255,255,0.55); text-decoration: none;
+  font-size: 0.855rem; font-weight: 500;
+  transition: background 0.15s, color 0.15s; position: relative;
+}
+.wcs-ma-nav__link:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.9); text-decoration: none; }
 
+.wcs-ma-nav__item.is-active .wcs-ma-nav__link {
+  background: rgba(193,46,55,0.15); color: #fff; font-weight: 600;
+}
+.wcs-ma-nav__item.is-active .wcs-ma-nav__link::before {
+  content: ''; position: absolute; left: 0; top: 25%; bottom: 25%;
+  width: 3px; border-radius: 2px; background: var(--color-safety-red, #c12e37);
+}
+
+.wcs-ma-nav__icon { font-size: 0.95rem; flex-shrink: 0; }
+.wcs-ma-nav__item.is-active .wcs-ma-nav__icon { color: var(--color-safety-red, #c12e37); }
+
+.wcs-ma-nav__arrow { margin-left: auto; font-size: 0.6rem; opacity: 0.3; transition: opacity 0.15s; }
+.wcs-ma-nav__link:hover .wcs-ma-nav__arrow { opacity: 0.7; }
+
+.wcs-ma-nav__item--logout { margin-top: 0.4rem; padding-top: 0.4rem; border-top: 1px solid rgba(255,255,255,0.06); }
+.wcs-ma-nav__item--logout .wcs-ma-nav__link { color: rgba(193,46,55,0.7); }
+.wcs-ma-nav__item--logout .wcs-ma-nav__link:hover { color: var(--color-safety-red,#c12e37); background: rgba(193,46,55,0.08); }
+
+.wcs-ma-nav__trust {
+  display: flex; gap: 0.5rem; flex-wrap: wrap;
+  padding: 0.9rem 1.25rem; border-top: 1px solid rgba(255,255,255,0.06);
+}
+.wcs-ma-nav__trust-item {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.68rem; font-weight: 500; color: rgba(255,255,255,0.3); letter-spacing: 0.04em;
+}
+.wcs-ma-nav__trust-item .bi { color: var(--color-safety-red, #c12e37); font-size: 0.75rem; }
+
+/* ══════════════════════════════════════════════════════════════
+   SAĞ: DASHBOARD
+══════════════════════════════════════════════════════════════ */
+.wcs-ma-dash { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
+
+/* Header */
+.wcs-ma-dash__header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 1rem; flex-wrap: wrap;
+  padding: 1.5rem 1.75rem;
+  background: var(--color-industrial-navy, #0f131e);
+  border-radius: 16px; position: relative; overflow: hidden;
+}
+.wcs-ma-dash__header::after {
+  content: ''; position: absolute; top: 0; right: 0;
+  width: 200px; height: 100%;
+  background: linear-gradient(135deg, transparent 40%, rgba(193,46,55,0.08) 100%);
+  pointer-events: none;
+}
+
+.wcs-ma-dash__title {
+  font-family: var(--font-heading, 'Inter', sans-serif);
+  font-size: clamp(1.25rem, 2vw, 1.6rem); font-weight: 800;
+  letter-spacing: -0.025em; color: #fff; margin: 0 0 0.35rem; line-height: 1.2;
+}
+.wcs-ma-dash__title span { color: var(--color-safety-red, #c12e37); }
+.wcs-ma-dash__subtitle { font-size: 0.875rem; color: rgba(255,255,255,0.45); margin: 0; line-height: 1.5; }
+
+.wcs-ma-dash__shop-btn {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  padding: 0.65rem 1.25rem;
+  background: var(--color-safety-red, #c12e37); color: #fff;
+  border-radius: 8px; font-size: 0.82rem; font-weight: 600;
+  text-decoration: none; white-space: nowrap; flex-shrink: 0;
+  transition: background 0.2s, transform 0.2s; position: relative; z-index: 1;
+}
+.wcs-ma-dash__shop-btn:hover { background: #a82530; color: #fff; transform: translateY(-1px); text-decoration: none; }
+
+/* İstatistik kartları */
+.wcs-ma-dash__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+
+.wcs-ma-stat {
+  display: flex; align-items: center; gap: 0.85rem;
+  background: #fff; border-radius: 12px;
+  border: 1px solid rgba(15,19,30,0.08); padding: 1rem 1.25rem;
+  box-shadow: 0 2px 8px rgba(15,19,30,0.05);
+}
+.wcs-ma-stat__icon {
+  width: 42px; height: 42px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; flex-shrink: 0;
+}
+.wcs-ma-stat__icon--red   { background: rgba(193,46,55,0.1);  color: var(--color-safety-red,#c12e37); }
+.wcs-ma-stat__icon--navy  { background: rgba(15,19,30,0.08);  color: var(--color-industrial-navy,#0f131e); }
+.wcs-ma-stat__icon--green { background: rgba(7,148,80,0.1);   color: #079450; }
+.wcs-ma-stat__value {
+  display: block; font-family: var(--font-heading,'Inter',sans-serif);
+  font-size: 1.4rem; font-weight: 800;
+  color: var(--color-industrial-navy,#0f131e); line-height: 1;
+  margin-bottom: 0.15rem; letter-spacing: -0.03em;
+}
+.wcs-ma-stat__label {
+  font-size: 0.72rem; font-weight: 500;
+  color: rgba(43,46,55,0.5); text-transform: uppercase; letter-spacing: 0.06em;
+}
+
+/* Grid */
+.wcs-ma-dash__grid { display: grid; grid-template-columns: 1fr 340px; gap: 1.25rem; align-items: flex-start; }
+.wcs-ma-dash__right { display: flex; flex-direction: column; gap: 1.25rem; }
+
+/* Kart */
+.wcs-ma-card {
+  background: #fff; border-radius: 14px;
+  border: 1px solid rgba(15,19,30,0.08);
+  box-shadow: 0 2px 12px rgba(15,19,30,0.05); overflow: hidden;
+}
+.wcs-ma-card__header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.25rem; border-bottom: 1px solid rgba(15,19,30,0.07);
+  background: var(--color-structure-white, #f8f8f8);
+}
+.wcs-ma-card__title {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.82rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--color-industrial-navy,#0f131e); margin: 0;
+}
+.wcs-ma-card__title .bi { color: var(--color-safety-red,#c12e37); font-size: 0.9rem; }
+.wcs-ma-card__link {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.78rem; font-weight: 500; color: rgba(43,46,55,0.5);
+  text-decoration: none; transition: color 0.15s;
+}
+.wcs-ma-card__link:hover { color: var(--color-safety-red,#c12e37); text-decoration: none; }
+.wcs-ma-card__body { padding: 0; }
+.wcs-ma-card__body--addresses { display: grid; grid-template-columns: 1fr 1fr; }
+
+/* Sipariş satırları */
+.wcs-ma-orders { display: flex; flex-direction: column; }
+.wcs-ma-order-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 0.75rem; padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid rgba(15,19,30,0.05); transition: background 0.15s;
+}
+.wcs-ma-order-row:last-child { border-bottom: none; }
+.wcs-ma-order-row:hover { background: rgba(15,19,30,0.02); }
+.wcs-ma-order-row__left  { display: flex; align-items: center; gap: 0.85rem; }
+.wcs-ma-order-row__num   { font-weight: 700; font-size: 0.88rem; color: var(--color-industrial-navy,#0f131e); }
+.wcs-ma-order-row__date  { font-size: 0.78rem; color: rgba(43,46,55,0.45); }
+.wcs-ma-order-row__items { font-size: 0.75rem; color: rgba(43,46,55,0.4); }
+.wcs-ma-order-row__right { display: flex; align-items: center; gap: 0.75rem; }
+.wcs-ma-order-row__total { font-size: 0.9rem; font-weight: 700; color: var(--color-industrial-navy,#0f131e); }
+.wcs-ma-order-row__view {
+  width: 30px; height: 30px; border-radius: 7px;
+  background: rgba(15,19,30,0.05); border: 1px solid rgba(15,19,30,0.08);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(43,46,55,0.5); text-decoration: none; font-size: 0.85rem; transition: all 0.15s;
+}
+.wcs-ma-order-row__view:hover { background: var(--color-industrial-navy,#0f131e); color: #fff; border-color: transparent; }
+
+.wcs-ma-order-status {
+  display: inline-flex; align-items: center;
+  padding: 0.2rem 0.6rem; border-radius: 20px;
+  font-size: 0.7rem; font-weight: 600; white-space: nowrap;
+}
+.wcs-ma-order-status--green { background: rgba(7,148,80,0.1);   color: #079450; }
+.wcs-ma-order-status--blue  { background: rgba(37,99,235,0.1);  color: #2563eb; }
+.wcs-ma-order-status--amber { background: rgba(245,158,11,0.1); color: #d97706; }
+.wcs-ma-order-status--red   { background: rgba(193,46,55,0.1);  color: #c12e37; }
+.wcs-ma-order-status--gray  { background: rgba(43,46,55,0.07);  color: rgba(43,46,55,0.6); }
+
+/* Garanti kartı */
+.wcs-ma-card--warranty .wcs-ma-card__header {
+  background: linear-gradient(135deg, var(--color-industrial-navy,#0f131e) 0%, #1a2d42 100%);
+  border-bottom-color: rgba(255,255,255,0.08);
+}
+.wcs-ma-card--warranty .wcs-ma-card__title { color: #fff; }
+.wcs-ma-card--warranty .wcs-ma-card__title .bi { color: rgba(255,255,255,0.7); }
+
+.wcs-ma-warranty-active { padding: 1.1rem 1.25rem; }
+.wcs-ma-warranty-badge {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.3rem 0.75rem; border-radius: 20px;
+  background: rgba(7,148,80,0.1); color: #079450;
+  font-size: 0.75rem; font-weight: 700; margin-bottom: 1rem;
+}
+.wcs-ma-warranty-items { display: flex; flex-direction: column; gap: 0.6rem; }
+.wcs-ma-warranty-item {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 0.5rem; padding: 0.6rem 0.75rem;
+  background: var(--color-structure-white,#f8f8f8); border-radius: 8px; font-size: 0.82rem;
+}
+.wcs-ma-warranty-item__label {
+  display: flex; align-items: center; gap: 0.35rem;
+  color: rgba(43,46,55,0.55); flex: 1;
+}
+.wcs-ma-warranty-item__label .bi { color: var(--color-safety-red,#c12e37); font-size: 0.8rem; }
+.wcs-ma-warranty-item strong { font-weight: 700; color: var(--color-industrial-navy,#0f131e); white-space: nowrap; }
+
+/* Adres kartları */
+.wcs-ma-address-card {
+  padding: 1rem 1.25rem; border-right: 1px solid rgba(15,19,30,0.07);
+  display: flex; flex-direction: column; gap: 0.5rem;
+}
+.wcs-ma-address-card:last-child { border-right: none; }
+.wcs-ma-address-card__head {
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em; color: rgba(43,46,55,0.5);
+}
+.wcs-ma-address-card__head .bi { color: var(--color-safety-red,#c12e37); font-size: 0.8rem; }
+.wcs-ma-address-card__body { font-size: 0.83rem; color: rgba(43,46,55,0.75); line-height: 1.6; flex: 1; }
+.wcs-ma-address-card__empty { color: rgba(43,46,55,0.35); font-style: italic; }
+.wcs-ma-address-card__edit {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.75rem; font-weight: 500; color: rgba(43,46,55,0.45);
+  text-decoration: none; margin-top: 0.25rem; transition: color 0.15s;
+}
+.wcs-ma-address-card__edit:hover { color: var(--color-safety-red,#c12e37); text-decoration: none; }
+
+/* Boş durum */
+.wcs-ma-empty {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 0.75rem; padding: 2.5rem 1.5rem; text-align: center;
+}
+.wcs-ma-empty--sm { padding: 1.5rem 1.25rem; }
+.wcs-ma-empty__icon { font-size: 2rem; color: rgba(43,46,55,0.2); }
+.wcs-ma-empty p { font-size: 0.875rem; color: rgba(43,46,55,0.5); margin: 0; }
+.wcs-ma-empty__btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.6rem 1.25rem;
+  background: var(--color-industrial-navy,#0f131e); color: #fff;
+  border-radius: 8px; font-size: 0.82rem; font-weight: 600;
+  text-decoration: none; transition: background 0.2s;
+}
+.wcs-ma-empty__btn:hover { background: #1a2d42; color: #fff; text-decoration: none; }
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 1024px) {
   .woocommerce-account .woocommerce {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: 220px 1fr !important;
+    gap: 1.25rem !important;
   }
+  .wcs-ma-nav { width: 220px; }
+  .wcs-ma-dash__grid { grid-template-columns: 1fr 300px; }
 }
 
-@media (max-width: 640px) {
-  .wcs-cart-shell__inner,
-  .wcs-checkout-shell__grid {
-    padding: 1.25rem 1.25rem 1.6rem;
+@media (max-width: 768px) {
+  .woocommerce-account .woocommerce {
+    grid-template-columns: 1fr !important;
+    padding: 0 1rem !important;
+    margin: 1rem auto 2rem !important;
   }
+  .wcs-ma-nav { position: static; width: 100%; }
+  .wcs-ma-dash__grid { grid-template-columns: 1fr; }
+  .wcs-ma-dash__stats { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .woocommerce-account .woocommerce { padding: 0 0.75rem !important; }
+  .wcs-ma-dash__header { padding: 1.25rem; }
+  .wcs-ma-dash__stats { grid-template-columns: 1fr; }
+  .wcs-ma-card__body--addresses { grid-template-columns: 1fr; }
+  .wcs-ma-address-card { border-right: none; border-bottom: 1px solid rgba(15,19,30,0.07); }
+  .wcs-ma-address-card:last-child { border-bottom: none; }
+  .wcs-ma-order-row__items { display: none; }
 }
 
 

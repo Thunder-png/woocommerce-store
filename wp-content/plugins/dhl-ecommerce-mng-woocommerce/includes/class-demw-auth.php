@@ -62,18 +62,20 @@ class DEMW_Auth {
 			case 'username_password':
 				$username = (string) $this->settings->get( 'username', '' );
 				$password = (string) $this->settings->get( 'password', '' );
+				$api_key  = (string) $this->settings->get( 'api_key', '' );
+				$api_secret = (string) $this->settings->get( 'api_secret', '' );
 				if ( '' === $username || '' === $password ) {
 					return new WP_Error( 'demw_missing_username_password', __( 'Username and password are required for Username / Password auth.', 'dhl-ecommerce-mng-woocommerce' ) );
 				}
-				// Keep auth mode swappable: send optional api key/secret if present, token exchange is handled by API client.
-				$api_key    = (string) $this->settings->get( 'api_key', '' );
-				$api_secret = (string) $this->settings->get( 'api_secret', '' );
-				if ( '' !== $api_key ) {
-					$headers['X-IBM-Client-Id'] = $api_key;
+				// Identity API docs require both client id and secret as headers.
+				if ( '' === $api_key || '' === $api_secret ) {
+					return new WP_Error(
+						'demw_missing_ibm_headers',
+						__( 'Username/Password auth also requires API Key and API Secret (X-IBM-Client-Id / X-IBM-Client-Secret).', 'dhl-ecommerce-mng-woocommerce' )
+					);
 				}
-				if ( '' !== $api_secret ) {
-					$headers['X-IBM-Client-Secret'] = $api_secret;
-				}
+				$headers['X-IBM-Client-Id']     = $api_key;
+				$headers['X-IBM-Client-Secret'] = $api_secret;
 				break;
 
 			case 'bearer_token':
