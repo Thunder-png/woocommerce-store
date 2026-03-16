@@ -472,6 +472,15 @@ class DEMW_Order_Actions {
 			return $recipient_payload;
 		}
 		$recipient_payload = $this->enrich_payload_recipient_location( $recipient_payload, $order );
+		if ( is_wp_error( $recipient_payload ) ) {
+			$this->persist_last_error( $order, $recipient_payload->get_error_message() );
+			return $recipient_payload;
+		}
+		$recipient_validation = $this->validate_recipient_payload_for_branch_resolution( $recipient_payload );
+		if ( is_wp_error( $recipient_validation ) ) {
+			$this->persist_last_error( $order, $recipient_validation->get_error_message() );
+			return $recipient_validation;
+		}
 
 		$recipient_result = $this->api_client->create_recipient( $recipient_payload );
 		if ( is_wp_error( $recipient_result ) ) {
@@ -486,6 +495,15 @@ class DEMW_Order_Actions {
 			return $order_payload;
 		}
 		$order_payload = $this->enrich_payload_recipient_location( $order_payload, $order );
+		if ( is_wp_error( $order_payload ) ) {
+			$this->persist_last_error( $order, $order_payload->get_error_message() );
+			return $order_payload;
+		}
+		$order_validation = $this->validate_recipient_payload_for_branch_resolution( $order_payload );
+		if ( is_wp_error( $order_validation ) ) {
+			$this->persist_last_error( $order, $order_validation->get_error_message() );
+			return $order_validation;
+		}
 
 		$order_result = $this->api_client->create_order( $order_payload );
 		if ( is_wp_error( $order_result ) ) {
@@ -617,7 +635,7 @@ class DEMW_Order_Actions {
 	 *
 	 * @param array<string,mixed> $payload Payload.
 	 * @param WC_Order            $order Order.
-	 * @return array<string,mixed>
+	 * @return array<string,mixed>|WP_Error
 	 */
 	private function enrich_payload_recipient_location( $payload, WC_Order $order ) {
 		if ( ! isset( $payload['recipient'] ) || ! is_array( $payload['recipient'] ) ) {
@@ -626,7 +644,14 @@ class DEMW_Order_Actions {
 
 		$resolved = $this->location_resolver->resolve_for_order( $order );
 		if ( is_wp_error( $resolved ) ) {
-			return $payload;
+			return new WP_Error(
+				'demw_location_resolution_failed',
+				sprintf(
+					/* translators: %s: details */
+					__( 'Recipient location codes could not be resolved from CBS API. Shipment payload was not sent to prevent branch resolution errors. Detail: %s', 'dhl-ecommerce-mng-woocommerce' ),
+					$resolved->get_error_message()
+				)
+			);
 		}
 
 		$payload['recipient']['cityCode']     = (int) $resolved['city_code'];
@@ -640,7 +665,68 @@ class DEMW_Order_Actions {
 		$order->update_meta_data( '_demw_resolved_neighborhood', (string) ( $resolved['neighborhood'] ?? '' ) );
 		$order->update_meta_data( '_demw_is_mobile_area', ! empty( $resolved['is_mobile_area'] ) ? 1 : 0 );
 		$order->update_meta_data( '_demw_is_out_of_service_area', ! empty( $resolved['is_out_of_service'] ) ? 1 : 0 );
+		if ( ! empty( $resolved['is_out_of_service'] ) ) {
+			return new WP_Error(
+				'demw_out_of_service_area',
+				__(
+					'Recipient address resolves to an out-of-service CBS neighborhood. Update il/ilce/mahalle/address before creating shipment.',
+					'dhl-ecommerce-mng-woocommerce'
+				)
+			);
+		}
 
 		return $payload;
+	}
+
+	/**
+	 * Validate recipient payload fields required for destination branch detection.
+	 *
+	 * @param array<string,mixed> $payload Payload.
+	 * @return true|WP_Error
+	 */
+	private function validate_recipient_payload_for_branch_resolution( $payload ) {
+		if ( ! isset( $payload['recipient'] ) || ! is_array( $payload['recipient'] ) ) {
+			return new WP_Error( 'demw_missing_recipient_block', __( 'Recipient block is missing in shipment payload.', 'dhl-ecommerce-mng-woocommerce' ) );
+		}
+
+		$recipient = $payload['recipient'];
+		$city_code = absint( $recipient['cityCode'] ?? 0 );
+		$district_code = absint( $recipient['districtCode'] ?? 0 );
+		$address = trim( (string) ( $recipient['address'] ?? '' ) );
+		$full_name = trim( (string) ( $recipient['fullName'] ?? '' ) );
+		$mobile_phone = trim( (string) ( $recipient['mobilePhoneNumber'] ?? '' ) );
+		$home_phone = trim( (string) ( $recipient['homePhoneNumber'] ?? '' ) );
+		$business_phone = trim( (string) ( $recipient['bussinessPhoneNumber'] ?? '' ) );
+		$customer_id = trim( (string) ( $recipient['customerId'] ?? '' ) );
+
+		if ( $city_code < 1 || $district_code < 1 ) {
+			return new WP_Error(
+				'demw_missing_location_codes',
+				__( 'Recipient cityCode/districtCode is empty. CBS location mapping must succeed before createRecipient/createOrder.', 'dhl-ecommerce-mng-woocommerce' )
+			);
+		}
+
+		if ( '' === $address ) {
+			return new WP_Error(
+				'demw_missing_recipient_address',
+				__( 'Recipient address is empty. Branch detection requires a full address.', 'dhl-ecommerce-mng-woocommerce' )
+			);
+		}
+
+		if ( '' === $customer_id && '' === $full_name ) {
+			return new WP_Error(
+				'demw_missing_recipient_name',
+				__( 'Recipient fullName is empty. Either customerId or fullName must be provided.', 'dhl-ecommerce-mng-woocommerce' )
+			);
+		}
+
+		if ( '' === $mobile_phone && '' === $home_phone && '' === $business_phone ) {
+			return new WP_Error(
+				'demw_missing_recipient_phone',
+				__( 'At least one recipient phone number is required for branch resolution.', 'dhl-ecommerce-mng-woocommerce' )
+			);
+		}
+
+		return true;
 	}
 }
