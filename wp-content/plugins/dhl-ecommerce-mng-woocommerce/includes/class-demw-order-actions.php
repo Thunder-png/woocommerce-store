@@ -273,6 +273,13 @@ class DEMW_Order_Actions {
 		$this->save_exchange_meta( $order );
 		$order->save();
 
+		$this->add_order_note(
+			$order,
+			$is_ready
+				? sprintf( __( 'DHL/MNG order query: destination branch ready. Branch code: %s', 'dhl-ecommerce-mng-woocommerce' ), $branch_code )
+				: __( 'DHL/MNG order query: destination branch is not ready yet.', 'dhl-ecommerce-mng-woocommerce' )
+		);
+
 		$message = $is_ready
 			? sprintf( __( 'Order query succeeded. Destination branch code: %s', 'dhl-ecommerce-mng-woocommerce' ), $branch_code )
 			: __( 'Order query succeeded but destination branch is not ready yet.', 'dhl-ecommerce-mng-woocommerce' );
