@@ -56,6 +56,8 @@ class DEMW_Order_Actions {
 	private $supported_actions = array(
 		'test_connection',
 		'create_shipment',
+		'query_order',
+		'query_shipment',
 		'query_status',
 		'get_label',
 	);
@@ -168,6 +170,12 @@ class DEMW_Order_Actions {
 			case 'create_shipment':
 				return $this->run_create_shipment( $order );
 
+			case 'query_order':
+				return $this->run_query_order( $order );
+
+			case 'query_shipment':
+				return $this->run_query_shipment( $order );
+
 			case 'query_status':
 				return $this->run_query_status( $order );
 
@@ -221,6 +229,93 @@ class DEMW_Order_Actions {
 		}
 
 		return $this->run_stage_barcode( $order, $reference_id, $command_api );
+	}
+
+	/**
+	 * Action: query order by reference.
+	 *
+	 * @param WC_Order $order Order.
+	 * @return array<string,mixed>|WP_Error
+	 */
+	private function run_query_order( WC_Order $order ) {
+		$reference_id = (string) $order->get_meta( '_demw_reference_id', true );
+		if ( '' === $reference_id ) {
+			$this->persist_last_error( $order, __( 'Reference ID is missing. Run Create Shipment stage 1 first.', 'dhl-ecommerce-mng-woocommerce' ) );
+			return new WP_Error( 'demw_missing_reference_id', __( 'Reference ID is missing.', 'dhl-ecommerce-mng-woocommerce' ) );
+		}
+
+		$result = $this->api_client->get_order_by_reference( $reference_id );
+		if ( is_wp_error( $result ) ) {
+			$this->persist_last_error( $order, $result->get_error_message() );
+			$this->save_exchange_meta( $order );
+			return $result;
+		}
+
+		$data = is_array( $result['data'] ) ? $result['data'] : array();
+		$branch_code = $this->extract_value(
+			$data,
+			array(
+				'destinationBranchCode',
+				'recipientBranchCode',
+				'receiverBranchCode',
+				'branchCode',
+				'shipment.destinationBranchCode',
+				'order.destinationBranchCode',
+			)
+		);
+		$is_ready = '' !== trim( $branch_code );
+
+		$order->update_meta_data( '_demw_destination_branch_code', $branch_code );
+		$order->update_meta_data( '_demw_branch_ready', $is_ready ? 1 : 0 );
+		$order->update_meta_data( '_demw_last_status', $is_ready ? __( 'Order query: branch ready', 'dhl-ecommerce-mng-woocommerce' ) : __( 'Order query: branch not ready', 'dhl-ecommerce-mng-woocommerce' ) );
+		$order->update_meta_data( '_demw_last_error', '' );
+		$this->update_common_meta( $order );
+		$this->save_exchange_meta( $order );
+		$order->save();
+
+		$message = $is_ready
+			? sprintf( __( 'Order query succeeded. Destination branch code: %s', 'dhl-ecommerce-mng-woocommerce' ), $branch_code )
+			: __( 'Order query succeeded but destination branch is not ready yet.', 'dhl-ecommerce-mng-woocommerce' );
+		return array( 'message' => $message );
+	}
+
+	/**
+	 * Action: query shipment detail by reference.
+	 *
+	 * @param WC_Order $order Order.
+	 * @return array<string,mixed>|WP_Error
+	 */
+	private function run_query_shipment( WC_Order $order ) {
+		$reference_id = (string) $order->get_meta( '_demw_reference_id', true );
+		if ( '' === $reference_id ) {
+			$this->persist_last_error( $order, __( 'Reference ID is missing. Run Create Shipment stage 1 first.', 'dhl-ecommerce-mng-woocommerce' ) );
+			return new WP_Error( 'demw_missing_reference_id', __( 'Reference ID is missing.', 'dhl-ecommerce-mng-woocommerce' ) );
+		}
+
+		$result = $this->api_client->get_shipment_by_reference( $reference_id );
+		if ( is_wp_error( $result ) ) {
+			$this->persist_last_error( $order, $result->get_error_message() );
+			$this->save_exchange_meta( $order );
+			return $result;
+		}
+
+		$data = is_array( $result['data'] ) ? $result['data'] : array();
+		$shipment_id = $this->extract_value( $data, array( 'shipmentId', 'shipment.shipmentId', '0.shipmentId' ) );
+		$tracking_number = $this->extract_value( $data, array( 'trackingNumber', 'barcode', 'cargoBarcode', 'shipmentPieceList.0.barcode' ) );
+
+		if ( '' !== $shipment_id ) {
+			$order->update_meta_data( '_demw_shipment_id', $shipment_id );
+		}
+		if ( '' !== $tracking_number ) {
+			$order->update_meta_data( '_demw_tracking_number', $tracking_number );
+		}
+		$order->update_meta_data( '_demw_last_status', __( 'Shipment query refreshed', 'dhl-ecommerce-mng-woocommerce' ) );
+		$order->update_meta_data( '_demw_last_error', '' );
+		$this->update_common_meta( $order );
+		$this->save_exchange_meta( $order );
+		$order->save();
+
+		return array( 'message' => __( 'Shipment query completed.', 'dhl-ecommerce-mng-woocommerce' ) );
 	}
 
 	/**

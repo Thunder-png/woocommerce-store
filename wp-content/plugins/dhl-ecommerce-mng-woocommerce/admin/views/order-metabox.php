@@ -28,6 +28,8 @@ $current_stage = ( ! empty( $meta['tracking_number'] ) || ! empty( $meta['shipme
 	</p>
 	<p><strong><?php echo esc_html__( 'Reference ID', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong> <?php echo esc_html( $meta['reference_id'] ? $meta['reference_id'] : '-' ); ?></p>
 	<p><strong><?php echo esc_html__( 'Shipment Stage', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong> <?php echo esc_html( $current_stage ); ?></p>
+	<p><strong><?php echo esc_html__( 'Branch Ready', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong> <?php echo esc_html( ! empty( $meta['branch_ready'] ) ? __( 'Yes', 'dhl-ecommerce-mng-woocommerce' ) : __( 'No', 'dhl-ecommerce-mng-woocommerce' ) ); ?></p>
+	<p><strong><?php echo esc_html__( 'Destination Branch Code', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong> <?php echo esc_html( ! empty( $meta['destination_branch_code'] ) ? $meta['destination_branch_code'] : '-' ); ?></p>
 	<?php if ( ! empty( $meta['resolved_neighborhood'] ) ) : ?>
 		<p><strong><?php echo esc_html__( 'Resolved Neighborhood', 'dhl-ecommerce-mng-woocommerce' ); ?>:</strong> <?php echo esc_html( $meta['resolved_neighborhood'] ); ?></p>
 	<?php endif; ?>
@@ -71,6 +73,8 @@ $current_stage = ( ! empty( $meta['tracking_number'] ) || ! empty( $meta['shipme
 	<div class="demw-action-grid">
 		<a class="button" href="<?php echo esc_url( $actions['test_connection'] ); ?>"><?php echo esc_html__( 'Test Connection', 'dhl-ecommerce-mng-woocommerce' ); ?></a>
 		<a class="button button-primary" href="<?php echo esc_url( $actions['create_shipment'] ); ?>"><?php echo esc_html__( 'Create Shipment', 'dhl-ecommerce-mng-woocommerce' ); ?></a>
+		<a class="button" href="<?php echo esc_url( $actions['query_order'] ); ?>"><?php echo esc_html__( 'Query Order (getorder)', 'dhl-ecommerce-mng-woocommerce' ); ?></a>
+		<a class="button" href="<?php echo esc_url( $actions['query_shipment'] ); ?>"><?php echo esc_html__( 'Query Shipment (getshipment)', 'dhl-ecommerce-mng-woocommerce' ); ?></a>
 		<a class="button" href="<?php echo esc_url( $actions['query_status'] ); ?>"><?php echo esc_html__( 'Query Shipment Status', 'dhl-ecommerce-mng-woocommerce' ); ?></a>
 		<a class="button" href="<?php echo esc_url( $actions['get_label'] ); ?>"><?php echo esc_html__( 'Get Label', 'dhl-ecommerce-mng-woocommerce' ); ?></a>
 	</div>

@@ -114,6 +114,8 @@ class DEMW_Admin_Metabox {
 			'tracking_number' => (string) $order->get_meta( '_demw_tracking_number', true ),
 			'order_created'   => DEMW_Helpers::as_bool( $order->get_meta( '_demw_order_created', true ) ),
 			'order_synced_at' => absint( $order->get_meta( '_demw_order_synced_at', true ) ),
+			'destination_branch_code' => (string) $order->get_meta( '_demw_destination_branch_code', true ),
+			'branch_ready'            => DEMW_Helpers::as_bool( $order->get_meta( '_demw_branch_ready', true ) ),
 			'resolved_neighborhood' => (string) $order->get_meta( '_demw_resolved_neighborhood', true ),
 			'is_mobile_area'        => DEMW_Helpers::as_bool( $order->get_meta( '_demw_is_mobile_area', true ) ),
 			'is_out_of_service_area'=> DEMW_Helpers::as_bool( $order->get_meta( '_demw_is_out_of_service_area', true ) ),
@@ -127,6 +129,8 @@ class DEMW_Admin_Metabox {
 		$actions  = array(
 			'test_connection' => $this->order_actions->get_action_url( $order_id, 'test_connection' ),
 			'create_shipment' => $this->order_actions->get_action_url( $order_id, 'create_shipment' ),
+			'query_order'     => $this->order_actions->get_action_url( $order_id, 'query_order' ),
+			'query_shipment'  => $this->order_actions->get_action_url( $order_id, 'query_shipment' ),
 			'query_status'    => $this->order_actions->get_action_url( $order_id, 'query_status' ),
 			'get_label'       => $this->order_actions->get_action_url( $order_id, 'get_label' ),
 		);
