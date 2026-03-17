@@ -281,6 +281,7 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 
 		$normalized_address = isset( $resolved['normalized_address'] ) ? trim( (string) $resolved['normalized_address'] ) : '';
 		$payload_address    = '' !== $normalized_address ? $normalized_address : $full_address;
+		$payload_address    = $this->append_location_context_to_address( $payload_address, $resolved );
 		$city_code          = isset( $resolved['city_code'] ) ? trim( (string) $resolved['city_code'] ) : '';
 		$district_code      = isset( $resolved['district_code'] ) ? trim( (string) $resolved['district_code'] ) : '';
 
@@ -303,26 +304,161 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 			'orderPieceList'      => $order_piece_list,
 		);
 
+		$calculated_cost = $this->calculate_transport_cost_with_fallback( $api_client, $payload );
+		if ( null !== $calculated_cost ) {
+			$this->cache_api_rate_cost( $cache_key, $calculated_cost, $cache_ttl );
+			return $calculated_cost;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Retry calculate call on destination-branch resolution errors.
+	 *
+	 * @param DEMW_API_Client     $api_client API client.
+	 * @param array<string,mixed> $payload Calculate payload.
+	 * @return float|null
+	 */
+	private function calculate_transport_cost_with_fallback( DEMW_API_Client $api_client, $payload ) {
 		$result = $api_client->calculate_transport_cost( $payload );
-		if ( is_wp_error( $result ) ) {
+		$cost   = $this->extract_calculated_amount( $result );
+		if ( null !== $cost ) {
+			return $cost;
+		}
+
+		if ( ! is_wp_error( $result ) ) {
+			return null;
+		}
+
+		if ( 'demw_destination_branch_not_found' !== (string) $result->get_error_code() ) {
 			$this->demw_log_error( 'Rate calculation failed', array( 'error' => $result->get_error_message() ) );
 			return null;
 		}
 
-		$data = is_array( $result['data'] ) ? $result['data'] : array();
+		$city_code     = isset( $payload['cityCode'] ) ? trim( (string) $payload['cityCode'] ) : '';
+		$district_code = isset( $payload['districtCode'] ) ? trim( (string) $payload['districtCode'] ) : '';
+		if ( '' === $city_code || '' === $district_code ) {
+			return null;
+		}
+
+		$districts = $api_client->get_districts( $city_code );
+		if ( is_wp_error( $districts ) || ! is_array( $districts ) ) {
+			return null;
+		}
+
+		$attempted_codes = array( $district_code => true );
+		$attempt_count   = 0;
+		foreach ( $districts as $district_item ) {
+			$candidate_code = isset( $district_item['code'] ) ? trim( (string) $district_item['code'] ) : '';
+			if ( '' === $candidate_code || isset( $attempted_codes[ $candidate_code ] ) ) {
+				continue;
+			}
+
+			$attempted_codes[ $candidate_code ] = true;
+			$attempt_count++;
+			if ( $attempt_count > 3 ) {
+				break;
+			}
+
+			$retry_payload                 = $payload;
+			$retry_payload['districtCode'] = $candidate_code;
+			$retry_result                  = $api_client->calculate_transport_cost( $retry_payload );
+			$retry_cost                    = $this->extract_calculated_amount( $retry_result );
+			if ( null !== $retry_cost ) {
+				return $retry_cost;
+			}
+		}
+
+		$this->demw_log_error(
+			'Rate calculation failed after district fallback attempts',
+			array(
+				'error'         => $result->get_error_message(),
+				'city_code'     => $city_code,
+				'district_code' => $district_code,
+			)
+		);
+		return null;
+	}
+
+	/**
+	 * Extract calculated amount from calculate endpoint response.
+	 *
+	 * @param array<string,mixed>|WP_Error $result API result.
+	 * @return float|null
+	 */
+	private function extract_calculated_amount( $result ) {
+		if ( is_wp_error( $result ) || ! is_array( $result ) || ! isset( $result['data'] ) ) {
+			return null;
+		}
+
+		$data        = is_array( $result['data'] ) ? $result['data'] : array();
 		$final_total = isset( $data['finalTotal'] ) ? (float) $data['finalTotal'] : null;
 		if ( null !== $final_total && $final_total >= 0 ) {
-			$this->cache_api_rate_cost( $cache_key, $final_total, $cache_ttl );
 			return $final_total;
 		}
 
 		$sub_total = isset( $data['subTotal'] ) ? (float) $data['subTotal'] : null;
 		if ( null !== $sub_total && $sub_total >= 0 ) {
-			$this->cache_api_rate_cost( $cache_key, $sub_total, $cache_ttl );
 			return $sub_total;
 		}
 
 		return null;
+	}
+
+	/**
+	 * Enrich free-text address with district/city if missing.
+	 *
+	 * @param string              $address  Base address.
+	 * @param array<string,mixed> $resolved Resolved location result.
+	 * @return string
+	 */
+	private function append_location_context_to_address( $address, $resolved ) {
+		$address  = trim( (string) $address );
+		$district = isset( $resolved['district_name'] ) ? trim( (string) $resolved['district_name'] ) : '';
+		$city     = isset( $resolved['city_name'] ) ? trim( (string) $resolved['city_name'] ) : '';
+
+		$normalized_address = $this->normalize_tr_text( $address );
+		if ( '' !== $district && false === strpos( $normalized_address, $this->normalize_tr_text( $district ) ) ) {
+			$address .= ' ' . $district;
+			$normalized_address = $this->normalize_tr_text( $address );
+		}
+		if ( '' !== $city && false === strpos( $normalized_address, $this->normalize_tr_text( $city ) ) ) {
+			$address .= ' ' . $city;
+		}
+
+		return trim( $address );
+	}
+
+	/**
+	 * Normalize Turkish text for insensitive contains checks.
+	 *
+	 * @param string $text Raw text.
+	 * @return string
+	 */
+	private function normalize_tr_text( $text ) {
+		$text = trim( (string) $text );
+		if ( '' === $text ) {
+			return '';
+		}
+
+		$map = array(
+			'I' => 'i',
+			'İ' => 'i',
+			'Ş' => 's',
+			'ş' => 's',
+			'Ğ' => 'g',
+			'ğ' => 'g',
+			'Ü' => 'u',
+			'ü' => 'u',
+			'Ö' => 'o',
+			'ö' => 'o',
+			'Ç' => 'c',
+			'ç' => 'c',
+		);
+		$text = strtr( $text, $map );
+
+		return function_exists( 'mb_strtolower' ) ? mb_strtolower( $text ) : strtolower( $text );
 	}
 
 	/**
