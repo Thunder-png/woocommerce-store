@@ -281,6 +281,12 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 
 		$normalized_address = isset( $resolved['normalized_address'] ) ? trim( (string) $resolved['normalized_address'] ) : '';
 		$payload_address    = '' !== $normalized_address ? $normalized_address : $full_address;
+		$city_code          = isset( $resolved['city_code'] ) ? trim( (string) $resolved['city_code'] ) : '';
+		$district_code      = isset( $resolved['district_code'] ) ? trim( (string) $resolved['district_code'] ) : '';
+
+		if ( '' === $city_code || '' === $district_code ) {
+			return null;
+		}
 
 		$payload = array(
 			'shipmentServiceType' => 1,
@@ -288,8 +294,8 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 			'paymentType'         => 1,
 			'pickUpType'          => absint( $this->get_option( 'pick_up_type', '1' ) ),
 			'deliveryType'        => 1,
-			'cityCode'            => absint( $resolved['city_code'] ),
-			'districtCode'        => absint( $resolved['district_code'] ),
+			'cityCode'            => $city_code,
+			'districtCode'        => $district_code,
 			'address'             => $payload_address,
 			'smsPreference1'      => 1,
 			'smsPreference2'      => 0,
