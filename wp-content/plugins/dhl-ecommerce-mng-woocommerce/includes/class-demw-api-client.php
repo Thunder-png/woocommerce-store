@@ -968,7 +968,12 @@ class DEMW_API_Client {
 				);
 			}
 
-			if ( '20001' === $nested_code || false !== stripos( $nested_desc, 'VARIŞ ŞUBESİ BULUNAMADI' ) || false !== stripos( $nested_desc, 'VARIS SUBESI BULUNAMADI' ) ) {
+			if (
+				'20001' === $nested_code
+				|| false !== stripos( $nested_desc, 'VARIŞ ŞUBESİ BULUNAMADI' )
+				|| false !== stripos( $nested_desc, 'VARIS SUBESI BULUNAMADI' )
+				|| false !== stripos( $nested_desc, 'SUBENIN ILI BULUNAMADI' )
+			) {
 				return array(
 					'code'    => 'demw_destination_branch_not_found',
 					'message' => __(

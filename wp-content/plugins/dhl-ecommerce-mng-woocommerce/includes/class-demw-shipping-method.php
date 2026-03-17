@@ -268,7 +268,7 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 			return null;
 		}
 
-		$resolved = $resolver->resolve_by_parts( $country, $city_name, $state_name );
+		$resolved = $resolver->resolve_by_parts( $country, $city_name, $state_name, $full_address );
 		if ( is_wp_error( $resolved ) ) {
 			$this->demw_log_error( 'Location resolution failed for rate calculation', array( 'error' => $resolved->get_error_message() ) );
 			return null;
@@ -279,19 +279,18 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 			return null;
 		}
 
+		$normalized_address = isset( $resolved['normalized_address'] ) ? trim( (string) $resolved['normalized_address'] ) : '';
+		$payload_address    = '' !== $normalized_address ? $normalized_address : $full_address;
+
 		$payload = array(
 			'shipmentServiceType' => 1,
 			'packagingType'       => absint( $this->get_option( 'packaging_type', '3' ) ),
 			'paymentType'         => 1,
 			'pickUpType'          => absint( $this->get_option( 'pick_up_type', '1' ) ),
 			'deliveryType'        => 1,
-			/*
-			 * Standard Query calculate endpoint expects city/district as string
-			 * values (CBS returns string codes such as "06", "074").
-			 */
-			'cityCode'            => (string) $resolved['city_code'],
-			'districtCode'        => (string) $resolved['district_code'],
-			'address'             => $full_address,
+			'cityCode'            => absint( $resolved['city_code'] ),
+			'districtCode'        => absint( $resolved['district_code'] ),
+			'address'             => $payload_address,
 			'smsPreference1'      => 1,
 			'smsPreference2'      => 0,
 			'smsPreference3'      => 0,
