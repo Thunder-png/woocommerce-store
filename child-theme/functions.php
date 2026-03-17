@@ -285,6 +285,24 @@ function wcs_child_enqueue_assets() {
             wcs_asset_version( 'assets/css/cart-checkout-account.css', $child_theme->get( 'Version' ) )
         );
     }
+
+	if ( function_exists( 'is_checkout' ) && is_checkout() && ( ! function_exists( 'is_order_received_page' ) || ! is_order_received_page() ) ) {
+		wp_enqueue_script(
+			'wcs-checkout-shipping-summary',
+			get_stylesheet_directory_uri() . '/assets/js/wcs-checkout-shipping-summary.js',
+			array( 'jquery', 'wc-checkout' ),
+			wcs_asset_version( 'assets/js/wcs-checkout-shipping-summary.js', $child_theme->get( 'Version' ) ),
+			true
+		);
+
+		wp_localize_script(
+			'wcs-checkout-shipping-summary',
+			'wcsCheckoutShippingSummary',
+			array(
+				'pendingText' => __( 'Adres girildikten sonra hesaplanır', 'woocommerce-store-child' ),
+			)
+		);
+	}
 }
 add_action( 'wp_enqueue_scripts', 'wcs_child_enqueue_assets' );
 

@@ -228,6 +228,38 @@
   padding: 0.2rem 0.6rem; border-radius: 20px;
 }
 
+.wcs-co-summary__shipping-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1.5rem;
+  border-bottom: 1px solid rgba(15,19,30,0.07);
+  background: rgba(15,19,30,0.02);
+}
+
+.wcs-co-summary__shipping-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(43,46,55,0.62);
+}
+
+.wcs-co-summary__shipping-label .bi {
+  color: var(--color-safety-red,#c12e37);
+}
+
+.wcs-co-summary__shipping-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-industrial-navy,#0f131e);
+  text-align: right;
+}
+
 .wcs-co-summary__body { padding: 1.25rem 1.5rem; }
 
 /* WooCommerce sipariş tablosu */

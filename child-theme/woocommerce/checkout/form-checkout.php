@@ -141,6 +141,29 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 						?>
 					</span>
 				</h2>
+				<div class="wcs-co-summary__shipping-line" data-wcs-checkout-shipping-line>
+					<span class="wcs-co-summary__shipping-label">
+						<i class="bi bi-truck"></i>
+						<?php esc_html_e( 'Kargo Bedeli', 'woocommerce-store-child' ); ?>
+					</span>
+					<span class="wcs-co-summary__shipping-value" data-wcs-checkout-shipping-value>
+						<?php
+						$shipping_total = 0.0;
+						$has_ready_rate = false;
+						if ( function_exists( 'WC' ) && WC()->cart ) {
+							$shipping_total = (float) WC()->cart->get_shipping_total() + (float) WC()->cart->get_shipping_tax();
+							$has_ready_rate = WC()->cart->needs_shipping() && WC()->cart->show_shipping();
+						}
+						if ( $shipping_total > 0 ) {
+							echo wp_kses_post( wc_price( $shipping_total ) );
+						} elseif ( $has_ready_rate ) {
+							esc_html_e( 'Ucretsiz', 'woocommerce-store-child' );
+						} else {
+							esc_html_e( 'Adres girildikten sonra hesaplanır', 'woocommerce-store-child' );
+						}
+						?>
+					</span>
+				</div>
 
 				<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
 
