@@ -284,6 +284,8 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 		$payload_address    = $this->append_location_context_to_address( $payload_address, $resolved );
 		$city_code          = isset( $resolved['city_code'] ) ? trim( (string) $resolved['city_code'] ) : '';
 		$district_code      = isset( $resolved['district_code'] ) ? trim( (string) $resolved['district_code'] ) : '';
+		$city_code          = $this->normalize_location_code( $city_code, 2 );
+		$district_code      = $this->normalize_location_code( $district_code, 3 );
 
 		if ( '' === $city_code || '' === $district_code ) {
 			return null;
@@ -351,6 +353,7 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 		$attempt_count   = 0;
 		foreach ( $districts as $district_item ) {
 			$candidate_code = isset( $district_item['code'] ) ? trim( (string) $district_item['code'] ) : '';
+			$candidate_code = $this->normalize_location_code( $candidate_code, 3 );
 			if ( '' === $candidate_code || isset( $attempted_codes[ $candidate_code ] ) ) {
 				continue;
 			}
@@ -459,6 +462,26 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 		$text = strtr( $text, $map );
 
 		return function_exists( 'mb_strtolower' ) ? mb_strtolower( $text ) : strtolower( $text );
+	}
+
+	/**
+	 * Normalize numeric location codes for calculate endpoint.
+	 *
+	 * @param string $code Raw code.
+	 * @param int    $pad_length Zero-padding length.
+	 * @return string
+	 */
+	private function normalize_location_code( $code, $pad_length ) {
+		$code = trim( (string) $code );
+		if ( '' === $code ) {
+			return '';
+		}
+
+		if ( ctype_digit( $code ) && strlen( $code ) < $pad_length ) {
+			return str_pad( $code, $pad_length, '0', STR_PAD_LEFT );
+		}
+
+		return $code;
 	}
 
 	/**
