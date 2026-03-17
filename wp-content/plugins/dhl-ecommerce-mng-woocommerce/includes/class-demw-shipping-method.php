@@ -144,6 +144,53 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 					'2' => __( 'Subeye Getirildi', 'dhl-ecommerce-mng-woocommerce' ),
 				),
 			),
+			'free_shipping_min_amount' => array(
+				'title'             => __( 'Free shipping minimum amount', 'dhl-ecommerce-mng-woocommerce' ),
+				'type'              => 'price',
+				'placeholder'       => '0',
+				'description'       => __( 'Set to 0 to disable. When cart subtotal reaches this amount, shipping becomes free.', 'dhl-ecommerce-mng-woocommerce' ),
+				'default'           => '0',
+				'desc_tip'          => true,
+				'sanitize_callback' => array( $this, 'sanitize_cost' ),
+			),
+			'handling_fee' => array(
+				'title'             => __( 'Handling fee', 'dhl-ecommerce-mng-woocommerce' ),
+				'type'              => 'price',
+				'placeholder'       => '0',
+				'description'       => __( 'Additional fixed fee added to the calculated shipping cost.', 'dhl-ecommerce-mng-woocommerce' ),
+				'default'           => '0',
+				'desc_tip'          => true,
+				'sanitize_callback' => array( $this, 'sanitize_cost' ),
+			),
+			'min_shipping_cost' => array(
+				'title'             => __( 'Minimum shipping cost', 'dhl-ecommerce-mng-woocommerce' ),
+				'type'              => 'price',
+				'placeholder'       => '0',
+				'description'       => __( 'Set to 0 to disable. Enforces a minimum shipping charge.', 'dhl-ecommerce-mng-woocommerce' ),
+				'default'           => '0',
+				'desc_tip'          => true,
+				'sanitize_callback' => array( $this, 'sanitize_cost' ),
+			),
+			'max_shipping_cost' => array(
+				'title'             => __( 'Maximum shipping cost', 'dhl-ecommerce-mng-woocommerce' ),
+				'type'              => 'price',
+				'placeholder'       => '0',
+				'description'       => __( 'Set to 0 to disable. Caps shipping charge at this amount.', 'dhl-ecommerce-mng-woocommerce' ),
+				'default'           => '0',
+				'desc_tip'          => true,
+				'sanitize_callback' => array( $this, 'sanitize_cost' ),
+			),
+			'api_cache_ttl' => array(
+				'title'       => __( 'API rate cache (minutes)', 'dhl-ecommerce-mng-woocommerce' ),
+				'type'        => 'number',
+				'description' => __( 'Checkout API cost cache duration. Set to 0 to disable cache.', 'dhl-ecommerce-mng-woocommerce' ),
+				'default'     => '15',
+				'desc_tip'    => true,
+				'custom_attributes' => array(
+					'min'  => '0',
+					'step' => '1',
+				),
+			),
 		);
 	}
 
@@ -171,6 +218,7 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 			}
 		}
 
+		$cost = $this->apply_cost_adjustments( $cost, $package );
 		$cost = wc_format_decimal( $cost );
 
 		$rate = array(
@@ -194,6 +242,15 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 		$api_client = $this->get_demw_api_client();
 		if ( ! $api_client ) {
 			return null;
+		}
+
+		$cache_ttl = (int) $this->get_option( 'api_cache_ttl', '15' );
+		$cache_key = $this->build_api_rate_cache_key( $package );
+		if ( $cache_ttl > 0 && '' !== $cache_key ) {
+			$cached_cost = get_transient( $cache_key );
+			if ( false !== $cached_cost && is_numeric( $cached_cost ) ) {
+				return (float) $cached_cost;
+			}
 		}
 
 		$city_name     = isset( $package['destination']['city'] ) ? (string) $package['destination']['city'] : '';
@@ -250,15 +307,108 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 		$data = is_array( $result['data'] ) ? $result['data'] : array();
 		$final_total = isset( $data['finalTotal'] ) ? (float) $data['finalTotal'] : null;
 		if ( null !== $final_total && $final_total >= 0 ) {
+			$this->cache_api_rate_cost( $cache_key, $final_total, $cache_ttl );
 			return $final_total;
 		}
 
 		$sub_total = isset( $data['subTotal'] ) ? (float) $data['subTotal'] : null;
 		if ( null !== $sub_total && $sub_total >= 0 ) {
+			$this->cache_api_rate_cost( $cache_key, $sub_total, $cache_ttl );
 			return $sub_total;
 		}
 
 		return null;
+	}
+
+	/**
+	 * Build cache key for API shipping-rate calls.
+	 *
+	 * @param array<string,mixed> $package Package.
+	 * @return string
+	 */
+	private function build_api_rate_cache_key( $package ) {
+		$destination = isset( $package['destination'] ) && is_array( $package['destination'] ) ? $package['destination'] : array();
+		$contents    = isset( $package['contents'] ) && is_array( $package['contents'] ) ? $package['contents'] : array();
+
+		$fingerprint_items = array();
+		foreach ( $contents as $item ) {
+			if ( ! is_array( $item ) || empty( $item['data'] ) || ! $item['data'] instanceof WC_Product ) {
+				continue;
+			}
+			/** @var WC_Product $product */
+			$product = $item['data'];
+			$fingerprint_items[] = array(
+				'id'  => (int) $product->get_id(),
+				'qty' => isset( $item['quantity'] ) ? (int) $item['quantity'] : 1,
+				'kg'  => $this->calculate_piece_kg( $product ),
+				'desi'=> $this->calculate_piece_desi( $product, 1 ),
+			);
+		}
+
+		$fingerprint = array(
+			'instance_id'   => (int) $this->instance_id,
+			'destination'   => array(
+				'country'   => isset( $destination['country'] ) ? (string) $destination['country'] : '',
+				'city'      => isset( $destination['city'] ) ? (string) $destination['city'] : '',
+				'state'     => isset( $destination['state'] ) ? (string) $destination['state'] : '',
+				'address'   => isset( $destination['address'] ) ? (string) $destination['address'] : '',
+				'address_2' => isset( $destination['address_2'] ) ? (string) $destination['address_2'] : '',
+			),
+			'items'         => $fingerprint_items,
+			'packagingType' => (string) $this->get_option( 'packaging_type', '3' ),
+			'pickUpType'    => (string) $this->get_option( 'pick_up_type', '1' ),
+		);
+
+		return 'demw_ship_rate_' . md5( wp_json_encode( $fingerprint ) );
+	}
+
+	/**
+	 * Cache API shipping cost.
+	 *
+	 * @param string $cache_key Cache key.
+	 * @param float  $cost      Shipping cost.
+	 * @param int    $cache_ttl Cache TTL in minutes.
+	 * @return void
+	 */
+	private function cache_api_rate_cost( $cache_key, $cost, $cache_ttl ) {
+		if ( $cache_ttl <= 0 || '' === $cache_key ) {
+			return;
+		}
+
+		set_transient( $cache_key, (float) $cost, $cache_ttl * MINUTE_IN_SECONDS );
+	}
+
+	/**
+	 * Apply post-calculation shipping rules.
+	 *
+	 * @param float               $base_cost Base calculated cost.
+	 * @param array<string,mixed> $package   Package details.
+	 * @return float
+	 */
+	private function apply_cost_adjustments( $base_cost, $package ) {
+		$cost       = max( 0, (float) $base_cost );
+		$subtotal   = isset( $package['contents_cost'] ) ? (float) $package['contents_cost'] : 0.0;
+		$free_min   = (float) $this->get_option( 'free_shipping_min_amount', '0' );
+		$handling   = (float) $this->get_option( 'handling_fee', '0' );
+		$min_cost   = (float) $this->get_option( 'min_shipping_cost', '0' );
+		$max_cost   = (float) $this->get_option( 'max_shipping_cost', '0' );
+
+		if ( $free_min > 0 && $subtotal >= $free_min ) {
+			return 0.0;
+		}
+
+		$cost += $handling;
+		$cost  = max( 0, $cost );
+
+		if ( $min_cost > 0 ) {
+			$cost = max( $min_cost, $cost );
+		}
+
+		if ( $max_cost > 0 ) {
+			$cost = min( $max_cost, $cost );
+		}
+
+		return $cost;
 	}
 
 	/**
