@@ -300,7 +300,7 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 		$payload_address    = $this->append_location_context_to_address( $payload_address, $resolved );
 		$city_code          = isset( $resolved['city_code'] ) ? trim( (string) $resolved['city_code'] ) : '';
 		$district_code      = isset( $resolved['district_code'] ) ? trim( (string) $resolved['district_code'] ) : '';
-		$city_code          = $this->normalize_location_code( $city_code, 2 );
+		$city_code          = $this->normalize_location_code( $city_code, 1 );
 		$district_code      = $this->normalize_location_code( $district_code, 1 );
 
 		if ( '' === $city_code || '' === $district_code ) {
@@ -313,11 +313,12 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 			'paymentType'         => 1,
 			'pickUpType'          => absint( $this->get_option( 'pick_up_type', '1' ) ),
 			'deliveryType'        => 1,
-			'cityCode'            => $city_code,
-			'districtCode'        => $district_code,
+			'recipientCustomerId' => 'null',
+			'cityCode'            => (int) $city_code,
+			'districtCode'        => (int) $district_code,
 			'address'             => $payload_address,
 			'smsPreference1'      => 1,
-			'smsPreference2'      => 0,
+			'smsPreference2'      => 1,
 			'smsPreference3'      => 0,
 			'orderPieceList'      => $order_piece_list,
 		);
@@ -389,8 +390,8 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 				break;
 			}
 
-			$retry_payload                 = $payload;
-			$retry_payload['districtCode'] = $candidate_code;
+			$retry_payload                  = $payload;
+			$retry_payload['districtCode'] = (int) $candidate_code;
 			$variant_payloads              = $this->build_location_retry_payloads( $retry_payload );
 
 			foreach ( $variant_payloads as $variant_payload ) {
@@ -534,22 +535,22 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 	 * @return array<int,array<string,mixed>>
 	 */
 	private function build_location_retry_payloads( $payload ) {
-		$base_city     = isset( $payload['cityCode'] ) ? $this->normalize_location_code( (string) $payload['cityCode'], 2 ) : '';
+		$base_city     = isset( $payload['cityCode'] ) ? $this->normalize_location_code( (string) $payload['cityCode'], 1 ) : '';
 		$base_district = isset( $payload['districtCode'] ) ? $this->normalize_location_code( (string) $payload['districtCode'], 1 ) : '';
 		if ( '' === $base_city || '' === $base_district ) {
 			return array();
 		}
 
-		$city_variants     = $this->build_location_code_variants( $base_city, 2 );
+		$city_variants     = $this->build_location_code_variants( $base_city, 1 );
 		$district_variants = $this->build_location_code_variants( $base_district, 1 );
 		$retry_payloads    = array();
 		$seen              = array();
 
 		foreach ( $city_variants as $city_variant ) {
 			foreach ( $district_variants as $district_variant ) {
-				$variant_payload                 = $payload;
-				$variant_payload['cityCode']    = $city_variant;
-				$variant_payload['districtCode'] = $district_variant;
+				$variant_payload                  = $payload;
+				$variant_payload['cityCode']     = (int) $city_variant;
+				$variant_payload['districtCode'] = (int) $district_variant;
 				$variant_key                     = $city_variant . '|' . $district_variant;
 				if ( isset( $seen[ $variant_key ] ) ) {
 					continue;
