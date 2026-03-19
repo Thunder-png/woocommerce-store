@@ -216,7 +216,18 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 			} else {
 				$cost = $fallback;
 				$wc = function_exists( 'WC' ) ? WC() : null;
-				if ( function_exists( 'wc_add_notice' ) && $wc && isset( $wc->session ) && $wc->session && ! $wc->session->get( 'demw_checkout_fallback_notice_shown' ) ) {
+				if (
+					function_exists( 'wc_add_notice' )
+					&& function_exists( 'is_checkout' )
+					&& is_checkout()
+					&& ! is_admin()
+					&& $wc
+					&& isset( $wc->session )
+					&& is_object( $wc->session )
+					&& is_callable( array( $wc->session, 'get' ) )
+					&& is_callable( array( $wc->session, 'set' ) )
+					&& ! $wc->session->get( 'demw_checkout_fallback_notice_shown' )
+				) {
 					wc_add_notice( __( 'Taşıyıcı şube eşlemesi yapılamadı; mağaza yöneticisi branch_code ayarını kontrol etmelidir', 'dhl-ecommerce-mng-woocommerce' ), 'notice' );
 					$wc->session->set( 'demw_checkout_fallback_notice_shown', true );
 				}
