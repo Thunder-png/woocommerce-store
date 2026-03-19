@@ -313,7 +313,7 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 			'paymentType'         => 1,
 			'pickUpType'          => absint( $this->get_option( 'pick_up_type', '1' ) ),
 			'deliveryType'        => 1,
-			'recipientCustomerId' => 'null',
+			'recipientCustomerId' => null,
 			'cityCode'            => (int) $city_code,
 			'districtCode'        => (int) $district_code,
 			'address'             => $payload_address,
