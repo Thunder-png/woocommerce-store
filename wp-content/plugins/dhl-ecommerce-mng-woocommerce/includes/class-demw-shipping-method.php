@@ -285,7 +285,7 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 		$city_code          = isset( $resolved['city_code'] ) ? trim( (string) $resolved['city_code'] ) : '';
 		$district_code      = isset( $resolved['district_code'] ) ? trim( (string) $resolved['district_code'] ) : '';
 		$city_code          = $this->normalize_location_code( $city_code, 2 );
-		$district_code      = $this->normalize_location_code( $district_code, 3 );
+		$district_code      = $this->normalize_location_code( $district_code, 2 );
 
 		if ( '' === $city_code || '' === $district_code ) {
 			return null;
@@ -344,6 +344,15 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 			return null;
 		}
 
+		$initial_retries = $this->build_location_retry_payloads( $payload );
+		foreach ( $initial_retries as $retry_payload ) {
+			$retry_result = $api_client->calculate_transport_cost( $retry_payload );
+			$retry_cost   = $this->extract_calculated_amount( $retry_result );
+			if ( null !== $retry_cost ) {
+				return $retry_cost;
+			}
+		}
+
 		$districts = $api_client->get_districts( $city_code );
 		if ( is_wp_error( $districts ) || ! is_array( $districts ) ) {
 			return null;
@@ -353,7 +362,7 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 		$attempt_count   = 0;
 		foreach ( $districts as $district_item ) {
 			$candidate_code = isset( $district_item['code'] ) ? trim( (string) $district_item['code'] ) : '';
-			$candidate_code = $this->normalize_location_code( $candidate_code, 3 );
+			$candidate_code = $this->normalize_location_code( $candidate_code, 2 );
 			if ( '' === $candidate_code || isset( $attempted_codes[ $candidate_code ] ) ) {
 				continue;
 			}
@@ -366,10 +375,14 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 
 			$retry_payload                 = $payload;
 			$retry_payload['districtCode'] = $candidate_code;
-			$retry_result                  = $api_client->calculate_transport_cost( $retry_payload );
-			$retry_cost                    = $this->extract_calculated_amount( $retry_result );
-			if ( null !== $retry_cost ) {
-				return $retry_cost;
+			$variant_payloads              = $this->build_location_retry_payloads( $retry_payload );
+
+			foreach ( $variant_payloads as $variant_payload ) {
+				$retry_result = $api_client->calculate_transport_cost( $variant_payload );
+				$retry_cost   = $this->extract_calculated_amount( $retry_result );
+				if ( null !== $retry_cost ) {
+					return $retry_cost;
+				}
 			}
 		}
 
@@ -477,11 +490,84 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 			return '';
 		}
 
-		if ( ctype_digit( $code ) && strlen( $code ) < $pad_length ) {
+		$code = preg_replace( '/\D+/', '', $code );
+		$code = is_string( $code ) ? $code : '';
+		if ( '' === $code ) {
+			return '';
+		}
+
+		// Keep canonical CBS value. Only pad a single-digit value (e.g. 6 -> 06).
+		if ( ctype_digit( $code ) && 1 === strlen( $code ) && $pad_length > 1 ) {
 			return str_pad( $code, $pad_length, '0', STR_PAD_LEFT );
 		}
 
 		return $code;
+	}
+
+	/**
+	 * Build retry payload variants for alternative location-code formats.
+	 *
+	 * @param array<string,mixed> $payload Base payload.
+	 * @return array<int,array<string,mixed>>
+	 */
+	private function build_location_retry_payloads( $payload ) {
+		$base_city     = isset( $payload['cityCode'] ) ? $this->normalize_location_code( (string) $payload['cityCode'], 2 ) : '';
+		$base_district = isset( $payload['districtCode'] ) ? $this->normalize_location_code( (string) $payload['districtCode'], 2 ) : '';
+		if ( '' === $base_city || '' === $base_district ) {
+			return array();
+		}
+
+		$city_variants     = $this->build_location_code_variants( $base_city, 2 );
+		$district_variants = $this->build_location_code_variants( $base_district, 3 );
+		$retry_payloads    = array();
+		$seen              = array();
+
+		foreach ( $city_variants as $city_variant ) {
+			foreach ( $district_variants as $district_variant ) {
+				$variant_payload                 = $payload;
+				$variant_payload['cityCode']    = $city_variant;
+				$variant_payload['districtCode'] = $district_variant;
+				$variant_key                     = $city_variant . '|' . $district_variant;
+				if ( isset( $seen[ $variant_key ] ) ) {
+					continue;
+				}
+				$seen[ $variant_key ] = true;
+				$retry_payloads[]     = $variant_payload;
+
+				// Prevent aggressive request fan-out during checkout.
+				if ( count( $retry_payloads ) >= 6 ) {
+					return $retry_payloads;
+				}
+			}
+		}
+
+		return $retry_payloads;
+	}
+
+	/**
+	 * Build unique numeric code variants.
+	 *
+	 * @param string $code Base code.
+	 * @param int    $preferred_length Preferred left-pad length.
+	 * @return array<int,string>
+	 */
+	private function build_location_code_variants( $code, $preferred_length ) {
+		$code = $this->normalize_location_code( $code, max( 1, (int) $preferred_length ) );
+		if ( '' === $code ) {
+			return array();
+		}
+
+		$variants = array( $code );
+		$trimmed  = ltrim( $code, '0' );
+		if ( '' !== $trimmed ) {
+			$variants[] = $trimmed;
+		}
+
+		if ( '' !== $trimmed && strlen( $trimmed ) < (int) $preferred_length ) {
+			$variants[] = str_pad( $trimmed, (int) $preferred_length, '0', STR_PAD_LEFT );
+		}
+
+		return array_values( array_unique( array_filter( $variants ) ) );
 	}
 
 	/**
