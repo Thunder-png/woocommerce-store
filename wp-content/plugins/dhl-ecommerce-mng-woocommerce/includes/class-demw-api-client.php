@@ -977,7 +977,7 @@ class DEMW_API_Client {
 				return array(
 					'code'    => 'demw_destination_branch_not_found',
 					'message' => __(
-						'Destination branch is not resolved yet for this order (Code: 20001). Wait a short time and retry barcode generation. If it repeats, verify recipient address and district fields (il/ilce) in the order.',
+						'Destination branch is not resolved yet for this order (Code: 20001). Wait a short time and retry barcode generation. If it repeats, verify recipient address and district fields (il/ilce) in the order. X-Branch-Code may be empty.',
 						'dhl-ecommerce-mng-woocommerce'
 					),
 				);
