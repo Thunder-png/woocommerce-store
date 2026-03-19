@@ -301,7 +301,7 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 		$city_code          = isset( $resolved['city_code'] ) ? trim( (string) $resolved['city_code'] ) : '';
 		$district_code      = isset( $resolved['district_code'] ) ? trim( (string) $resolved['district_code'] ) : '';
 		$city_code          = $this->normalize_location_code( $city_code, 2 );
-		$district_code      = $this->normalize_location_code( $district_code, 2 );
+		$district_code      = $this->normalize_location_code( $district_code, 1 );
 
 		if ( '' === $city_code || '' === $district_code ) {
 			return null;
@@ -378,7 +378,7 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 		$attempt_count   = 0;
 		foreach ( $districts as $district_item ) {
 			$candidate_code = isset( $district_item['code'] ) ? trim( (string) $district_item['code'] ) : '';
-			$candidate_code = $this->normalize_location_code( $candidate_code, 2 );
+			$candidate_code = $this->normalize_location_code( $candidate_code, 1 );
 			if ( '' === $candidate_code || isset( $attempted_codes[ $candidate_code ] ) ) {
 				continue;
 			}
@@ -535,13 +535,13 @@ class DEMW_Shipping_Method extends WC_Shipping_Method {
 	 */
 	private function build_location_retry_payloads( $payload ) {
 		$base_city     = isset( $payload['cityCode'] ) ? $this->normalize_location_code( (string) $payload['cityCode'], 2 ) : '';
-		$base_district = isset( $payload['districtCode'] ) ? $this->normalize_location_code( (string) $payload['districtCode'], 2 ) : '';
+		$base_district = isset( $payload['districtCode'] ) ? $this->normalize_location_code( (string) $payload['districtCode'], 1 ) : '';
 		if ( '' === $base_city || '' === $base_district ) {
 			return array();
 		}
 
 		$city_variants     = $this->build_location_code_variants( $base_city, 2 );
-		$district_variants = $this->build_location_code_variants( $base_district, 3 );
+		$district_variants = $this->build_location_code_variants( $base_district, 1 );
 		$retry_payloads    = array();
 		$seen              = array();
 
