@@ -1083,6 +1083,21 @@ body.wcs-ma--login .woocommerce-account .woocommerce,
   padding: 0 1rem;
 }
 
+/*
+ * Astra wrapper düzeyi genişlik kısıtları login/register görünümünde
+ * içeriği daraltabildiği için guest account ekranında üst kapsayıcıları
+ * tam genişlikte bırakıyoruz.
+ */
+body.wcs-ma--login .site-main,
+body.wcs-ma--login .ast-container,
+body.wcs-ma--login .content-area,
+body.wcs-ma--login .entry-content,
+body.wcs-ma--login .woocommerce-account .woocommerce,
+body.wcs-ma--login .woocommerce-account .woocommerce-MyAccount-content {
+  width: 100% !important;
+  max-width: none !important;
+}
+
 /* WooCommerce default float/layout reset */
 #customer_login.wcs-account-login .u-column1,
 #customer_login.wcs-account-login .u-column2,
@@ -1166,7 +1181,7 @@ body.wcs-ma--login .woocommerce-account .woocommerce,
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
     gap: 1.5rem !important;
     width: 100% !important;
-    max-width: 960px !important;
+    max-width: 1120px !important;
     align-items: stretch;
   }
 
@@ -1185,6 +1200,7 @@ body.wcs-ma--login .woocommerce-account .woocommerce,
 
   .wcs-account-login .wcs-account-login__col--login,
   .wcs-account-login .wcs-account-login__col--register {
+    width: 100% !important;
     min-width: 0 !important;
   }
 }
