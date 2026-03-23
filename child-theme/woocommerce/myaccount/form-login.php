@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 do_action( 'woocommerce_before_customer_login_form' );
 ?>
 
-<div class="wcs-account-login" id="customer_login">
+<div class="wcs-account-login u-columns col2-set" id="customer_login">
 	<div class="wcs-account-login__quick-nav" role="navigation" aria-label="<?php esc_attr_e( 'Hesap kisayol secimi', 'woocommerce-store-child' ); ?>">
 		<a href="#wcs-login-panel" class="wcs-account-login__quick-link wcs-account-login__quick-link--login">
 			<i class="bi bi-box-arrow-in-right"></i>
