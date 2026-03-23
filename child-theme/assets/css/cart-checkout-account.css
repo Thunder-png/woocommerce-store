@@ -1112,11 +1112,33 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
     gap: 1.5rem !important;
     align-items: stretch;
+    width: 100% !important;
+    max-width: none !important;
+  }
+
+  #customer_login.wcs-account-login .wcs-account-login__quick-nav {
+    grid-column: 1 / -1 !important;
+  }
+
+  #customer_login.wcs-account-login .u-column1.col-1,
+  #customer_login.wcs-account-login .u-column2.col-2 {
+    float: none !important;
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  /* Kolon sabitleme: quick-nav grid'i kaydırsa bile formları doğru kolonlara oturt */
+  #customer_login.wcs-account-login .u-column1.col-1 {
+    grid-column: 1 / 2 !important;
+  }
+  #customer_login.wcs-account-login .u-column2.col-2 {
+    grid-column: 2 / 3 !important;
   }
 
   #customer_login.wcs-account-login .wcs-account-login__col--login,
   #customer_login.wcs-account-login .wcs-account-login__col--register {
     margin: 0;
+    min-width: 0 !important;
   }
 }
 
