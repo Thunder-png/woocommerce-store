@@ -543,6 +543,24 @@
   align-items: flex-start !important;
 }
 
+/*
+ * Login / Sign Up ekranı (#customer_login) geldiğinde sol nav alanı daraltıyor.
+ * Bu sayfalarda tek kolona geçip nav'ı gizleyerek daha geniş bir kullanım alanı sağlıyoruz.
+ */
+@media (min-width: 769px) {
+  .woocommerce-account .woocommerce:has(#customer_login) {
+    grid-template-columns: 1fr !important;
+  }
+
+  .woocommerce-account .woocommerce:has(#customer_login) .wcs-ma-nav {
+    display: none !important;
+  }
+
+  .woocommerce-account .woocommerce:has(#customer_login) .wcs-ma-content {
+    grid-column: 1 / -1 !important;
+  }
+}
+
 /* :has() desteklemeyen tarayıcılar için fallback */
 .woocommerce-account .woocommerce {
   display: grid !important;
