@@ -1187,8 +1187,8 @@ body.wcs-ma--login .woocommerce-account .woocommerce-MyAccount-content {
     margin-bottom: 0 !important;
   }
 
-  .woocommerce-account #customer_login.wcs-account-login .u-column1.col-1,
-  .woocommerce-account #customer_login.wcs-account-login .u-column2.col-2 {
+  .woocommerce-account #customer_login.wcs-account-login .u-column1,
+  .woocommerce-account #customer_login.wcs-account-login .u-column2 {
     float: none !important;
     width: auto !important;
     min-width: 0 !important;
@@ -1281,4 +1281,3 @@ body.wcs-ma--login .woocommerce-account .woocommerce-MyAccount-content {
 .wcs-account-lost-password__back {
   margin-top: 1rem;
 }
-

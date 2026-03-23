@@ -22,7 +22,7 @@ do_action( 'woocommerce_before_customer_login_form' );
 		</a>
 	</div>
 
-	<div class="u-column1 col-1 wcs-account-login__col wcs-account-login__col--login">
+	<div class="u-column1 wcs-account-login__col wcs-account-login__col--login">
 
 			<div id="wcs-login-panel"></div>
 			<h2 class="wcs-account-login__title"><?php esc_html_e( 'Giriş Yap', 'woocommerce-store-child' ); ?></h2>
@@ -65,7 +65,7 @@ do_action( 'woocommerce_before_customer_login_form' );
 			</form>
 		</div>
 
-	<div class="u-column2 col-2 wcs-account-login__col wcs-account-login__col--register">
+	<div class="u-column2 wcs-account-login__col wcs-account-login__col--register">
 
 			<div id="wcs-register-panel"></div>
 			<h2 class="wcs-account-login__title"><?php esc_html_e( 'Kayıt Ol', 'woocommerce-store-child' ); ?></h2>
@@ -105,4 +105,3 @@ do_action( 'woocommerce_before_customer_login_form' );
 </div>
 
 <?php do_action( 'woocommerce_after_customer_login_form' ); ?>
-
