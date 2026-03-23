@@ -1100,6 +1100,7 @@ body.wcs-ma--login .woocommerce-account .woocommerce-MyAccount-content {
   float: none !important;
   width: auto !important;
   max-width: none !important;
+  flex: 1 1 auto !important;
 }
 
 .wcs-account-login__col {
@@ -1190,7 +1191,8 @@ body.wcs-ma--login .woocommerce-account .woocommerce-MyAccount-content {
   .woocommerce-account #customer_login.wcs-account-login .u-column1.col-1,
   .woocommerce-account #customer_login.wcs-account-login .u-column2.col-2 {
     float: none !important;
-    width: auto !important;
+    width: 100% !important;
+    max-width: none !important;
     min-width: 0 !important;
     margin: 0 !important;
   }
@@ -1281,4 +1283,3 @@ body.wcs-ma--login .woocommerce-account .woocommerce-MyAccount-content {
 .wcs-account-lost-password__back {
   margin-top: 1rem;
 }
-
