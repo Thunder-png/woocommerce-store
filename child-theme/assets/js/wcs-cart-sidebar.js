@@ -51,15 +51,15 @@
       }
     });
 
-    // AJAX ile sepete ekleme olduğunda sidebari aç.
-    $(document.body).on('added_to_cart wc_fragments_refreshed', function () {
+    // AJAX ile gerçekten sepete ekleme olduğunda sidebari aç.
+    $(document.body).on('added_to_cart', function () {
       openSidebar($sidebar, $overlay);
     });
 
-    // Sayfa yenilendikten sonra WooCommerce mesajı varsa (non-AJAX add to cart)
-    // sidebari otomatik aç.
-    var $notice = $('.woocommerce-message');
-    if ($notice.length) {
+    // Non-AJAX add to cart sonrasında URL'de added-to-cart parametresi oluşur.
+    // Sadece bu durumda otomatik aç; genel woocommerce mesajlarında açma.
+    var hasAddedToCartParam = window.location.search.indexOf('added-to-cart=') !== -1;
+    if (hasAddedToCartParam) {
       openSidebar($sidebar, $overlay);
     }
   });
