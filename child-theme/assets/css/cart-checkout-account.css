@@ -580,6 +580,27 @@
   min-width: 0; /* grid overflow önle */
 }
 
+/*
+ * Guest (login/register) view:
+ * Astra / WooCommerce grid rules bazen :has() ile verdiğimiz düzeltmeyi
+ * geçersiz kılabiliyor. body'de 'wcs-ma--login' class'ı olunca
+ * garanti şekilde tek kolona geçiyoruz.
+ */
+@media (min-width: 769px) {
+  body.wcs-ma--login .woocommerce-account .woocommerce {
+    grid-template-columns: 1fr !important;
+  }
+
+  body.wcs-ma--login .woocommerce-account .woocommerce .wcs-ma-nav {
+    display: none !important;
+  }
+
+  body.wcs-ma--login .woocommerce-account .woocommerce .wcs-ma-content {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+  }
+}
+
 /* ══════════════════════════════════════════════════════════════
    SOL: NAVİGASYON SIDEBAR
 ══════════════════════════════════════════════════════════════ */

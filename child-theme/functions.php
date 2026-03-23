@@ -1467,6 +1467,24 @@ function wcs_enable_checkout_registration() {
 add_filter( 'woocommerce_checkout_registration_enabled', 'wcs_enable_checkout_registration', 20 );
 
 /**
+ * Add a dedicated body class for the My Account login/register (guest) view.
+ *
+ * This allows CSS to reliably switch the layout even when :has() selectors
+ * are overridden by parent theme styles.
+ *
+ * @param array<string> $classes Existing body classes.
+ * @return array<string>
+ */
+function wcs_body_class_myaccount_guest_login( $classes ) {
+	if ( function_exists( 'is_account_page' ) && is_account_page() && ! is_user_logged_in() ) {
+		$classes[] = 'wcs-ma--login';
+	}
+
+	return $classes;
+}
+add_filter( 'body_class', 'wcs_body_class_myaccount_guest_login', 20 );
+
+/**
  * Do not force account creation on checkout.
  *
  * @return bool
