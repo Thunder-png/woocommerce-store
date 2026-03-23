@@ -917,6 +917,16 @@
   .wcs-ma-order-row__items { display: none; }
 }
 
+/*
+ * Account login/register görünümünde (guest), üstteki 1024px kuralı
+ * .woocommerce grid'ini 220px + 1fr'e çekebiliyor.
+ * Login ekranında tek içerik olduğu için her breakpoint'te 1 kolonu zorla.
+ */
+body.wcs-ma--login .woocommerce-account .woocommerce,
+.woocommerce-account .woocommerce:has(#customer_login) {
+  grid-template-columns: 1fr !important;
+}
+
 
 .wcs-account-warranty-list {
   margin: 0;
