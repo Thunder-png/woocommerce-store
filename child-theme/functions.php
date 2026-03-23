@@ -1495,6 +1495,83 @@ function wcs_body_class_myaccount_guest_login( $classes ) {
 add_filter( 'body_class', 'wcs_body_class_myaccount_guest_login', 20 );
 
 /**
+ * Print an emergency high-priority CSS override for My Account guest login.
+ *
+ * Some Astra + plugin combinations inject late layout rules that can still
+ * collapse the login/register columns on desktop. This inline block is loaded
+ * in <head> with very high priority and is scoped to guest account view only.
+ *
+ * @return void
+ */
+function wcs_print_myaccount_guest_emergency_css() {
+	if ( ! function_exists( 'is_account_page' ) || ! is_account_page() || is_user_logged_in() ) {
+		return;
+	}
+	?>
+	<style id="wcs-myaccount-guest-emergency-css">
+		body.woocommerce-account.wcs-ma--login .site-content .ast-container,
+		body.woocommerce-account.wcs-ma--login .content-area,
+		body.woocommerce-account.wcs-ma--login #primary,
+		body.woocommerce-account.wcs-ma--login article,
+		body.woocommerce-account.wcs-ma--login .entry-content,
+		body.woocommerce-account.wcs-ma--login .woocommerce,
+		body.woocommerce-account.wcs-ma--login .woocommerce-MyAccount-content {
+			width: 100% !important;
+			max-width: 100% !important;
+			float: none !important;
+			margin-left: auto !important;
+			margin-right: auto !important;
+		}
+
+		body.woocommerce-account.wcs-ma--login .widget-area,
+		body.woocommerce-account.wcs-ma--login.ast-left-sidebar #secondary,
+		body.woocommerce-account.wcs-ma--login.ast-right-sidebar #secondary {
+			display: none !important;
+		}
+
+		body.woocommerce-account.wcs-ma--login #customer_login.wcs-account-login {
+			display: flex !important;
+			flex-wrap: wrap !important;
+			gap: 1.5rem !important;
+			max-width: 1120px !important;
+			margin: 2rem auto 3rem !important;
+			padding: 0 1rem !important;
+		}
+
+		body.woocommerce-account.wcs-ma--login #customer_login.wcs-account-login .wcs-account-login__quick-nav {
+			flex: 0 0 100% !important;
+			max-width: 100% !important;
+			margin: 0 !important;
+		}
+
+		body.woocommerce-account.wcs-ma--login #customer_login.wcs-account-login .u-column1.col-1,
+		body.woocommerce-account.wcs-ma--login #customer_login.wcs-account-login .u-column2.col-2 {
+			float: none !important;
+			width: calc(50% - 0.75rem) !important;
+			max-width: calc(50% - 0.75rem) !important;
+			flex: 0 0 calc(50% - 0.75rem) !important;
+			margin: 0 !important;
+			min-width: 0 !important;
+		}
+
+		@media (max-width: 768px) {
+			body.woocommerce-account.wcs-ma--login #customer_login.wcs-account-login {
+				gap: 1rem !important;
+			}
+
+			body.woocommerce-account.wcs-ma--login #customer_login.wcs-account-login .u-column1.col-1,
+			body.woocommerce-account.wcs-ma--login #customer_login.wcs-account-login .u-column2.col-2 {
+				width: 100% !important;
+				max-width: 100% !important;
+				flex: 0 0 100% !important;
+			}
+		}
+	</style>
+	<?php
+}
+add_action( 'wp_head', 'wcs_print_myaccount_guest_emergency_css', 999 );
+
+/**
  * Do not force account creation on checkout.
  *
  * @return bool
