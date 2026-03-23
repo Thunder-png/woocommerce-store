@@ -1065,11 +1065,14 @@ body.wcs-ma--login .woocommerce-account .woocommerce,
 
 /* ─────────────────────────────────────────────
    My Account: Login / Register
+   (Scoped: sadece hesap sayfası + WooCommerce login formu — Astra çakışmalarını azaltır)
    ───────────────────────────────────────────── */
-.wcs-account-login {
+.woocommerce-account #customer_login.wcs-account-login {
   max-width: 960px;
   margin: 2.5rem auto 3rem;
   padding: 0 1rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /*
@@ -1146,7 +1149,7 @@ body.wcs-ma--login .woocommerce-account .woocommerce-MyAccount-content {
   text-decoration: none;
 }
 
-.wcs-account-login .woocommerce-form,
+.woocommerce-account #customer_login.wcs-account-login .woocommerce-form,
 .wcs-account-edit,
 .wcs-account-lost-password {
   font-family: var(--font-body, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
@@ -1157,11 +1160,11 @@ body.wcs-ma--login .woocommerce-account .woocommerce-MyAccount-content {
   max-width: 360px;
 }
 
-.wcs-account-login .woocommerce-form-row {
+.woocommerce-account #customer_login.wcs-account-login .woocommerce-form-row {
   max-width: none;
 }
 
-.wcs-account-login .woocommerce-form-row input.input-text,
+.woocommerce-account #customer_login.wcs-account-login .woocommerce-form-row input.input-text,
 .wcs-account-edit .woocommerce-form-row input.input-text,
 .wcs-account-edit .woocommerce-form-row input.woocommerce-Input--password,
 .wcs-account-lost-password .woocommerce-form-row input.input-text {
@@ -1170,7 +1173,7 @@ body.wcs-ma--login .woocommerce-account .woocommerce-MyAccount-content {
 
 @media (min-width: 769px) {
   /* Desktop: quick-nav + login/register doğrudan wcs-account-login altında */
-  .wcs-account-login {
+  .woocommerce-account #customer_login.wcs-account-login {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
     gap: 1.5rem !important;
@@ -1179,21 +1182,21 @@ body.wcs-ma--login .woocommerce-account .woocommerce-MyAccount-content {
     align-items: stretch;
   }
 
-  .wcs-account-login__quick-nav {
+  .woocommerce-account #customer_login.wcs-account-login .wcs-account-login__quick-nav {
     grid-column: 1 / -1 !important;
     margin-bottom: 0 !important;
   }
 
-  .wcs-account-login .u-column1.col-1,
-  .wcs-account-login .u-column2.col-2 {
+  .woocommerce-account #customer_login.wcs-account-login .u-column1.col-1,
+  .woocommerce-account #customer_login.wcs-account-login .u-column2.col-2 {
     float: none !important;
     width: auto !important;
     min-width: 0 !important;
     margin: 0 !important;
   }
 
-  .wcs-account-login .wcs-account-login__col--login,
-  .wcs-account-login .wcs-account-login__col--register {
+  .woocommerce-account #customer_login.wcs-account-login .wcs-account-login__col--login,
+  .woocommerce-account #customer_login.wcs-account-login .wcs-account-login__col--register {
     width: 100% !important;
     min-width: 0 !important;
   }
