@@ -1444,6 +1444,19 @@ function wcs_enable_auto_login_after_registration() {
 add_filter( 'woocommerce_registration_auth_new_customer', 'wcs_enable_auto_login_after_registration' );
 
 /**
+ * Force My Account registration to stay enabled.
+ *
+ * Some environments disable this option in WooCommerce settings, which hides
+ * the register form and blocks sign-up processing. We keep it on for this UX.
+ *
+ * @return string
+ */
+function wcs_force_enable_myaccount_registration() {
+	return 'yes';
+}
+add_filter( 'pre_option_woocommerce_enable_myaccount_registration', 'wcs_force_enable_myaccount_registration' );
+
+/**
  * Keep both guest and account checkout modes enabled.
  *
  * @return bool

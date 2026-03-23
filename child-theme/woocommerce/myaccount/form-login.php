@@ -8,31 +8,21 @@
 defined( 'ABSPATH' ) || exit;
 
 do_action( 'woocommerce_before_customer_login_form' );
+?>
 
-if ( 'yes' === get_option( 'woocommerce_enable_myaccount_registration' ) ) :
-	?>
-	<div class="u-columns col2-set wcs-account-login" id="customer_login">
-		<div class="wcs-account-login__quick-nav" role="navigation" aria-label="<?php esc_attr_e( 'Hesap kisayol secimi', 'woocommerce-store-child' ); ?>">
-			<a href="#wcs-login-panel" class="wcs-account-login__quick-link wcs-account-login__quick-link--login">
-				<i class="bi bi-box-arrow-in-right"></i>
-				<span><?php esc_html_e( 'Giris Yap', 'woocommerce-store-child' ); ?></span>
-			</a>
-			<a href="#wcs-register-panel" class="wcs-account-login__quick-link wcs-account-login__quick-link--register">
-				<i class="bi bi-person-plus"></i>
-				<span><?php esc_html_e( 'Kayit Ol', 'woocommerce-store-child' ); ?></span>
-			</a>
-		</div>
-		<div class="u-column1 col-1 wcs-account-login__col wcs-account-login__col--login">
-	<?php else : ?>
-	<div class="wcs-account-login" id="customer_login">
-		<div class="wcs-account-login__quick-nav" role="navigation" aria-label="<?php esc_attr_e( 'Hesap kisayol secimi', 'woocommerce-store-child' ); ?>">
-			<a href="#wcs-login-panel" class="wcs-account-login__quick-link wcs-account-login__quick-link--login">
-				<i class="bi bi-box-arrow-in-right"></i>
-				<span><?php esc_html_e( 'Giris Yap', 'woocommerce-store-child' ); ?></span>
-			</a>
-		</div>
-		<div class="wcs-account-login__col wcs-account-login__col--login">
-	<?php endif; ?>
+<div class="u-columns col2-set wcs-account-login" id="customer_login">
+	<div class="wcs-account-login__quick-nav" role="navigation" aria-label="<?php esc_attr_e( 'Hesap kisayol secimi', 'woocommerce-store-child' ); ?>">
+		<a href="#wcs-login-panel" class="wcs-account-login__quick-link wcs-account-login__quick-link--login">
+			<i class="bi bi-box-arrow-in-right"></i>
+			<span><?php esc_html_e( 'Giris Yap', 'woocommerce-store-child' ); ?></span>
+		</a>
+		<a href="#wcs-register-panel" class="wcs-account-login__quick-link wcs-account-login__quick-link--register">
+			<i class="bi bi-person-plus"></i>
+			<span><?php esc_html_e( 'Kayit Ol', 'woocommerce-store-child' ); ?></span>
+		</a>
+	</div>
+
+	<div class="u-column1 col-1 wcs-account-login__col wcs-account-login__col--login">
 
 			<div id="wcs-login-panel"></div>
 			<h2 class="wcs-account-login__title"><?php esc_html_e( 'Giriş Yap', 'woocommerce-store-child' ); ?></h2>
@@ -75,9 +65,7 @@ if ( 'yes' === get_option( 'woocommerce_enable_myaccount_registration' ) ) :
 			</form>
 		</div>
 
-	<?php if ( 'yes' === get_option( 'woocommerce_enable_myaccount_registration' ) ) : ?>
-
-		<div class="u-column2 col-2 wcs-account-login__col wcs-account-login__col--register">
+	<div class="u-column2 col-2 wcs-account-login__col wcs-account-login__col--register">
 
 			<div id="wcs-register-panel"></div>
 			<h2 class="wcs-account-login__title"><?php esc_html_e( 'Kayıt Ol', 'woocommerce-store-child' ); ?></h2>
@@ -113,10 +101,8 @@ if ( 'yes' === get_option( 'woocommerce_enable_myaccount_registration' ) ) :
 				<?php do_action( 'woocommerce_register_form_end' ); ?>
 
 			</form>
-
-		</div>
-	<?php endif; ?>
 	</div>
+</div>
 
 <?php do_action( 'woocommerce_after_customer_login_form' ); ?>
 
