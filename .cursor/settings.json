@@ -1,0 +1,13 @@
+{
+  "plugins": {
+    "functions": {
+      "enabled": true
+    },
+    "browserstack": {
+      "enabled": true
+    },
+    "browse": {
+      "enabled": true
+    }
+  }
+}
