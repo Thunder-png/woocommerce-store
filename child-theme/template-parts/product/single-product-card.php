@@ -171,7 +171,13 @@ if ( $is_simple ) {
                 <?php if ( $cat_name && $cat_url ) : ?>
                     <a href="<?php echo esc_url( $cat_url ); ?>" class="wcs-sp-card__cat-badge"><i class="bi bi-tag"></i> <?php echo esc_html( $cat_name ); ?></a>
                 <?php endif; ?>
-                <button class="wcs-sp-card__fav" type="button" aria-label="<?php esc_attr_e( 'Favorilere ekle', 'woocommerce-store-child' ); ?>" aria-pressed="false">
+                <button
+                    class="wcs-sp-card__fav wcs-wishlist-btn"
+                    type="button"
+                    data-wcs-wishlist
+                    data-product-id="<?php echo esc_attr( $product_id ); ?>"
+                    aria-label="<?php esc_attr_e( 'Favorilere ekle', 'woocommerce-store-child' ); ?>"
+                    aria-pressed="false">
                     <i class="bi bi-heart"></i>
                 </button>
             </div>
@@ -268,7 +274,7 @@ if ( $is_simple ) {
             <?php endif; ?>
 
             <!-- WooCommerce add to cart form -->
-            <div class="wcs-sp-card__woo-form">
+            <div class="wcs-sp-card__woo-form wcs-sp-atc-section">
                 <?php if ( function_exists( 'woocommerce_template_single_add_to_cart' ) ) woocommerce_template_single_add_to_cart(); ?>
             </div>
 
@@ -304,3 +310,16 @@ if ( $is_simple ) {
     </section><!-- /.wcs-sp-card -->
 
 </div><!-- /.wcs-sp-wrap -->
+
+<div class="wcs-sticky-atc">
+    <div class="wcs-sticky-atc__inner">
+        <div class="wcs-sticky-atc__meta">
+            <span class="wcs-sticky-atc__title"><?php echo esc_html( $title ); ?></span>
+            <span class="wcs-sticky-atc__price"><?php echo wp_kses_post( $price_html ); ?></span>
+        </div>
+        <button type="button" class="wcs-sticky-atc__btn" data-wcs-sticky-atc-button>
+            <i class="bi bi-cart-plus"></i>
+            <?php esc_html_e( 'Sepete Ekle', 'woocommerce-store-child' ); ?>
+        </button>
+    </div>
+</div>

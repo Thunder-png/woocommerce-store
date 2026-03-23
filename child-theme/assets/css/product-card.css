@@ -97,6 +97,26 @@ ul.products {
 .wcs-card__badge--stock { background: rgba(0,180,80,0.10); color: #3ddc84; border: 1px solid rgba(0,180,80,0.2); }
 .wcs-card__badge--low   { background: rgba(255,160,0,0.10); color: #ffb830; border: 1px solid rgba(255,160,0,0.18); }
 
+.wcs-card__wish {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(248,248,248,0.22);
+  background: rgba(10,10,10,0.5);
+  color: #fff;
+  z-index: 7;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.wcs-wishlist-btn--active {
+  color: #ff7580 !important;
+  border-color: rgba(255,117,128,0.55) !important;
+}
+
 /* ── Image ── */
 .wcs-card__img {
   position: relative;
@@ -282,6 +302,65 @@ ul.products {
 .wcs-card__cta .bi { font-size: 0.9em; transition: transform 0.2s; }
 .wcs-card:hover .wcs-card__cta .bi { transform: translateX(3px); }
 
+.wcs-quick-view-btn {
+  margin-top: 0.45rem;
+  width: 100%;
+  border: 1px solid rgba(248,248,248,0.12);
+  background: rgba(248,248,248,0.03);
+  color: rgba(248,248,248,0.86);
+  border-radius: 8px;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.wcs-quick-view-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100001;
+  display: grid;
+  place-items: center;
+}
+.wcs-quick-view-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+}
+.wcs-quick-view-modal__dialog {
+  position: relative;
+  width: min(900px, 94vw);
+  max-height: 86vh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.25rem;
+}
+.wcs-quick-view-modal__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: none;
+  background: transparent;
+  font-size: 1.6rem;
+  color: rgba(15,19,30,0.7);
+}
+.wcs-qv-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.2rem;
+}
+.wcs-qv-card__media img { width: 100%; height: auto; border-radius: 10px; }
+.wcs-qv-card__title { margin: 0 0 0.6rem; font-size: 1.35rem; }
+.wcs-qv-card__title a { color: var(--color-industrial-navy,#0f131e); text-decoration: none; }
+.wcs-qv-card__price { font-size: 1.15rem; margin-bottom: 0.6rem; color: var(--color-safety-red,#c12e37); }
+.wcs-qv-card__excerpt { font-size: 0.88rem; color: rgba(43,46,55,0.75); line-height: 1.7; margin-bottom: 1rem; }
+
 /* ── Bottom accent line ── */
 .wcs-card__line {
   position: absolute;
@@ -424,6 +503,7 @@ ul.products {
   .wcs-shop__header { padding: 3rem 1.2rem 1.5rem; flex-direction: column; align-items: flex-start; }
   .wcs-shop__filters { padding: 0 1.2rem 1.5rem; }
   .wcs-card__price { font-size: 1.1rem; }
+  .wcs-qv-card { grid-template-columns: 1fr; }
 }
 /* ── WooCommerce varsayılan result-count ve ordering'i gizle ───
    Filter bar içindeki sürümler kullanılıyor.                   */

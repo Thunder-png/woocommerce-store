@@ -105,6 +105,8 @@ $policy_links = array(
 		'url'   => home_url( '/mesafeli-satis-sozlesmesi/' ),
 	),
 );
+
+$cart_count = function_exists( 'WC' ) && WC()->cart ? WC()->cart->get_cart_contents_count() : 0;
 ?>
 
 <footer class="wcs-footer" aria-label="<?php esc_attr_e( 'Site alt bilgisi', 'woocommerce-store-child' ); ?>">
@@ -340,3 +342,27 @@ $policy_links = array(
 	</div>
 
 </footer><!-- /.wcs-footer -->
+
+<button id="wcs-back-to-top" class="wcs-back-to-top" aria-label="<?php esc_attr_e( 'Sayfa basina git', 'woocommerce-store-child' ); ?>" hidden>
+	<i class="bi bi-arrow-up"></i>
+</button>
+
+<nav class="wcs-mobile-bottom-nav" aria-label="<?php esc_attr_e( 'Mobil alt menu', 'woocommerce-store-child' ); ?>">
+	<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="wcs-mobile-bottom-nav__item">
+		<i class="bi bi-house"></i>
+		<span><?php esc_html_e( 'Ana Sayfa', 'woocommerce-store-child' ); ?></span>
+	</a>
+	<a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="wcs-mobile-bottom-nav__item">
+		<i class="bi bi-grid"></i>
+		<span><?php esc_html_e( 'Urunler', 'woocommerce-store-child' ); ?></span>
+	</a>
+	<a href="<?php echo esc_url( wc_get_cart_url() ); ?>" class="wcs-mobile-bottom-nav__item wcs-mobile-bottom-nav__item--cart">
+		<i class="bi bi-cart3"></i>
+		<span><?php esc_html_e( 'Sepet', 'woocommerce-store-child' ); ?></span>
+		<span class="wcs-mobile-bottom-nav__badge" data-wcs-mobile-cart-count><?php echo absint( $cart_count ); ?></span>
+	</a>
+	<a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>" class="wcs-mobile-bottom-nav__item">
+		<i class="bi bi-person"></i>
+		<span><?php esc_html_e( 'Hesabim', 'woocommerce-store-child' ); ?></span>
+	</a>
+</nav>

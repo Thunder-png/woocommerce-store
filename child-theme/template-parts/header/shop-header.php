@@ -215,10 +215,22 @@ $current_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $
 
     // ── Scroll: sticky + shrink ──────────────────────────
     var header = document.getElementById('wcs-header');
+    var backToTop = document.getElementById('wcs-back-to-top');
     if (header) {
         window.addEventListener('scroll', function () {
             header.classList.toggle('wcs-header--scrolled', window.scrollY > 60);
+            if (backToTop) {
+                var show = window.scrollY > 300;
+                backToTop.hidden = !show;
+                backToTop.classList.toggle('is-visible', show);
+            }
         }, { passive: true });
+    }
+
+    if (backToTop) {
+        backToTop.addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
     }
 
     // ── Hamburger → mobil menü ───────────────────────────
@@ -306,6 +318,19 @@ $current_url = ( is_ssl() ? 'https://' : 'http://' ) . $_SERVER['HTTP_HOST'] . $
             if (++attempts > 20) clearInterval(poll);
         }, 150);
     }
+
+    // ── Mobile bottom nav cart badge sync ───────────────
+    function syncMobileCartCount() {
+        var badge = document.querySelector('[data-wcs-mobile-cart-count]');
+        var headerBadge = document.querySelector('.wcs-header__cart-badge');
+        if (!badge || !headerBadge) return;
+        badge.textContent = headerBadge.textContent.trim() || '0';
+    }
+
+    if (window.jQuery) {
+        window.jQuery(document.body).on('wc_fragments_loaded wc_fragments_refreshed', syncMobileCartCount);
+    }
+    syncMobileCartCount();
 
 })();
 </script>

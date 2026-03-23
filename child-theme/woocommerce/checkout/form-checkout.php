@@ -65,11 +65,38 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 	<!-- ── ANA FORM ──────────────────────────────────────── -->
 	<form name="checkout" method="post"
 		  class="checkout woocommerce-checkout wcs-co-form"
+		  data-wcs-floating-checkout
 		  action="<?php echo esc_url( wc_get_checkout_url() ); ?>"
 		  enctype="multipart/form-data">
 
 		<!-- SOL: Fatura & Teslimat -->
 		<div class="wcs-co-form__left">
+
+			<?php if ( ! is_user_logged_in() ) : ?>
+				<?php $mode = isset( $_POST['wcs_checkout_mode'] ) ? sanitize_key( wp_unslash( $_POST['wcs_checkout_mode'] ) ) : 'guest'; ?>
+				<div class="wcs-co-mode">
+					<h2 class="wcs-co-mode__title">
+						<i class="bi bi-person-check"></i>
+						<?php esc_html_e( 'Alisveris Sekli', 'woocommerce-store-child' ); ?>
+					</h2>
+					<div class="wcs-co-mode__options" role="radiogroup" aria-label="<?php esc_attr_e( 'Alisveris sekli secimi', 'woocommerce-store-child' ); ?>">
+						<label class="wcs-co-mode__option<?php echo 'register' !== $mode ? ' is-active' : ''; ?>">
+							<input type="radio" name="wcs_checkout_mode" value="guest" <?php checked( 'register' !== $mode ); ?>>
+							<span class="wcs-co-mode__label"><?php esc_html_e( 'Misafir olarak devam et', 'woocommerce-store-child' ); ?></span>
+							<span class="wcs-co-mode__desc"><?php esc_html_e( 'Hizli odeme yaparsiniz, hesap olusturulmaz.', 'woocommerce-store-child' ); ?></span>
+						</label>
+						<label class="wcs-co-mode__option<?php echo 'register' === $mode ? ' is-active' : ''; ?>">
+							<input type="radio" name="wcs_checkout_mode" value="register" <?php checked( 'register', $mode ); ?>>
+							<span class="wcs-co-mode__label"><?php esc_html_e( 'Uye olarak devam et', 'woocommerce-store-child' ); ?></span>
+							<span class="wcs-co-mode__desc"><?php esc_html_e( 'Siparis gecmisi, adres kaydi ve hizli tekrar satin alim.', 'woocommerce-store-child' ); ?></span>
+						</label>
+					</div>
+					<p class="wcs-co-mode__login">
+						<?php esc_html_e( 'Zaten hesabin var mi?', 'woocommerce-store-child' ); ?>
+						<a href="#" class="showlogin"><?php esc_html_e( 'Giris yap', 'woocommerce-store-child' ); ?></a>
+					</p>
+				</div>
+			<?php endif; ?>
 
 			<!-- Giriş yapılmamışsa login hatırlatıcı -->
 			<?php if ( ! is_user_logged_in() && $checkout->is_registration_enabled() ) : ?>

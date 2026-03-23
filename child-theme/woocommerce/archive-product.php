@@ -71,7 +71,7 @@ if ( $is_home_shop ) :
 				?>
 				<a href="<?php echo esc_url( $link ); ?>" class="wcs-fp-cat-card wcs-fp-cat-card--<?php echo $i+1; ?>">
 					<div class="wcs-fp-cat-card__img-wrap">
-						<img src="<?php echo esc_url( $banner_base . $cat[4] ); ?>" alt="<?php echo esc_attr( $cat[1] ); ?>" loading="lazy" class="wcs-fp-cat-card__img">
+						<img src="<?php echo esc_url( $banner_base . $cat[4] ); ?>" alt="<?php echo esc_attr( $cat[1] ); ?>" loading="lazy" decoding="async" class="wcs-fp-cat-card__img">
 						<div class="wcs-fp-cat-card__overlay" aria-hidden="true"></div>
 					</div>
 					<div class="wcs-fp-cat-card__body">
@@ -172,7 +172,8 @@ if ( $is_home_shop ) :
 								<img class="wcs-home-category-card__img"
 									 src="<?php echo esc_url( $op_image_url ); ?>"
 									 alt="<?php echo esc_attr( $ozel_product->get_name() ); ?>"
-									 loading="lazy">
+									 loading="lazy"
+                                     decoding="async">
 							<?php else : ?>
 								<div class="wcs-home-category-card__media-placeholder" aria-hidden="true">
 									<span class="wcs-home-category-card__media-icon"></span>

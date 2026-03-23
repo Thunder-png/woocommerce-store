@@ -63,6 +63,16 @@ $currency  = get_woocommerce_currency_symbol();
 		<?php endif; ?>
 	</div>
 
+	<button
+		type="button"
+		class="wcs-card__wish wcs-wishlist-btn"
+		data-wcs-wishlist
+		data-product-id="<?php echo esc_attr( $product->get_id() ); ?>"
+		aria-label="<?php esc_attr_e( 'Favorilere ekle', 'woocommerce-store-child' ); ?>"
+		aria-pressed="false">
+		<i class="bi bi-heart" aria-hidden="true"></i>
+	</button>
+
 	<!-- ── Thumbnail ── -->
 	<a href="<?php the_permalink(); ?>" class="wcs-card__img" tabindex="-1" aria-hidden="true">
 		<?php if ( has_post_thumbnail() ) : ?>
@@ -136,6 +146,11 @@ $currency  = get_woocommerce_currency_symbol();
 				<i class="bi bi-arrow-right" aria-hidden="true"></i>
 			</a>
 		</div>
+
+		<button type="button" class="wcs-quick-view-btn" data-product-id="<?php echo esc_attr( $product->get_id() ); ?>">
+			<i class="bi bi-eye"></i>
+			<?php esc_html_e( 'Hizli goruntule', 'woocommerce-store-child' ); ?>
+		</button>
 
 	</div><!-- /.wcs-card__body -->
 

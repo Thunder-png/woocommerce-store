@@ -29,13 +29,13 @@ function wcs_child_enqueue_assets() {
     $parent_theme = wp_get_theme( get_template() );
     $child_theme  = wp_get_theme();
 
-    // Lottie her sayfada yüklenmeli — header logosu için gerekli.
+    // Lottie her sayfada yüklenmeli — header/footer logosu için gerekli.
     wp_enqueue_script(
         'lottie-web',
         'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js',
         array(),
         '5.12.2',
-        false // <head>'de yükle, logo hemen görünsün.
+        true
     );
 
 	wp_enqueue_script(
@@ -143,6 +143,54 @@ function wcs_child_enqueue_assets() {
         true
     );
 
+    wp_enqueue_script(
+        'wcs-toast',
+        get_stylesheet_directory_uri() . '/assets/js/wcs-toast.js',
+        array( 'jquery' ),
+        wcs_asset_version( 'assets/js/wcs-toast.js', $child_theme->get( 'Version' ) ),
+        true
+    );
+
+    wp_enqueue_script(
+        'wcs-live-search',
+        get_stylesheet_directory_uri() . '/assets/js/wcs-live-search.js',
+        array(),
+        wcs_asset_version( 'assets/js/wcs-live-search.js', $child_theme->get( 'Version' ) ),
+        true
+    );
+
+    wp_localize_script(
+        'wcs-live-search',
+        'wcsLiveSearch',
+        array(
+            'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
+            'nonce'          => wp_create_nonce( 'wcs-live-search' ),
+            'minChars'       => 2,
+            'noResultsText'  => __( 'Sonuc bulunamadi', 'woocommerce-store-child' ),
+            'searchMoreText' => __( 'Daha fazla sonuc icin Enter', 'woocommerce-store-child' ),
+        )
+    );
+
+    wp_enqueue_script(
+        'wcs-cart-coupon',
+        get_stylesheet_directory_uri() . '/assets/js/wcs-cart-coupon.js',
+        array( 'jquery', 'wc-cart-fragments' ),
+        wcs_asset_version( 'assets/js/wcs-cart-coupon.js', $child_theme->get( 'Version' ) ),
+        true
+    );
+
+    wp_localize_script(
+        'wcs-cart-coupon',
+        'wcsCartCoupon',
+        array(
+            'ajaxUrl'      => function_exists( 'WC_AJAX' ) ? WC_AJAX::get_endpoint( 'apply_coupon' ) : home_url( '/?wc-ajax=apply_coupon' ),
+            'nonce'        => wp_create_nonce( 'apply-coupon' ),
+            'successText'  => __( 'Kupon uygulandi.', 'woocommerce-store-child' ),
+            'errorText'    => __( 'Kupon uygulanamadi.', 'woocommerce-store-child' ),
+            'missingText'  => __( 'Lutfen kupon kodu girin.', 'woocommerce-store-child' ),
+        )
+    );
+
     if ( is_front_page() ) {
         wp_enqueue_style(
             'wcs-home-category-grid',
@@ -168,14 +216,6 @@ function wcs_child_enqueue_assets() {
         );
 
         wp_enqueue_script(
-            'lottie-web',
-            'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js',
-            array(),
-            '5.12.2',
-            true
-        );
-
-        wp_enqueue_script(
             'wcs-hero-script',
             get_stylesheet_directory_uri() . '/template-parts/components/hero/hero.js',
             array( 'lottie-web' ),
@@ -185,14 +225,6 @@ function wcs_child_enqueue_assets() {
     }
 
     if ( $is_shop_context ) {
-        wp_enqueue_script(
-            'lottie-web',
-            'https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.12.2/lottie.min.js',
-            array(),
-            '5.12.2',
-            true
-        );
-
         wp_enqueue_script(
             'wcs-hero-script',
             get_stylesheet_directory_uri() . '/template-parts/components/hero/hero.js',
@@ -207,13 +239,55 @@ function wcs_child_enqueue_assets() {
             array( 'wcs-custom-style' ),
             wcs_asset_version( 'template-parts/components/hero/hero.css', $child_theme->get( 'Version' ) )
         );
+
+        wp_enqueue_script(
+            'wcs-filter-ajax',
+            get_stylesheet_directory_uri() . '/assets/js/wcs-filter-ajax.js',
+            array(),
+            wcs_asset_version( 'assets/js/wcs-filter-ajax.js', $child_theme->get( 'Version' ) ),
+            true
+        );
+
+        wp_enqueue_script(
+            'wcs-quick-view',
+            get_stylesheet_directory_uri() . '/assets/js/wcs-quick-view.js',
+            array(),
+            wcs_asset_version( 'assets/js/wcs-quick-view.js', $child_theme->get( 'Version' ) ),
+            true
+        );
+
+        wp_localize_script(
+            'wcs-quick-view',
+            'wcsQuickView',
+            array(
+                'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+                'nonce'   => wp_create_nonce( 'wcs-quick-view' ),
+            )
+        );
+
+        wp_enqueue_script(
+            'wcs-wishlist',
+            get_stylesheet_directory_uri() . '/assets/js/wcs-wishlist.js',
+            array(),
+            wcs_asset_version( 'assets/js/wcs-wishlist.js', $child_theme->get( 'Version' ) ),
+            true
+        );
     }
 
 	if ( function_exists( 'is_product' ) && is_product() ) {
         global $product;
+        $current_product = null;
+
+        if ( function_exists( 'wc_get_product' ) ) {
+            $current_product = wc_get_product( get_queried_object_id() );
+        }
+
+        if ( ! ( $current_product instanceof WC_Product ) && $product instanceof WC_Product ) {
+            $current_product = $product;
+        }
 
 		// Varyasyon attribute butonları sadece variable ürünlerde gerekli.
-		if ( $product instanceof WC_Product && $product->is_type( 'variable' ) ) {
+		if ( $current_product instanceof WC_Product && $current_product->is_type( 'variable' ) ) {
 			wp_enqueue_script(
 				'wcs-attribute-buttons',
 				get_stylesheet_directory_uri() . '/assets/js/wcs-attribute-buttons.js',
@@ -221,6 +295,14 @@ function wcs_child_enqueue_assets() {
 				wcs_asset_version( 'assets/js/wcs-attribute-buttons.js', $child_theme->get( 'Version' ) ),
 				true
 			);
+
+            wp_enqueue_script(
+                'wcs-variation-cards',
+                get_stylesheet_directory_uri() . '/assets/js/variation-cards.js',
+                array( 'jquery', 'wc-add-to-cart-variation' ),
+                wcs_asset_version( 'assets/js/variation-cards.js', $child_theme->get( 'Version' ) ),
+                true
+            );
 		}
 
 		// Adet arttıkça toplam fiyatın güncellenmesi için JS.
@@ -232,8 +314,8 @@ function wcs_child_enqueue_assets() {
 			true
 		);
 
-		if ( function_exists( 'wc_get_price_to_display' ) && $product instanceof WC_Product ) {
-			$unit_price_for_total = wc_get_price_to_display( $product );
+		if ( function_exists( 'wc_get_price_to_display' ) && $current_product instanceof WC_Product ) {
+			$unit_price_for_total = wc_get_price_to_display( $current_product );
 
 			wp_localize_script(
 				'wcs-qty-total',
@@ -260,6 +342,69 @@ function wcs_child_enqueue_assets() {
             true
         );
 
+        wp_enqueue_script(
+            'wcs-spec-card',
+            get_stylesheet_directory_uri() . '/assets/js/wcs-spec-card.js',
+            array( 'jquery', 'wc-add-to-cart-variation' ),
+            wcs_asset_version( 'assets/js/wcs-spec-card.js', $child_theme->get( 'Version' ) ),
+            true
+        );
+
+        wp_enqueue_script(
+            'wcs-m2-calculator',
+            get_stylesheet_directory_uri() . '/assets/js/m2-calculator.js',
+            array(),
+            wcs_asset_version( 'assets/js/m2-calculator.js', $child_theme->get( 'Version' ) ),
+            true
+        );
+
+        wp_enqueue_script(
+            'wcs-calculator-toggle',
+            get_stylesheet_directory_uri() . '/assets/js/wcs-calculator-toggle.js',
+            array(),
+            wcs_asset_version( 'assets/js/wcs-calculator-toggle.js', $child_theme->get( 'Version' ) ),
+            true
+        );
+
+        wp_enqueue_script(
+            'wcs-sticky-atc',
+            get_stylesheet_directory_uri() . '/assets/js/wcs-sticky-atc.js',
+            array(),
+            wcs_asset_version( 'assets/js/wcs-sticky-atc.js', $child_theme->get( 'Version' ) ),
+            true
+        );
+
+        wp_enqueue_script(
+            'wcs-wishlist',
+            get_stylesheet_directory_uri() . '/assets/js/wcs-wishlist.js',
+            array(),
+            wcs_asset_version( 'assets/js/wcs-wishlist.js', $child_theme->get( 'Version' ) ),
+            true
+        );
+
+        wp_enqueue_style(
+            'glightbox-style',
+            'https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css',
+            array(),
+            '3.3.1'
+        );
+
+        wp_enqueue_script(
+            'glightbox',
+            'https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js',
+            array(),
+            '3.3.1',
+            true
+        );
+
+        wp_enqueue_script(
+            'wcs-gallery-lightbox',
+            get_stylesheet_directory_uri() . '/assets/js/wcs-gallery-lightbox.js',
+            array( 'glightbox' ),
+            wcs_asset_version( 'assets/js/wcs-gallery-lightbox.js', $child_theme->get( 'Version' ) ),
+            true
+        );
+
 		wp_localize_script(
 			'wcs-ajax-add-to-cart',
 			'wcsAjaxAddToCart',
@@ -267,6 +412,16 @@ function wcs_child_enqueue_assets() {
 				'cartUrl' => function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'cart' ) : home_url( '/cart/' ),
 			)
 		);
+
+        wp_localize_script(
+            'wcs-m2-calculator',
+            'wcsCalculator',
+            array(
+                'pricePerM2' => ( function_exists( 'wc_get_price_to_display' ) && $current_product instanceof WC_Product ) ? wc_get_price_to_display( $current_product ) : 0,
+                'vatRate'    => 0.20,
+                'currency'   => get_woocommerce_currency_symbol(),
+            )
+        );
     }
 
     if (
@@ -302,9 +457,26 @@ function wcs_child_enqueue_assets() {
 				'pendingText' => __( 'Adres girildikten sonra hesaplanır', 'woocommerce-store-child' ),
 			)
 		);
+
+        wp_enqueue_script(
+            'wcs-checkout-validation',
+            get_stylesheet_directory_uri() . '/assets/js/wcs-checkout-validation.js',
+            array( 'jquery', 'wc-checkout' ),
+            wcs_asset_version( 'assets/js/wcs-checkout-validation.js', $child_theme->get( 'Version' ) ),
+            true
+        );
 	}
 }
 add_action( 'wp_enqueue_scripts', 'wcs_child_enqueue_assets' );
+
+/**
+ * Add font preconnect hints for external font hosts.
+ */
+function wcs_add_font_preconnect_hints() {
+    echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
+    echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
+}
+add_action( 'wp_head', 'wcs_add_font_preconnect_hints', 5 );
 
 // Blog helpers and schema.
 require_once get_stylesheet_directory() . '/inc/blog-functions.php';
@@ -463,7 +635,8 @@ add_action( 'wp_footer', 'wcs_render_brand_footer', 20 );
  */
 function wcs_render_cart_sidebar() {
     if ( is_admin() ) { return; }
-    $count = function_exists( 'WC' ) && WC()->cart ? WC()->cart->get_cart_contents_count() : 0;
+    $count        = function_exists( 'WC' ) && WC()->cart ? WC()->cart->get_cart_contents_count() : 0;
+    $is_cart_empty = function_exists( 'WC' ) && WC()->cart ? WC()->cart->is_empty() : true;
     ?>
     <div class="wcs-cart-sidebar-overlay" aria-hidden="true"></div>
     <aside class="wcs-cart-sidebar" aria-label="<?php esc_attr_e( 'Sepetiniz', 'woocommerce-store-child' ); ?>" aria-hidden="true" role="dialog">
@@ -483,9 +656,27 @@ function wcs_render_cart_sidebar() {
             <span><i class="bi bi-arrow-return-left"></i> <?php esc_html_e( '30 Gün İade', 'woocommerce-store-child' ); ?></span>
         </div>
         <div class="wcs-cart-sidebar__body">
-            <?php woocommerce_mini_cart(); ?>
+            <?php if ( $is_cart_empty ) : ?>
+                <div class="wcs-cart-sidebar__empty">
+                    <span class="wcs-cart-sidebar__empty-icon"><i class="bi bi-cart-x"></i></span>
+                    <h3 class="wcs-cart-sidebar__empty-title"><?php esc_html_e( 'Sepetiniz su an bos', 'woocommerce-store-child' ); ?></h3>
+                    <p class="wcs-cart-sidebar__empty-desc"><?php esc_html_e( 'Guvenlik filesi urunlerini kesfederek alisverise baslayin.', 'woocommerce-store-child' ); ?></p>
+                    <a href="<?php echo esc_url( wc_get_page_permalink( 'shop' ) ); ?>" class="wcs-cart-sidebar__btn wcs-cart-sidebar__btn--primary">
+                        <i class="bi bi-grid"></i> <?php esc_html_e( 'Alisverise Basla', 'woocommerce-store-child' ); ?>
+                    </a>
+                </div>
+            <?php else : ?>
+                <?php woocommerce_mini_cart(); ?>
+            <?php endif; ?>
         </div>
         <footer class="wcs-cart-sidebar__footer">
+            <form class="wcs-cart-sidebar__coupon" data-wcs-cart-coupon-form>
+                <label for="wcs-cart-coupon-input" class="screen-reader-text"><?php esc_html_e( 'Kupon kodu', 'woocommerce-store-child' ); ?></label>
+                <input type="text" id="wcs-cart-coupon-input" class="wcs-cart-sidebar__coupon-input" placeholder="<?php esc_attr_e( 'Kupon kodu', 'woocommerce-store-child' ); ?>" data-wcs-cart-coupon-input>
+                <button type="submit" class="wcs-cart-sidebar__coupon-btn" data-wcs-cart-coupon-submit>
+                    <?php esc_html_e( 'Uygula', 'woocommerce-store-child' ); ?>
+                </button>
+            </form>
             <div class="wcs-cart-sidebar__subtotal">
                 <span class="wcs-cart-sidebar__subtotal-label"><?php esc_html_e( 'Ara Toplam', 'woocommerce-store-child' ); ?></span>
                 <span class="wcs-cart-sidebar__subtotal-value"><?php if ( function_exists( 'WC' ) && WC()->cart ) echo wp_kses_post( WC()->cart->get_cart_subtotal() ); ?></span>
@@ -806,6 +997,106 @@ function wcs_render_shop_attribute_filters() {
     <?php
 }
 add_action( 'woocommerce_before_shop_loop', 'wcs_render_shop_attribute_filters', 15 );
+
+/**
+ * AJAX live search for header product search box.
+ */
+function wcs_ajax_live_search() {
+    check_ajax_referer( 'wcs-live-search', 'nonce' );
+
+    $term = isset( $_GET['term'] ) ? sanitize_text_field( wp_unslash( $_GET['term'] ) ) : '';
+    $term_length = function_exists( 'mb_strlen' ) ? mb_strlen( $term ) : strlen( $term );
+    if ( $term_length < 2 ) {
+        wp_send_json_success(
+            array(
+                'items' => array(),
+            )
+        );
+    }
+
+    $query = new WC_Product_Query(
+        array(
+            'status' => 'publish',
+            'limit'  => 8,
+            'return' => 'objects',
+            'search' => '*' . $term . '*',
+            'orderby' => 'date',
+            'order'   => 'DESC',
+        )
+    );
+
+    $products = $query->get_products();
+    $items    = array();
+
+    foreach ( $products as $product ) {
+        if ( ! $product instanceof WC_Product ) {
+            continue;
+        }
+
+        $items[] = array(
+            'id'       => $product->get_id(),
+            'name'     => $product->get_name(),
+            'price'    => wp_strip_all_tags( $product->get_price_html() ),
+            'url'      => $product->get_permalink(),
+            'image'    => wp_get_attachment_image_url( $product->get_image_id(), 'thumbnail' ),
+            'in_stock' => $product->is_in_stock(),
+        );
+    }
+
+    wp_send_json_success(
+        array(
+            'items' => $items,
+        )
+    );
+}
+add_action( 'wp_ajax_wcs_live_search', 'wcs_ajax_live_search' );
+add_action( 'wp_ajax_nopriv_wcs_live_search', 'wcs_ajax_live_search' );
+
+/**
+ * AJAX quick view modal content.
+ */
+function wcs_ajax_quick_view() {
+    check_ajax_referer( 'wcs-quick-view', 'nonce' );
+
+    $product_id = isset( $_GET['product_id'] ) ? absint( $_GET['product_id'] ) : 0;
+    if ( ! $product_id ) {
+        wp_send_json_error( array( 'message' => __( 'Gecersiz urun.', 'woocommerce-store-child' ) ), 400 );
+    }
+
+    $product = wc_get_product( $product_id );
+    if ( ! $product instanceof WC_Product ) {
+        wp_send_json_error( array( 'message' => __( 'Urun bulunamadi.', 'woocommerce-store-child' ) ), 404 );
+    }
+
+    ob_start();
+    ?>
+    <article class="wcs-qv-card">
+        <div class="wcs-qv-card__media">
+            <a href="<?php echo esc_url( get_permalink( $product_id ) ); ?>">
+                <?php echo $product->get_image( 'woocommerce_single' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+            </a>
+        </div>
+        <div class="wcs-qv-card__content">
+            <h3 class="wcs-qv-card__title">
+                <a href="<?php echo esc_url( get_permalink( $product_id ) ); ?>"><?php echo esc_html( $product->get_name() ); ?></a>
+            </h3>
+            <div class="wcs-qv-card__price"><?php echo wp_kses_post( $product->get_price_html() ); ?></div>
+            <?php if ( $product->get_short_description() ) : ?>
+                <div class="wcs-qv-card__excerpt"><?php echo wp_kses_post( wp_trim_words( $product->get_short_description(), 28 ) ); ?></div>
+            <?php endif; ?>
+            <div class="wcs-qv-card__actions">
+                <a class="wcs-card__cta" href="<?php echo esc_url( get_permalink( $product_id ) ); ?>">
+                    <?php esc_html_e( 'Urune Git', 'woocommerce-store-child' ); ?>
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </article>
+    <?php
+    wp_send_json_success( array( 'html' => ob_get_clean() ) );
+}
+add_action( 'wp_ajax_wcs_quick_view', 'wcs_ajax_quick_view' );
+add_action( 'wp_ajax_nopriv_wcs_quick_view', 'wcs_ajax_quick_view' );
 
 /**
  * Render home category grid below hero on the front page.
@@ -1151,6 +1442,49 @@ function wcs_enable_auto_login_after_registration() {
 	return true;
 }
 add_filter( 'woocommerce_registration_auth_new_customer', 'wcs_enable_auto_login_after_registration' );
+
+/**
+ * Keep both guest and account checkout modes enabled.
+ *
+ * @return bool
+ */
+function wcs_enable_checkout_registration() {
+	return true;
+}
+add_filter( 'woocommerce_checkout_registration_enabled', 'wcs_enable_checkout_registration', 20 );
+
+/**
+ * Do not force account creation on checkout.
+ *
+ * @return bool
+ */
+function wcs_disable_required_checkout_registration() {
+	return false;
+}
+add_filter( 'woocommerce_checkout_registration_required', 'wcs_disable_required_checkout_registration', 20 );
+
+/**
+ * Map custom checkout mode selection into WooCommerce posted data.
+ *
+ * @param array<string,mixed> $data Checkout posted data.
+ * @return array<string,mixed>
+ */
+function wcs_apply_checkout_mode_to_posted_data( $data ) {
+	if ( is_user_logged_in() ) {
+		return $data;
+	}
+
+	$mode = isset( $_POST['wcs_checkout_mode'] ) ? sanitize_key( wp_unslash( $_POST['wcs_checkout_mode'] ) ) : 'guest';
+
+	if ( 'register' === $mode ) {
+		$data['createaccount'] = 1;
+	} else {
+		$data['createaccount'] = 0;
+	}
+
+	return $data;
+}
+add_filter( 'woocommerce_checkout_posted_data', 'wcs_apply_checkout_mode_to_posted_data', 20 );
 
 /**
  * Redirect to My Account after logout.

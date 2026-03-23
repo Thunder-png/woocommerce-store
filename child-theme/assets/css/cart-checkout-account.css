@@ -92,6 +92,71 @@
 .wcs-co-login-notice .bi { color: var(--color-safety-red,#c12e37); font-size: 1.1rem; }
 .wcs-co-login-notice a { color: var(--color-safety-red,#c12e37); font-weight: 600; }
 
+/* Checkout mode selection (guest/register) */
+.wcs-co-mode {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid rgba(15,19,30,0.08);
+  box-shadow: 0 4px 16px rgba(15,19,30,0.05);
+  padding: 1.2rem 1.25rem;
+}
+.wcs-co-mode__title {
+  margin: 0 0 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: var(--color-industrial-navy,#0f131e);
+}
+.wcs-co-mode__title .bi { color: var(--color-safety-red,#c12e37); }
+.wcs-co-mode__options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+.wcs-co-mode__option {
+  position: relative;
+  border: 1.5px solid rgba(15,19,30,0.1);
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.85rem 0.9rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.wcs-co-mode__option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.wcs-co-mode__option.is-active {
+  border-color: var(--color-safety-red,#c12e37);
+  background: rgba(193,46,55,0.03);
+  box-shadow: 0 0 0 3px rgba(193,46,55,0.08);
+}
+.wcs-co-mode__label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-industrial-navy,#0f131e);
+}
+.wcs-co-mode__desc {
+  font-size: 0.78rem;
+  color: rgba(43,46,55,0.65);
+  line-height: 1.4;
+}
+.wcs-co-mode__login {
+  margin: 0.75rem 0 0;
+  font-size: 0.82rem;
+  color: rgba(43,46,55,0.7);
+}
+.wcs-co-mode__login a {
+  color: var(--color-safety-red,#c12e37);
+  font-weight: 600;
+  margin-left: 0.2rem;
+}
+
 /* Bölüm kartları */
 .wcs-co-section {
   background: #fff;
@@ -175,6 +240,34 @@
 }
 .wcs-co-section input.input-text.woocommerce-invalid,
 .wcs-co-section select.woocommerce-invalid { border-color: #e53e3e; }
+
+/* Floating labels + inline validation helpers */
+.wcs-co-wrap[data-wcs-floating-checkout] .form-row {
+  position: relative;
+}
+.wcs-co-wrap[data-wcs-floating-checkout] .form-row > label {
+  position: absolute;
+  top: -0.45rem;
+  left: 0.65rem;
+  background: #fff;
+  padding: 0 0.35rem;
+  margin: 0;
+  z-index: 2;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+}
+.wcs-co-wrap[data-wcs-floating-checkout] .wcs-field-invalid input,
+.wcs-co-wrap[data-wcs-floating-checkout] .wcs-field-invalid select,
+.wcs-co-wrap[data-wcs-floating-checkout] .wcs-field-invalid textarea {
+  border-color: #d5313e !important;
+  box-shadow: 0 0 0 3px rgba(213,49,62,0.12) !important;
+}
+.wcs-co-wrap[data-wcs-floating-checkout] .wcs-field-invalid .wcs-field-error {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+  color: #d5313e;
+}
 
 .wcs-co-section textarea { resize: vertical; min-height: 90px; }
 
@@ -951,6 +1044,39 @@
   letter-spacing: -0.02em;
 }
 
+.wcs-account-login__lead {
+  margin: -0.45rem 0 1rem;
+  font-size: 0.9rem;
+  color: rgba(43,46,55,0.7);
+}
+
+.wcs-account-login__quick-nav {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 0.35rem;
+}
+.wcs-account-login__quick-link {
+  border: 1.5px solid rgba(15,19,30,0.1);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--color-industrial-navy,#0f131e);
+  text-decoration: none;
+  padding: 0.75rem 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  font-weight: 700;
+  font-size: 0.86rem;
+}
+.wcs-account-login__quick-link:hover {
+  border-color: var(--color-safety-red,#c12e37);
+  color: var(--color-safety-red,#c12e37);
+  text-decoration: none;
+}
+
 .wcs-account-login .woocommerce-form,
 .wcs-account-edit,
 .wcs-account-lost-password {
@@ -984,8 +1110,15 @@
 }
 
 @media (max-width: 768.98px) {
+  .wcs-co-mode__options { grid-template-columns: 1fr; }
+
   .wcs-account-login__col + .wcs-account-login__col {
     margin-top: 1.5rem;
+  }
+
+  .wcs-account-login__quick-nav {
+    grid-template-columns: 1fr;
+    margin-bottom: 0.75rem;
   }
 }
 
