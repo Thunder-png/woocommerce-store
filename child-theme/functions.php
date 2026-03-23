@@ -424,17 +424,27 @@ function wcs_child_enqueue_assets() {
         );
     }
 
-    if (
-        function_exists( 'is_cart' )
-        && function_exists( 'is_checkout' )
-        && (
-            is_cart()
-            || is_checkout()
-            || ( function_exists( 'is_account_page' ) && is_account_page() )
-        )
-    ) {
+    if ( function_exists( 'is_cart' ) && is_cart() ) {
         wp_enqueue_style(
-            'wcs-cart-checkout-account',
+            'wcs-cart-page',
+            get_stylesheet_directory_uri() . '/assets/css/cart.css',
+            array( 'wcs-custom-style' ),
+            wcs_asset_version( 'assets/css/cart.css', $child_theme->get( 'Version' ) )
+        );
+    }
+
+    if ( function_exists( 'is_checkout' ) && is_checkout() ) {
+        wp_enqueue_style(
+            'wcs-checkout-page',
+            get_stylesheet_directory_uri() . '/assets/css/checkout.css',
+            array( 'wcs-custom-style' ),
+            wcs_asset_version( 'assets/css/checkout.css', $child_theme->get( 'Version' ) )
+        );
+    }
+
+    if ( function_exists( 'is_account_page' ) && is_account_page() ) {
+        wp_enqueue_style(
+            'wcs-account-page',
             get_stylesheet_directory_uri() . '/assets/css/cart-checkout-account.css',
             array( 'wcs-custom-style' ),
             wcs_asset_version( 'assets/css/cart-checkout-account.css', $child_theme->get( 'Version' ) )

@@ -519,19 +519,6 @@
 .woocommerce-account .site-main,
 .woocommerce-account .ast-container { background: var(--color-structure-white, #f8f8f8); }
 
-/* ── Ana layout grid — nav + content ─────────────────────────── */
-/* my-account.php override'ından gelen direkt çocuklar:
-   1. .wcs-ma-nav (navigation.php)
-   2. .wcs-ma-content (my-account.php içindeki div) */
-.woocommerce-account .woocommerce {
-  /* block olarak bırak, içini grid yap */
-}
-
-.woocommerce-account .woocommerce > .wcs-ma-nav,
-.woocommerce-account .woocommerce > .wcs-ma-content {
-  /* grid uygulanamıyorsa fallback için float */
-}
-
 @supports selector(:has(*)) {
   /* Gerçek grid container: nav + content yan yana */
   .woocommerce-account .woocommerce:has(.wcs-ma-nav) {
@@ -888,7 +875,7 @@
 
 /* ── Responsive ───────────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .woocommerce-account .woocommerce {
+  body:not(.wcs-ma--login) .woocommerce-account .woocommerce {
     grid-template-columns: 220px 1fr !important;
     gap: 1.25rem !important;
   }
@@ -1095,7 +1082,9 @@ body.wcs-ma--login .entry-content,
 body.wcs-ma--login .woocommerce-account .woocommerce,
 body.wcs-ma--login .woocommerce-account .woocommerce-MyAccount-content {
   width: 100% !important;
-  max-width: none !important;
+  max-width: 1200px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 /* WooCommerce default float/layout reset */
@@ -1161,10 +1150,13 @@ body.wcs-ma--login .woocommerce-account .woocommerce-MyAccount-content {
   font-family: var(--font-body, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
 }
 
-.wcs-account-login .woocommerce-form-row,
 .wcs-account-edit .woocommerce-form-row,
 .wcs-account-lost-password .woocommerce-form-row {
   max-width: 360px;
+}
+
+.wcs-account-login .woocommerce-form-row {
+  max-width: none;
 }
 
 .wcs-account-login .woocommerce-form-row input.input-text,
@@ -1206,8 +1198,6 @@ body.wcs-ma--login .woocommerce-account .woocommerce-MyAccount-content {
 }
 
 @media (max-width: 768.98px) {
-  .wcs-co-mode__options { grid-template-columns: 1fr; }
-
   .wcs-account-login__col + .wcs-account-login__col {
     margin-top: 1.5rem;
   }

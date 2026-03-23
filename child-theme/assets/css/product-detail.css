@@ -364,8 +364,12 @@ a.wcs-sp-breadcrumb__item:hover { color: var(--color-safety-red,#c12e37); }
 .single-product .upsells.products h2 { font-family: var(--font-heading,'Inter',sans-serif); font-size: 1.35rem; font-weight: 800; letter-spacing: -.02em; color: var(--color-industrial-navy,#0f131e); margin: 0 0 1.25rem; display: flex; align-items: center; gap: .5rem; }
 .single-product .related.products h2::before,
 .single-product .upsells.products h2::before { content: ''; display: inline-block; width: 4px; height: 1.35rem; background: var(--color-safety-red,#c12e37); border-radius: 2px; }
-.single-product .related .products,
-.single-product .upsells .products { display: grid!important; grid-template-columns: repeat(4,1fr)!important; gap: 1.25rem!important; }
+.single-product .related.products > ul.products,
+.single-product .upsells.products > ul.products {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.25rem;
+}
 
 /* m² hesaplayıcı */
 .single-product .wcs-calculator { display: none; margin-top: 0; border-radius: 12px; background: linear-gradient(135deg,rgba(193,46,55,.05),#fff); border: 1px solid rgba(193,46,55,.2); padding: 1.25rem; }
@@ -431,8 +435,8 @@ a.wcs-sp-breadcrumb__item:hover { color: var(--color-safety-red,#c12e37); }
   .wcs-sp-card { grid-template-columns: 1fr; gap: 1.75rem; padding: 1.5rem; }
   .wcs-sp-card__gallery-badges { position: static; flex-direction: row; margin-bottom: .75rem; }
   .wcs-spec-card.kfc-card { max-width: 100%; margin-top: 1rem; }
-  .single-product .related .products,
-  .single-product .upsells .products { grid-template-columns: repeat(2,1fr)!important; }
+  .single-product .related.products > ul.products,
+  .single-product .upsells.products > ul.products { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width:640px) {
@@ -444,8 +448,8 @@ a.wcs-sp-breadcrumb__item:hover { color: var(--color-safety-red,#c12e37); }
   .wcs-sp-card__trust-item:nth-child(3),
   .wcs-sp-card__trust-item:nth-child(4) { border-top: 1px solid rgba(15,19,30,.08); }
   .wcs-sp-card__trust-item:nth-child(4) { border-right: none; }
-  .single-product .related .products,
-  .single-product .upsells .products { grid-template-columns: 1fr!important; }
+  .single-product .related.products > ul.products,
+  .single-product .upsells.products > ul.products { grid-template-columns: 1fr; }
   .wcs-sp-card__var-grid { grid-template-columns: 1fr 1fr; }
   .single-product div.product, .wcs-sp-wrap { padding-left: .75rem; padding-right: .75rem; }
   .wcs-sticky-atc__title { max-width: 46vw; }
